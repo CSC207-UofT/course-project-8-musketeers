@@ -12,11 +12,11 @@ public class ImplicitGrapherTest {
       //int[] dims1 = getImDims("sample.png");
       mainPixels[5] = (int)Long.parseLong("FFFF00FF", 16);
       mainPixels[6] = (int)Long.parseLong("FF00FFFF", 16);
-      raymarch(mainPixels, dims1[0], dims1[1]);
+      implicitGraph(mainPixels, dims1[0], dims1[1]);
       writeImage(mainPixels, dims1[0], dims1[1], "sampleOut.png");
    }
 
-  public static void raymarch(int[] pixels, int w, int h) {
+  public static void implicitGraph(int[] pixels, int w, int h) {
       for (int y = 0; y < h; y++) {
          for (int x = 0; x < w; x++) {
             float cx = (x - w/2) * 0.1f;
