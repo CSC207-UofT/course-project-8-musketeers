@@ -2,10 +2,10 @@ import java.util.Map;
 
 // TODO: Handle inputs like pi
 
-// Node for constants
-public class NumberNode extends Node{
+// Expression for constants
+public class NumberExpression extends Expression {
 
-    public NumberNode(String num){
+    public NumberExpression(String num){
         super(num);
     }
 
