@@ -1,9 +1,9 @@
 import java.util.Map;
 
-public class VariableNode extends Node{
+public class VariableExpression extends Expression {
 
     // Variables can only have names x, y, z
-    public VariableNode(String varName){
+    public VariableExpression(String varName){
         super(varName);
     }
 
