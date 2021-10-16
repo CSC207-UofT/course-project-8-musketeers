@@ -36,8 +36,22 @@ public class ExpressionCreator {
             }
         }
 
+        else if (terms.get(0).equals("cos") &&
+                findCorrespondingBracket(terms, 1) == terms.size() -1){
+            Expression innerExpression = create(terms.subList(2, terms.size() - 1));
+            returnExpression = new CosExpression(innerExpression);
+        }
+
+        else if (terms.get(0).equals("sin") &&
+                findCorrespondingBracket(terms, 1) == terms.size() -1){
+            Expression innerExpression = create(terms.subList(2, terms.size() - 1));
+            returnExpression = new SinExpression(innerExpression);
+        }
+
         // Recursive step
         else {
+
+
             // We first find what operators are not inside any brackets
             // (operators inside brackets are dealt with deeper in the recursion)
             // Then we sort them by (reverse) order of precedence to ensure
@@ -159,5 +173,22 @@ public class ExpressionCreator {
         return true;
     }
 
+    private int findCorrespondingBracket(List<String> terms, int startInd){
+        int bracketCounter = 0;
+
+        for (int i = startInd; i < terms.size(); i++){
+            if (terms.get(i).equals("(")){
+                bracketCounter += 1;
+            } else if (terms.get(i).equals(")")){
+                bracketCounter -= 1;
+            }
+
+            if (bracketCounter == 0){
+                return i;
+            }
+        }
+
+        return -1;
+    }
 
 }

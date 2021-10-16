@@ -36,7 +36,7 @@ public class ExpressionReader {
         Axes axes = new Axes();
 
         ExpressionReader er = new ExpressionReader();
-        String test = "x ^ 2 + 5 - y";
+        String test = "cos ( x ^ 2 )";
 
         Expression func = er.read(test);
         axes.addExpression(func);
