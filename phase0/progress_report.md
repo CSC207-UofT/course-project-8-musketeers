@@ -34,11 +34,9 @@ The `Renderer` takes an `Axes` (currently just an `Expression`), a `Viewpoint`, 
 
 #### Renderer Demo Results
 
-![img](https://lh4.googleusercontent.com/4cWKx44zY8AWeHNTL_q_MsNQNh_ELwF467jSJHX7Vq_7JT3m99ggj1UpQ8LAr_Bbc_1Eu1ttzvl2e9aVv6aYD1CpCov_E2VG0-6QIy8CtyuNyV-G2dy0XRKz_lCFIW0XwUU3qZ5S=s0)
-
-![img](https://lh4.googleusercontent.com/o-V7fwqOah_NKuRahkaBbslZBWwi3LblTQPzY3iXgIEsfR_QbA5NpDrhOjkOl_HiXKqz4dJgvGM6OfjU59exjShYUUOMlvl9-PgP6Pgp9iq9s4-F_xukN9VZoT0EQqD7pdMAx2or=s0)
-
-![img](https://lh5.googleusercontent.com/o85IQ3v4-lT2dCVV6gkkzwwr3aPSGeY_LTMfM2nRGPl4wONxKHWMx1jX2P1T4Kyssexy8YMfnAGjj7WFKqWmP5VTqwU2kTnT0xceFOUyzvyHNXet6t-SsEUA7UYk9rGxpVcxa482=s0)
+![Raymarcher](https://lh4.googleusercontent.com/4cWKx44zY8AWeHNTL_q_MsNQNh_ELwF467jSJHX7Vq_7JT3m99ggj1UpQ8LAr_Bbc_1Eu1ttzvl2e9aVv6aYD1CpCov_E2VG0-6QIy8CtyuNyV-G2dy0XRKz_lCFIW0XwUU3qZ5S=s0)
+![Explicit graph](https://lh5.googleusercontent.com/o85IQ3v4-lT2dCVV6gkkzwwr3aPSGeY_LTMfM2nRGPl4wONxKHWMx1jX2P1T4Kyssexy8YMfnAGjj7WFKqWmP5VTqwU2kTnT0xceFOUyzvyHNXet6t-SsEUA7UYk9rGxpVcxa482=s0)
+![Implicit graph](https://lh4.googleusercontent.com/o-V7fwqOah_NKuRahkaBbslZBWwi3LblTQPzY3iXgIEsfR_QbA5NpDrhOjkOl_HiXKqz4dJgvGM6OfjU59exjShYUUOMlvl9-PgP6Pgp9iq9s4-F_xukN9VZoT0EQqD7pdMAx2or=s0)
 
 
 
@@ -68,14 +66,17 @@ AST/Expression implementation: Dihan, Rishibh, Ted
   - 3D - adjustable lighting, shadows etc
   - 2D - color gradients etc
   - Will try OpenGL or GUI
-  - CRC Models + Presentation: Andrew, Binseong
-  - Testing: Omar, Binseong
 
-  *What has worked well so far with your design as you have started implementing the code?*
+- CRC Models + Presentation: Andrew, Binseong
+
+- Testing: Omar, Binseong
+
+
+*What has worked well so far with your design as you have started implementing the code?*
 
   - Having a recursive structure for Expressions works really well
   - Having modularity between the ASTs and Renderer classes means that we can have groups working on them independently 
 
-  *Have you clearly indicated at least one open question your group is struggling with, so that your TA can address it in their feedback for phase 0?*
+*Have you clearly indicated at least one open question your group is struggling with, so that your TA can address it in their feedback for phase 0?*
 
   - Categorizing classes by clean architecture (especially with controllers and use cases)
