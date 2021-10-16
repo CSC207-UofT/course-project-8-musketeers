@@ -1,8 +1,10 @@
+package Backend;
+
 import java.util.Map;
 
 // TODO: Handle inputs like pi
 
-// Expression for constants
+// Backend.Expression for constants
 public class NumberExpression extends Expression {
 
     public NumberExpression(String num){

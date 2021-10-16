@@ -28,9 +28,9 @@ Possible extensions:
 - Finding derivatives and integrals
 
 #### Scenario Walk-through
-A user inputs an expression like `f(x) = x^2 + 5`. First an empty `Axes` object is created. This is passed on to `ExpressionReader`. The `ExpressionReader` converts `x^2 + 5` into a list `[“x”, “^”, “2”, “+”, “5”]` and passes that on to `ExpressionCreator`. `ExpressionCreator` will convert all the variables, operators and numbers into appropriate `Expressions` (`NumberExpression`, `VariableExpression`, `OperatorExpression`) and combines them into an Abstract Syntax Tree, then create a `FunctionExpression` that stores the function name “f” along with the expression that it evaluates. `ExpressionReader` will then return this `FunctionExpression` which will then be added to the `Axes` object.
+A user inputs an expression like `f(x) = x^2 + 5`. First an empty `Backend.Axes` object is created. This is passed on to `Backend.ExpressionReader`. The `Backend.ExpressionReader` converts `x^2 + 5` into a list `[“x”, “^”, “2”, “+”, “5”]` and passes that on to `Backend.ExpressionCreator`. `Backend.ExpressionCreator` will convert all the variables, operators and numbers into appropriate `Expressions` (`Backend.NumberExpression`, `Backend.VariableExpression`, `Backend.OperatorExpression`) and combines them into an Abstract Syntax Tree, then create a `Backend.FunctionExpression` that stores the function name “f” along with the expression that it evaluates. `Backend.ExpressionReader` will then return this `Backend.FunctionExpression` which will then be added to the `Backend.Axes` object.
 
-The `Renderer` takes an `Axes` (currently just an `Expression`), a `Viewpoint`, and other parameters for the desired image (such as size, scales of axes, etc), then generates an int[] array representing pixels of an image. `RendererUseCase` will pass the parameters of the image to `Renderer` which will then convert the pixel array into an image and save it to a file.
+The `Renderer` takes an `Backend.Axes` (currently just an `Backend.Expression`), a `Viewpoint`, and other parameters for the desired image (such as size, scales of axes, etc), then generates an int[] array representing pixels of an image. `RendererUseCase` will pass the parameters of the image to `Renderer` which will then convert the pixel array into an image and save it to a file.
 
 #### Renderer Demo Results
 
@@ -46,11 +46,11 @@ The `Renderer` takes an `Axes` (currently just an `Expression`), a `Viewpoint`, 
 
 *What each group member has been working on and plans to work on next?*
 
-AST/Expression implementation: Dihan, Rishibh, Ted
+AST/Backend.Expression implementation: Dihan, Rishibh, Ted
 
-- Creating the Expression class that represents a given function as an abstract syntax tree.
+- Creating the Backend.Expression class that represents a given function as an abstract syntax tree.
 
-- For a given input string representing an expression, creating the ExpressionReader and ExpressionCreator classes to build the function AST.
+- For a given input string representing an expression, creating the Backend.ExpressionReader and Backend.ExpressionCreator classes to build the function AST.
 
 - To-do
 

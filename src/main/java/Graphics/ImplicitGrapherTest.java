@@ -1,7 +1,7 @@
-package basic;
+package Graphics;
 
-import static basic.ImageTest.*;
-import static basic.RaymarcherTest.fmtHex255;
+import static Graphics.ImageTest.*;
+import static Graphics.RaymarcherTest.fmtHex255;
 
 public class ImplicitGrapherTest {
     public static class CoolFunc implements Evaluatable {

@@ -1,6 +1,6 @@
-package basic;
+package Graphics;
 
-import static basic.ImageTest.*;
+import static Graphics.ImageTest.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
