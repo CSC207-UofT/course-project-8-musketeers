@@ -1,3 +1,5 @@
+package Backend;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -5,14 +7,15 @@ import java.util.Map;
 
 // TODO: create method is too long, break into helper methods
 // TODO: check validity of expressions
+// TODO: Handle functions like cos/sin/sqrt in input
 public class ExpressionCreator {
 
     private final Constants constants = new Constants();
 
 
-    /** Converts a (valid) expression (represented as a list) into an Expression
+    /** Converts a (valid) expression (represented as a list) into an Backend.Expression
      * @param terms A list of terms in the expression (see below for how they should be broken up
-     * @return An Expression (AST) representation of the expression
+     * @return An Backend.Expression (AST) representation of the expression
      */
     // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
     // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
@@ -23,12 +26,13 @@ public class ExpressionCreator {
         // Base case for the recursion
         // One term means it's a variable, number or a function that takes in some input
         if (terms.size() == 1){
-            if (constants.getVariables().contains(terms.get(0))){
-                returnExpression = new VariableExpression(terms.get(0));
+            String term = terms.get(0);
+            if (constants.getVariables().contains(term)){
+                returnExpression = new VariableExpression(term);
             }
             // Assuming that if we don't have a variable or function, we just have a number
             else{
-                returnExpression = new NumberExpression(terms.get(0));
+                returnExpression = new NumberExpression(term);
             }
         }
 
@@ -92,15 +96,18 @@ public class ExpressionCreator {
         // a pair of brackets or not
         int bracketCounter = 0;
 
-        // We iterate over the terms, if we encounter '(', we increment counter
-        // by 1 and if we encounter ')' we decrement it by 1
+        // We iterate over the terms, if we encounter ')', we increment counter
+        // by 1 and if we encounter '(' we decrement it by 1
         // Thus we know we are outside every pair of brackets when counter is 0
-        for (int i = 0; i < terms.size(); i++){
+        // We need to go in reverse order as the operators at the end
+        // have lower precedence and those up ahead.
+        // e.g. 2 - 1 - 3 == (2 - 1) - 3 != 2 - (1 - 3)
+        for (int i = terms.size() - 1; i > -1; i--){
             String term = terms.get(i);
 
-            if (term.equals("(")){
+            if (term.equals(")")){
                 bracketCounter += 1;
-            } else if (term.equals(")")){
+            } else if (term.equals("(")){
                 bracketCounter -= 1;
             }
 

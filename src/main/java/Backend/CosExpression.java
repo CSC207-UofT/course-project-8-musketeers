@@ -1,12 +1,14 @@
+package Backend;
+
 import java.util.Map;
 
-public class Cos extends FunctionExpression {
+public class CosExpression extends Expression{
 
     private Expression input;
 
     // Only one input for cos of course
     // But the input can be an expression of any kind
-    public Cos(Expression input){
+    public CosExpression(Expression input){
         super("cos");
         this.input = input;
     }

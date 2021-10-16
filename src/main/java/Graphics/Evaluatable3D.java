@@ -1,5 +1,5 @@
 
-package basic;
+package Graphics;
 
 interface Evaluatable3D {
     float evaluate(float x, float y, float z);

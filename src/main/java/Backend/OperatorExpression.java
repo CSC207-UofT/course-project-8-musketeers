@@ -1,6 +1,8 @@
+package Backend;
+
 import java.util.Map;
 
-// OperatorExpression stores the 'Expression' with operators, e.g. E_1 + E_2
+// Backend.OperatorExpression stores the 'Backend.Expression' with operators, e.g. E_1 + E_2
 // where E_1, E_2 themselves are Expressions
 public class OperatorExpression extends Expression {
 

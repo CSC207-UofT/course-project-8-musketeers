@@ -1,4 +1,4 @@
-package basic;
+package Graphics;
 
 // For compatibility with OpenGL and OpenCL use lowercase.
 public class float3 {
