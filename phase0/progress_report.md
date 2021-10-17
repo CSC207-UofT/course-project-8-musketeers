@@ -44,12 +44,10 @@ The `Renderer` takes an `Backend.Axes` (currently just an `Backend.Expression`),
 
 *What each group member has been working on and plans to work on next?*
 
-AST/Backend.Expression implementation: Dihan, Rishibh, Ted
+AST/Backend.Expression implementation: Dihan, Rishibh, Ted, Omar
 
 - Creating the Backend.Expression class that represents a given function as an abstract syntax tree.
-
 - For a given input string representing an expression, creating the Backend.ExpressionReader and Backend.ExpressionCreator classes to build the function AST.
-
 - To-do
 
   - AST operations like function composition
@@ -57,18 +55,15 @@ AST/Backend.Expression implementation: Dihan, Rishibh, Ted
   - Clean up code
   - Handling brackets more appropriately
   - Handling constants like pi and e
+- Graphics/Graphing: Kevin, Louis, Binseong, Andrew
 
-- Graphics/Graphing: Kevin, Louis
-
-  - Created basic 2D implicit grapher
-  - 3D SDF raymarcher
-  - Will try extending raymarcher to arbitrary implicit functions
+  - Created basic 2D implicit Grapher
+  - 3D SDF Raymarcher
+  - Will try extending Raymarcher to arbitrary implicit functions
   - 3D - adjustable lighting, shadows etc
   - 2D - color gradients etc
   - Will try OpenGL or GUI
-
-- CRC Models + Presentation: Andrew, Binseong
-
+- ExpressionReader: Omar and Ted
 - Testing: Omar, Binseong
 
 
