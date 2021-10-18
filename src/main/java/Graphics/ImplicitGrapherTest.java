@@ -3,6 +3,11 @@ package Graphics;
 import static Graphics.ImageTest.*;
 import static Graphics.RaymarcherTest.fmtHex255;
 
+import Backend.Expression;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class ImplicitGrapherTest {
     public static class CoolFunc implements Evaluatable {
         public float evaluate(float cx, float cy) {
@@ -60,4 +65,31 @@ public class ImplicitGrapherTest {
          }
       }
   }
+
+    public static void graphImplicit(int[] pixels, int w, int h, Expression func,
+                                     float scale, float xpos, float ypos,
+                                     boolean useThreshold) {
+
+        Map<String, Double> varMap = new HashMap<>();
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                double cx = (x - w/2) * scale - xpos;
+                double cy = (y - h/2) * scale - ypos;
+                varMap.put("x", cx);
+                varMap.put("y", cy);
+
+                if (useThreshold) {
+                    if (func.evaluate(varMap) > 0) {
+                        pixels[y * w + x] = (int) Long.parseLong("FFFFFFFF", 16);
+                    } else {
+                        pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
+                    }
+                } else {
+                    double result = func.evaluate(varMap);
+                    String outR = fmtHex255((int) (255 * Math.sqrt(result)));
+                    pixels[y * w + x] = (int) Long.parseLong("FF" + outR + outR + outR, 16);
+                }
+            }
+        }
+    }
 }
