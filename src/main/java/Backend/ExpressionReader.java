@@ -34,6 +34,7 @@ public class ExpressionReader {
     }
 
 
+    // Try "( x ^ 2 + y ^ 2 - 1 ) ^ 3 - x ^ 2 * y ^ 3"!
     public static void main(String[] args) throws Exception {
         Axes axes = new Axes();
         int size = 512;

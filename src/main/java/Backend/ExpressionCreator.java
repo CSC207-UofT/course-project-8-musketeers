@@ -36,22 +36,13 @@ public class ExpressionCreator {
             }
         }
 
-        else if (terms.get(0).equals("cos") &&
-                findCorrespondingBracket(terms, 1) == terms.size() -1){
-            Expression innerExpression = create(terms.subList(2, terms.size() - 1));
-            returnExpression = new CosExpression(innerExpression);
-        }
-
-        else if (terms.get(0).equals("sin") &&
-                findCorrespondingBracket(terms, 1) == terms.size() -1){
-            Expression innerExpression = create(terms.subList(2, terms.size() - 1));
-            returnExpression = new SinExpression(innerExpression);
+        else if(constants.getFunctions().contains(terms.get(0)) &&
+                containsOuterBrackets(terms.subList(1, terms.size()))) {
+            returnExpression = buildBuiltInFunctionExpression(terms);
         }
 
         // Recursive step
         else {
-
-
             // We first find what operators are not inside any brackets
             // (operators inside brackets are dealt with deeper in the recursion)
             // Then we sort them by (reverse) order of precedence to ensure
@@ -92,6 +83,16 @@ public class ExpressionCreator {
         return returnExpression;
     }
 
+    private Expression buildBuiltInFunctionExpression(List<String> terms){
+        Expression innerExpression = create(terms.subList(2, terms.size() - 1));
+        switch (terms.get(0)){
+            case "cos": return new CosExpression(innerExpression);
+            case "sin": return new SinExpression(innerExpression);
+            case "tan": return new TanExpression(innerExpression);
+            case "sqrt": return new SqrtExpression(innerExpression);
+            default: throw new IllegalArgumentException("Unrecognised function");
+        }
+    }
 
     /** Returns a map of operators that are not in any brackets (in the order that they appear)
      *  along with the indices that they appear at.
