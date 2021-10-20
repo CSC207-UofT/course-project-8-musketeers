@@ -1,7 +1,10 @@
 package Backend;
 
-import java.util.HashMap;
 import java.util.List;
+
+import Graphics.ImplicitGrapherTest;
+
+import static Graphics.ImageTest.writeImage;
 
 // TODO: for now Backend.ExpressionReader.read assumes that there are spaces between the necessary
 // characters. Also Backend.ExpressionCreator assumes that all the brackets are appropriately
@@ -31,22 +34,26 @@ public class ExpressionReader {
     }
 
 
-    public static void main(String[] args) {
-
+    // Try "( x ^ 2 + y ^ 2 - 1 ) ^ 3 - x ^ 2 * y ^ 3"!
+    public static void main(String[] args) throws Exception {
         Axes axes = new Axes();
+        int size = 512;
+        int[] mainPixels = new int[size*size];
+        int[] dims1 = {size,size};
 
         ExpressionReader er = new ExpressionReader();
-        String test = "x ^ 2 + 5 - y";
+
+        System.out.println("Please ensure that each 'unit' of information in" +
+                "the input is spaced out:");
+        System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
+        String test = args[0];
 
         Expression func = er.read(test);
         axes.addExpression(func);
 
-        HashMap<String, Double> varMap = new HashMap<>();
-        varMap.put("x", 0.0);
-        varMap.put("y", 2.0);
-
-        System.out.println(func.evaluate(varMap));
-
+        ImplicitGrapherTest.graphImplicit(mainPixels, dims1[0], dims1[1], func, 0.1f, 0.f, 0.f, true);
+        writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
+        System.out.println("...Done!");
     }
 
 }

@@ -1,5 +1,6 @@
 package Backend;
 
+import java.util.HashMap;
 import java.util.Map;
 
 // Backend.OperatorExpression stores the 'Backend.Expression' with operators, e.g. E_1 + E_2
@@ -20,15 +21,20 @@ public class OperatorExpression extends Expression {
     // We evaluate this expression based on what the operator is
     @Override
     public double evaluate(Map<String, Double> arguments) {
-
-        return switch (getItem()) {
-            case "+" -> lExpression.evaluate(arguments) + rExpression.evaluate(arguments);
-            case "-" -> lExpression.evaluate(arguments) - rExpression.evaluate(arguments);
-            case "*" -> lExpression.evaluate(arguments) * rExpression.evaluate(arguments);
-            case "/" -> lExpression.evaluate(arguments) / rExpression.evaluate(arguments);
-            case "^" -> Math.pow(lExpression.evaluate(arguments), rExpression.evaluate(arguments));
-            default -> throw new IllegalArgumentException("Unexpected operator");
-        };
+        switch (getItem()) {
+            case "+":
+                return lExpression.evaluate(arguments) + rExpression.evaluate(arguments);
+            case "-":
+                return lExpression.evaluate(arguments) - rExpression.evaluate(arguments);
+            case "*":
+                return lExpression.evaluate(arguments) * rExpression.evaluate(arguments);
+            case "/":
+                return lExpression.evaluate(arguments) / rExpression.evaluate(arguments);
+            case "^":
+                return Math.pow(lExpression.evaluate(arguments), rExpression.evaluate(arguments));
+            default:
+                throw new IllegalArgumentException("Unexpected operator");
+        }
 
     }
 

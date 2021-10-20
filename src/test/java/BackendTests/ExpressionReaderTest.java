@@ -67,4 +67,33 @@ public class ExpressionReaderTest {
         Expression exp = er.read("2 / 2 / 2");
         assertEquals(exp.evaluate(varMap), 0.5, delta);
     }
+
+    @Test(timeout = 50)
+    public void testCos(){
+        Expression exp = er.read("cos ( x ^ 2 )");
+        varMap.put("x", 1.0);
+        assertEquals(exp.evaluate(varMap), Math.cos(1), delta);
+    }
+
+    @Test(timeout = 50)
+    public void testCosWithOtherOperators(){
+        Expression exp = er.read("2 * cos ( x ^ 2 ) + 5");
+        varMap.put("x", 0.0);
+        assertEquals(exp.evaluate(varMap), 7, delta);
+    }
+
+    @Test(timeout = 50)
+    public void testSin(){
+        Expression exp = er.read("sin ( x ^ 2 )");
+        varMap.put("x", 1.0);
+        assertEquals(exp.evaluate(varMap), Math.sin(1), delta);
+    }
+
+    @Test(timeout = 50)
+    public void testSinWithOtherOperators(){
+        Expression exp = er.read("cos ( x ) ^ 2 + sin ( x ) ^ 2");
+        varMap.put("x", 3.0);
+        assertEquals(exp.evaluate(varMap), 1, delta);
+    }
+
 }
