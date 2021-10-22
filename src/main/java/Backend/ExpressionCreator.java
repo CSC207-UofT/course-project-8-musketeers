@@ -51,38 +51,6 @@ public class ExpressionCreator {
             // TODO: Don't need to get all the necessary operators, only one with the lowest precedence
             Map<String, Integer> operatorAndIndices = getOuterOperators(terms);
 
-            // This for loop is a bit gratuitous? because there shouldn't be more than one comparison operator anyway?
-            // Mainly just to get a working version of ComparisonExpression ready.
-            for(String op: constants.getComparisons()){
-
-                if(operatorAndIndices.containsKey(op)) {
-                    int opIndex = operatorAndIndices.get(op);
-
-                    List<String> leftTerms = terms.subList(0, opIndex);
-                    List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
-
-                    // Via induction, we only need to deal with cases
-                    // where the left or right expressions are contained in a pair of brackets
-                    // e.g. (2 + 3) * 5
-                    // If this is not the case, we will get to such a case recursively
-                    if (containsOuterBrackets(leftTerms)) {
-                        // we remove the first and last term which we know are '(' and ')' respectively
-                        leftTerms = leftTerms.subList(1, leftTerms.size() - 1);
-                    }
-                    if (containsOuterBrackets(rightTerms)) {
-                        rightTerms = rightTerms.subList(1, rightTerms.size() - 1);
-                    }
-
-                    // Recursively create expressions for the left and right terms
-                    Expression lExpression = create(leftTerms);
-                    Expression rExpression = create(rightTerms);
-
-                    returnExpression = new ComparatorExpression(op, lExpression, rExpression);
-
-                    break;
-                }
-            }
-
             for(String op: constants.getOperators()){
 
                 if(operatorAndIndices.containsKey(op)) {
@@ -108,6 +76,38 @@ public class ExpressionCreator {
                     Expression rExpression = create(rightTerms);
 
                     returnExpression = new OperatorExpression(op, lExpression, rExpression);
+
+                    break;
+                }
+            }
+
+
+            // Remove this for loop if you merge Comparator Expression with Operator Expression.
+            for(String op: constants.getComparisons()){
+
+                if(operatorAndIndices.containsKey(op)) {
+                    int opIndex = operatorAndIndices.get(op);
+
+                    List<String> leftTerms = terms.subList(0, opIndex);
+                    List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
+
+                    // Via induction, we only need to deal with cases
+                    // where the left or right expressions are contained in a pair of brackets
+                    // e.g. (2 + 3) * 5
+                    // If this is not the case, we will get to such a case recursively
+                    if (containsOuterBrackets(leftTerms)) {
+                        // we remove the first and last term which we know are '(' and ')' respectively
+                        leftTerms = leftTerms.subList(1, leftTerms.size() - 1);
+                    }
+                    if (containsOuterBrackets(rightTerms)) {
+                        rightTerms = rightTerms.subList(1, rightTerms.size() - 1);
+                    }
+
+                    // Recursively create expressions for the left and right terms
+                    Expression lExpression = create(leftTerms);
+                    Expression rExpression = create(rightTerms);
+
+                    returnExpression = new ComparatorExpression(op, lExpression, rExpression);
 
                     break;
                 }

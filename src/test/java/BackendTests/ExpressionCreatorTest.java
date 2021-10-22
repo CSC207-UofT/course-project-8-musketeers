@@ -169,4 +169,52 @@ public class ExpressionCreatorTest {
         assertEquals(exp.evaluate(varMap), -1.0, delta);
     }
 
+    @Test(timeout = 50)
+    public void testLessThanOrEqualToWithOtherOperators(){
+        Expression exp = ec.create(List.of("x", "+", "z", "<=", "5", "-", "y"));
+        varMap.put("x", 5.0);
+        varMap.put("y", 0.1);
+        varMap.put("z", 0.0);
+        assertEquals(exp.evaluate(varMap), -1.0, delta);
+        varMap.put("x", 5.0);
+        varMap.put("y", 0.0);
+        varMap.put("z", 0.0);
+        assertEquals(exp.evaluate(varMap), 1.0, delta);
+        varMap.put("x", 5.0);
+        varMap.put("y", -0.1);
+        varMap.put("z", 0.0);
+        assertEquals(exp.evaluate(varMap), 1.0, delta);
+    }
+
+    @Test(timeout = 50)
+    public void testLessThanWithOtherOperators(){
+        Expression exp = ec.create(List.of("x", "+", "z", "<", "5", "-", "y"));
+        varMap.put("x", 5.0);
+        varMap.put("y", 0.1);
+        varMap.put("z", 0.0);
+        assertEquals(exp.evaluate(varMap), -1.0, delta);
+        varMap.put("x", 5.0);
+        varMap.put("y", 0.0);
+        varMap.put("z", 0.0);
+        assertEquals(exp.evaluate(varMap), -1.0, delta);
+        varMap.put("x", 5.0);
+        varMap.put("y", -0.1);
+        varMap.put("z", 0.0);
+        assertEquals(exp.evaluate(varMap), 1.0, delta);
+    }
+
+    @Test(timeout = 50)
+    public void testMultipleComparators(){
+        // This assumes that chained comparators are treated like regular operations i.e. 1 < 2 < 3 means (1 < 2) < 3.
+        // Should we make chained comparators behave like a logical operator i.e. 1 < 2 < 3 means 1 < 2 & 2 < 3.
+
+        Expression exp = ec.create(List.of("-1", ">=", "y", ">=", "x"));
+        varMap.put("x", 5.0);
+        varMap.put("y", 4.9);
+        assertEquals(exp.evaluate(varMap), 1.0, delta);
+        varMap.put("x", 5.0);
+        varMap.put("y", 5.9);
+        assertEquals(exp.evaluate(varMap), -1.0, delta);
+    }
+
 }
