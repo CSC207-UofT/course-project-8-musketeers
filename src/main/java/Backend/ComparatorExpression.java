@@ -1,5 +1,7 @@
 package Backend;
 
+import java.util.Map;
+
 /**
  * ComparatorExpression allows for the graphing of regions of the graphing space through an inequality
  * rather than typical equalities.
