@@ -6,17 +6,15 @@ import java.util.Set;
 
 public class Constants {
 
-    private final List<String> OPERATORS = new ArrayList<>(List.of(new String[]{"-", "+", "*", "/", "^"}));
-    private final List<String> COMPARISONS = new ArrayList<>(List.of(new String[]{"<=", ">=", "<", ">"}));
+    // List used for operators as the order of operators matter and is used to control the order
+    // of precedence in expressions
+    private final List<String> OPERATORS = new ArrayList<>(List.of(new String[]{"+", "-", "/", "*", "^"}));
+    // sets used for these as only need containment and order is irrelevant
     private final Set<String> VARIABLES = Set.of("x", "y", "z");
     private final Set<String> FUNCTIONS = Set.of("cos", "sin", "tan", "sqrt");
 
     public List<String> getOperators() {
         return OPERATORS;
-    }
-
-    public List<String> getComparisons() {
-        return COMPARISONS;
     }
 
     public Set<String> getFunctions() {
