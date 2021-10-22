@@ -208,7 +208,7 @@ public class ExpressionCreatorTest {
         // This assumes that chained comparators are treated like regular operations i.e. 1 < 2 < 3 means (1 < 2) < 3.
         // Should we make chained comparators behave like a logical operator i.e. 1 < 2 < 3 means 1 < 2 & 2 < 3.
 
-        Expression exp = ec.create(List.of("-1", ">=", "y", ">=", "x"));
+        Expression exp = ec.create(List.of("x", "<=", "y", "<=", "-1"));
         varMap.put("x", 5.0);
         varMap.put("y", 4.9);
         assertEquals(exp.evaluate(varMap), 1.0, delta);
