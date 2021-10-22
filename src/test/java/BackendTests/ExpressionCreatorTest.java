@@ -22,15 +22,17 @@ public class ExpressionCreatorTest {
         ec = new ExpressionCreator();
     }
 
+    // TEST INPUT PATTERNS
+
     @Test(timeout = 50)
     public void testSingleNumber(){
-        Expression exp = ec.create(Arrays.asList("2"));
+        Expression exp = ec.create(List.of("2"));
         assertEquals(exp.evaluate(varMap), 2.0, delta);
     }
 
     @Test(timeout = 50)
     public void testSingleVariable(){
-        Expression exp = ec.create(Arrays.asList("x"));
+        Expression exp = ec.create(List.of("x"));
         varMap.put("x", 5.0);
         assertEquals(exp.evaluate(varMap), 5.0, delta);
     }
@@ -94,6 +96,8 @@ public class ExpressionCreatorTest {
         assertEquals(exp.evaluate(varMap), 0.05, delta);
     }
 
+    // TEST SPECIFIC FEATURES, NOT JUST GENERAL PATTERNS
+
     @Test(timeout = 50)
     public void testPower(){
         Expression exp = ec.create(Arrays.asList("x", "^", "2"));
@@ -141,6 +145,28 @@ public class ExpressionCreatorTest {
         Expression exp = ec.create(Arrays.asList("tan", "(", "x", ")", "^", "2", "+", "3"));
         varMap.put("x", 1.0);
         assertEquals(exp.evaluate(varMap), Math.pow(Math.tan(1), 2.0) + 3, delta);
+    }
+
+    @Test(timeout = 50)
+    public void testLessThanOrEqualTo(){
+        Expression exp = ec.create(List.of("x", "<=", "5"));
+        varMap.put("x", 4.9);
+        assertEquals(exp.evaluate(varMap), 1.0, delta);
+        varMap.put("x", 5.0);
+        assertEquals(exp.evaluate(varMap), 1.0, delta);
+        varMap.put("x", 5.1);
+        assertEquals(exp.evaluate(varMap), -1.0, delta);
+    }
+
+    @Test(timeout = 50)
+    public void testLessThan(){
+        Expression exp = ec.create(List.of("x", "<", "5"));
+        varMap.put("x", 4.9);
+        assertEquals(exp.evaluate(varMap), 1.0, delta);
+        varMap.put("x", 5.0);
+        assertEquals(exp.evaluate(varMap), -1.0, delta);
+        varMap.put("x", 5.1);
+        assertEquals(exp.evaluate(varMap), -1.0, delta);
     }
 
 }
