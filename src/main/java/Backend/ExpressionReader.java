@@ -1,6 +1,8 @@
 package Backend;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import Graphics.ImplicitGrapherTest;
 
@@ -46,14 +48,18 @@ public class ExpressionReader {
         System.out.println("Please ensure that each 'unit' of information in" +
                 "the input is spaced out:");
         System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
-        String test = args[0];
-
+//        String test = args[0];
+        String test = "4 - 5 + 1";
         Expression func = er.read(test);
         axes.addExpression(func);
 
-        ImplicitGrapherTest.graphImplicit(mainPixels, dims1[0], dims1[1], func, 0.1f, 0.f, 0.f, true);
-        writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
-        System.out.println("...Done!");
+        Map<String, Double> varMap = new HashMap<>();
+
+        System.out.println(test + " = " + func.evaluate(varMap));
+
+//        ImplicitGrapherTest.graphImplicit(mainPixels, dims1[0], dims1[1], func, 0.1f, 0.f, 0.f, true);
+//        writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
+//        System.out.println("...Done!");
     }
 
 }

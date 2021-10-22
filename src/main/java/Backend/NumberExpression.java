@@ -14,6 +14,13 @@ public class NumberExpression extends Expression {
     // Evaluating a number just means returning itself
     @Override
     public double evaluate(Map<String, Double> arguments) {
-        return Double.parseDouble(getItem());
+
+        try {
+            return Double.parseDouble(getItem());
+        }
+        catch (Exception NumberFormatException){
+            throw new NumberFormatException("Number expected but not found");
+        }
+
     }
 }
