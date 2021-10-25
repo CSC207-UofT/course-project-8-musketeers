@@ -51,10 +51,9 @@ public class ExpressionReader {
     List<String> parsed = new ArrayList<>(List.of());
     StringBuilder section = new StringBuilder(); // section will be storing any series of characters which are not
                                                 // operators.
-    String splitexpression = recreateWithoutSpaces(expression); //string expressions are much easier to work with.
 
-    for (int character = 0; character < splitexpression.length(); character++) {
-         String letter = String.valueOf(splitexpression.charAt(character));
+    for (int character = 0; character < expression.length(); character++) {
+         String letter = String.valueOf(expression.charAt(character));
 
          //unlike other cases, if the minus sign is at the beginning, we dont need to add brackets to ensure
         // we are not changing the order of operations.
@@ -70,18 +69,18 @@ public class ExpressionReader {
          // conditions here in which the minus sign is interpreted as unary.
         // if all conditions hold interpret "next letter" as  (0 - "next letter" ).
 
-         else if (letter.equals("-") && splitexpression.length() > character +1 &&
-                 (constants.getOperators().contains(String.valueOf(splitexpression.charAt(character- 1))) ||
-                         String.valueOf(splitexpression.charAt(character- 1)).equals("(") ||
-                         String.valueOf(splitexpression.charAt(character- 1)).equals(",") ||
-                 String.valueOf(splitexpression.charAt(character- 1)).equals("="))) {
+         else if (letter.equals("-") && expression.length() > character +1 &&
+                 (constants.getOperators().contains(String.valueOf(expression.charAt(character- 1))) ||
+                         String.valueOf(expression.charAt(character- 1)).equals("(") ||
+                         String.valueOf(expression.charAt(character- 1)).equals(",") ||
+                 String.valueOf(expression.charAt(character- 1)).equals("="))) {
              // no need to add an open brack if preceded by an open bracket
-             if (!String.valueOf(splitexpression.charAt(character- 1)).equals("(")) {
+             if (!String.valueOf(expression.charAt(character- 1)).equals("(")) {
                  parsed.add("(");
              }
              parsed.add(("0"));
              parsed.add(letter);
-             parsed.add(String.valueOf(splitexpression.charAt(character+1)));
+             parsed.add(String.valueOf(expression.charAt(character+1)));
              parsed.add(")");
              character++;
 
@@ -97,6 +96,14 @@ public class ExpressionReader {
            section = new StringBuilder();
 
         }
+       else if (letter.equals(" ")) {
+             if (!section.toString().equals("")) {
+                 parsed.add(section.toString());
+             }
+           section = new StringBuilder();
+
+         }
+
        else {section.append(letter);
 
 
@@ -111,23 +118,6 @@ public class ExpressionReader {
 
     }
 
-    /** Takes an input string and removes any spaces within it.
-     *
-     * @param expression any string that may or may not have spaces.
-     * @return a string without spaces
-     */
-    public String recreateWithoutSpaces(String expression) {
-        String[] str1 = expression.split(" ");
-        StringBuilder recreatedString = new StringBuilder();
-        for (String s: str1) {
-            recreatedString.append(s);
-        }
-        return recreatedString.toString();
-    }
-
-
-
-
 
     // Try "( x ^ 2 + y ^ 2 - 1 ) ^ 3 - x ^ 2 * y ^ 3"!
     public static void main(String[] args) throws Exception {
@@ -137,7 +127,7 @@ public class ExpressionReader {
         int[] dims1 = {size,size};
 
         ExpressionReader er = new ExpressionReader();
-        String test = "(x^2+y^2-1)^3-x^2*y^3";
+        String test = "  23*cos(x ) +2";
         System.out.println(er.expressionParser(test));
         Expression func = er.read(test);
         axes.addExpression(func);
