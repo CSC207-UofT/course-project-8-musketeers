@@ -1,5 +1,7 @@
 package Backend;
 
+import Backend.BuiltinExpressions.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,11 +22,13 @@ public class ExpressionCreator {
      */
     private Expression buildBuiltInFunctionExpression(List<String> terms){
         Expression innerExpression = create(terms.subList(2, terms.size() - 1));
+        Expression[] inputs = findFunctionInputs(terms);
         switch (terms.get(0)){
-            case "cos": return new CosExpression(innerExpression);
-            case "sin": return new SinExpression(innerExpression);
-            case "tan": return new TanExpression(innerExpression);
-            case "sqrt": return new SqrtExpression(innerExpression);
+            case "cos": return new CosExpression(inputs);
+            case "sin": return new SinExpression(inputs);
+            case "tan": return new TanExpression(inputs);
+            case "sqrt": return new SqrtExpression(inputs);
+            case "mandel": return new MandelExpression(inputs);
             default: throw new IllegalArgumentException("Unrecognised function");
         }
     }
@@ -162,6 +166,51 @@ public class ExpressionCreator {
 
         return null;
     }
+
+
+    /**
+     * @param terms List of terms as accepted by create, assumed to be of the form [func, (, ..., )]
+     * @return A list of Expressions where each expression is an input to some function
+     */
+    private Expression[] findFunctionInputs (List<String> terms){
+        List<Integer> commaIndices = findCommaIndices(terms);
+        // we add the final index (corresponding to ')' )
+        // this ensures that between every pair of indices in commaIndices
+        // we have an input expression
+        commaIndices.add(terms.size() - 1);
+
+        Expression[] inputs = new Expression[commaIndices.size()];
+        // start at 2 because first item if function name and second item is '('
+        int startInd = 2;
+
+        for (int i = 0; i < inputs.length; i++){
+            inputs[i] = create(terms.subList(startInd, commaIndices.get(i)));
+            startInd = commaIndices.get(i) + 1;
+        }
+
+        return inputs;
+
+    }
+
+
+    /**
+     * Assumed to be for inputs like [min, (, x, y, )] but could be used for anything
+     * @param terms List of terms as accepted by create
+     * @return List of indices corresponding to where the "," character appears
+     */
+    private List<Integer> findCommaIndices(List<String> terms){
+        List<Integer> commaIndices = new ArrayList<>();
+
+        int startInd = 0;
+
+        while (terms.subList(startInd, terms.size()).contains(",")){
+            commaIndices.add(terms.indexOf(","));
+            startInd = terms.indexOf(",") + 1;
+        }
+
+        return commaIndices;
+    }
+
 
     /** Converts a (valid) expression (represented as a list) into an Backend.Expression
      * @param terms A list of terms in the expression (see below for how they should be broken up
