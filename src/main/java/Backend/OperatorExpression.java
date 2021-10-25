@@ -7,8 +7,8 @@ import java.util.Map;
 // where E_1, E_2 themselves are Expressions
 public class OperatorExpression extends Expression {
 
-    private final Expression lExpression;
-    private final Expression rExpression;
+    protected final Expression lExpression;
+    protected final Expression rExpression;
 
     // OperatorExpressions store both the operation they correspond to
     // and the expressions to their left and right

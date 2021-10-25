@@ -1,5 +1,6 @@
 package Backend;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,38 +51,75 @@ public class ExpressionCreator {
 
             // TODO: Don't need to get all the necessary operators, only one with the lowest precedence
             Map<String, Integer> operatorAndIndices = getOuterOperators(terms);
-            for(String op: constants.getOperators()){
 
-                if(operatorAndIndices.containsKey(op)) {
-                    int opIndex = operatorAndIndices.get(op);
-
-                    List<String> leftTerms = terms.subList(0, opIndex);
-                    List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
-
-                    // Via induction, we only need to deal with cases
-                    // where the left or right expressions are contained in a pair of brackets
-                    // e.g. (2 + 3) * 5
-                    // If this is not the case, we will get to such a case recursively
-                    if (containsOuterBrackets(leftTerms)) {
-                        // we remove the first and last term which we know are '(' and ')' respectively
-                        leftTerms = leftTerms.subList(1, leftTerms.size() - 1);
-                    }
-                    if (containsOuterBrackets(rightTerms)) {
-                        rightTerms = rightTerms.subList(1, rightTerms.size() - 1);
-                    }
-
-                    // Recursively create expressions for the left and right terms
-                    Expression lExpression = create(leftTerms);
-                    Expression rExpression = create(rightTerms);
-
-                    returnExpression = new OperatorExpression(op, lExpression, rExpression);
-                    break;
-                }
+            // Go through the different types of operators in reverse order of precedence.
+            // TODO: use a better empty expression representation than null
+            returnExpression = createExpressionRecursiveHelper("Logical", operatorAndIndices, terms);
+            if (returnExpression == null) {
+                returnExpression = createExpressionRecursiveHelper("Comparator", operatorAndIndices, terms);
+            }
+            if (returnExpression == null){
+                returnExpression = createExpressionRecursiveHelper("Operator", operatorAndIndices, terms);
             }
         }
 
         return returnExpression;
     }
+
+
+    private Expression createExpressionRecursiveHelper(String expressionType, Map<String, Integer> operatorAndIndices,
+                                              List<String> terms){
+        // TODO: javadoc
+        List<String> candidateOperators = new ArrayList<>();
+        switch (expressionType){
+            case "Operator":
+                candidateOperators = constants.getOperators();
+                break;
+            case "Comparator":
+                candidateOperators = constants.getComparators();
+                break;
+            case "Logical":
+                candidateOperators = constants.getLogicalOperators();
+                break;
+        }
+
+        for(String op: candidateOperators){
+            if(operatorAndIndices.containsKey(op)) {
+                int opIndex = operatorAndIndices.get(op);
+
+                List<String> leftTerms = terms.subList(0, opIndex);
+                List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
+
+                // Via induction, we only need to deal with cases
+                // where the left or right expressions are contained in a pair of brackets
+                // e.g. (2 + 3) * 5
+                // If this is not the case, we will get to such a case recursively
+                if (containsOuterBrackets(leftTerms)) {
+                    // we remove the first and last term which we know are '(' and ')' respectively
+                    leftTerms = leftTerms.subList(1, leftTerms.size() - 1);
+                }
+                if (containsOuterBrackets(rightTerms)) {
+                    rightTerms = rightTerms.subList(1, rightTerms.size() - 1);
+                }
+
+                // Recursively create expressions for the left and right terms
+                Expression lExpression = create(leftTerms);
+                Expression rExpression = create(rightTerms);
+
+                switch (expressionType){
+                    case "Operator":
+                        return new OperatorExpression(op, lExpression, rExpression);
+                    case "Comparator":
+                        return new ComparatorExpression(op, lExpression, rExpression);
+                    case "Logical":
+                        return new LogicalOperatorExpression(op, lExpression, rExpression);
+                }
+            }
+        }
+
+        return null;
+    }
+
 
     private Expression buildBuiltInFunctionExpression(List<String> terms){
         Expression innerExpression = create(terms.subList(2, terms.size() - 1));
@@ -127,8 +165,11 @@ public class ExpressionCreator {
             }
 
             if (bracketCounter == 0){
-                if (constants.getOperators().contains(term) &&
-                        !operatorAndIndex.containsKey(term)){
+                boolean bOperatorFound = constants.getOperators().contains(term) ||
+                        constants.getComparators().contains(term) ||
+                        constants.getLogicalOperators().contains(term);
+
+                if (bOperatorFound && !operatorAndIndex.containsKey(term)){
                     operatorAndIndex.put(term, i);
                 }
             }

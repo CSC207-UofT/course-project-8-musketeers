@@ -9,19 +9,47 @@ import java.util.Map;
 public class ComparatorExpression extends Expression {
 
     // if x^2 + 5 >= 0 is to be stored, then expr would store the expression 'x^2 + 5'
-    private final Expression expr;
+    private final Expression lExpression;
+    private final Expression rExpression;
 
-    public ComparatorExpression(Expression expr){
-        super(">=");
-        this.expr = expr;
+    public ComparatorExpression(String comparatorOp, Expression lExpression, Expression rExpression){
+        super(comparatorOp);
+        this.lExpression = lExpression;
+        this.rExpression = rExpression;
     }
 
     @Override
     public double evaluate(Map<String, Double> arguments) {
-        double greaterThan;
-        if (expr.evaluate(arguments) >= 1) {greaterThan = 1;}
-        else {greaterThan = -1;}
+        boolean comparisonHolds;
+        double pixelValue;
 
-        return greaterThan;
+        double lExpressionVal = this.lExpression.evaluate(arguments);
+        double rExpressionVal = this.rExpression.evaluate(arguments);
+
+        switch(getItem()){
+            case ">=":
+                comparisonHolds = lExpressionVal >= rExpressionVal;
+                break;
+            case "<=":
+                comparisonHolds = lExpressionVal <= rExpressionVal;
+                break;
+            case ">":
+                comparisonHolds = lExpressionVal > rExpressionVal;
+                break;
+            case "<":
+                comparisonHolds = lExpressionVal < rExpressionVal;
+                break;
+            case "==":
+                comparisonHolds = lExpressionVal == rExpressionVal;
+                break;
+            default:
+                comparisonHolds = false;
+                break;
+        }
+
+        if (comparisonHolds) {pixelValue = 1;}
+        else {pixelValue = -1;}
+
+        return pixelValue;
     }
 }
