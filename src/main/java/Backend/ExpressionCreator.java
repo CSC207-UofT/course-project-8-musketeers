@@ -37,6 +37,7 @@ public class ExpressionCreator {
             }
         }
 
+        // check that we have only one expression that we are composing with our built-in functions
         else if(constants.getFunctions().contains(terms.get(0)) &&
                 containsOuterBrackets(terms.subList(1, terms.size()))) {
             returnExpression = buildBuiltInFunctionExpression(terms);
@@ -119,7 +120,11 @@ public class ExpressionCreator {
 
         return null;
     }
-
+    /**
+     * @param terms list of terms as the create method accepts
+     * @return a 'built-in' function expression (usually things like cos, sin, sqrt, etc.)
+     */
+=======
 
     private Expression buildBuiltInFunctionExpression(List<String> terms){
         Expression innerExpression = create(terms.subList(2, terms.size() - 1));
@@ -188,9 +193,7 @@ public class ExpressionCreator {
      */
     private boolean containsOuterBrackets(List<String> terms){
 
-        if (terms.size() == 1){
-            return false;
-        }
+        if (terms.size() == 1){ return false; }
 
         // Same bracketCounter idea as in getOuterOperators
         // However in this case we want to ensure that we only reach 0
@@ -213,24 +216,6 @@ public class ExpressionCreator {
 
         }
         return true;
-    }
-
-    private int findCorrespondingBracket(List<String> terms, int startInd){
-        int bracketCounter = 0;
-
-        for (int i = startInd; i < terms.size(); i++){
-            if (terms.get(i).equals("(")){
-                bracketCounter += 1;
-            } else if (terms.get(i).equals(")")){
-                bracketCounter -= 1;
-            }
-
-            if (bracketCounter == 0){
-                return i;
-            }
-        }
-
-        return -1;
     }
 
 }

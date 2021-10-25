@@ -6,6 +6,11 @@ import java.util.Set;
 
 public class Constants {
 
+
+    // List used for operators as the order of operators matter and is used to control the order
+    // of precedence in expressions
+    // sets used for these as only need containment and order is irrelevant
+=======
     private final List<String> OPERATORS = new ArrayList<>(List.of(new String[]{"-", "+", "*", "/", "^"}));
     private final List<String> COMPARATORS = new ArrayList<>(List.of(new String[]{"<=", ">=", "<", ">"}));
     private final List<String> LOGICALOPERATORS = new ArrayList<>(List.of(new String[]{"&", "|", "!"}));
@@ -16,6 +21,7 @@ public class Constants {
         return OPERATORS;
     }
 
+=======
     public List<String> getComparators() {
         return COMPARATORS;
     }
