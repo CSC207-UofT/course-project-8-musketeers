@@ -23,18 +23,24 @@ public class ComparatorExpression extends Expression {
         boolean comparisonHolds;
         double pixelValue;
 
+        double lExpressionVal = this.lExpression.evaluate(arguments);
+        double rExpressionVal = this.rExpression.evaluate(arguments);
+
         switch(getItem()){
             case ">=":
-                comparisonHolds = this.lExpression.evaluate(arguments) >= this.rExpression.evaluate(arguments);
+                comparisonHolds = lExpressionVal >= rExpressionVal;
                 break;
             case "<=":
-                comparisonHolds = this.lExpression.evaluate(arguments) <= this.rExpression.evaluate(arguments);
+                comparisonHolds = lExpressionVal <= rExpressionVal;
                 break;
             case ">":
-                comparisonHolds = this.lExpression.evaluate(arguments) > this.rExpression.evaluate(arguments);
+                comparisonHolds = lExpressionVal > rExpressionVal;
                 break;
             case "<":
-                comparisonHolds = this.lExpression.evaluate(arguments) < this.rExpression.evaluate(arguments);
+                comparisonHolds = lExpressionVal < rExpressionVal;
+                break;
+            case "==":
+                comparisonHolds = lExpressionVal == rExpressionVal;
                 break;
             default:
                 comparisonHolds = false;
