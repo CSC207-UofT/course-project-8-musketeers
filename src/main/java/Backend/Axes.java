@@ -14,12 +14,12 @@ import java.util.Set;
 public class Axes {
     private float scale;
     private Point origin;
-    private Set<Expression> exprCollection;
+    private final List<Expression> exprCollection; //should be final right??
 
     public Axes(){
         this.scale = 1;
         this.origin = new Point();
-        this.exprCollection = new HashSet<Expression>();
+        this.exprCollection = new ArrayList<>();
 
     }
 
@@ -39,8 +39,8 @@ public class Axes {
 
 
 
-    public Set<Expression> getExpressions(){
-        return exprCollection;
+    public List<Expression> getExpressions(){
+        return this.exprCollection;
     }
     public void addExpression(Expression expr){
         exprCollection.add(expr);
