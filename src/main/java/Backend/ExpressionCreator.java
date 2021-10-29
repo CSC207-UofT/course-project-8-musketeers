@@ -28,18 +28,15 @@ public class ExpressionCreator {
         // One term means it's a variable, number or a function that takes in some input
         if (terms.size() == 1){
             String term = terms.get(0);
-            if (constants.getVariables().contains(term)){
-                returnExpression = new VariableExpression(term);
-            }
-            // Assuming that if we don't have a variable or function, we just have a number
-            else{
-                returnExpression = new NumberExpression(term);
-            }
+            ExpressionBuilder eb = new ExpressionBuilder();
+            returnExpression = eb.constructExpression(term);
         }
 
         else if(constants.getFunctions().contains(terms.get(0)) &&
                 containsOuterBrackets(terms.subList(1, terms.size()))) {
-            returnExpression = buildBuiltInFunctionExpression(terms);
+            Expression innerExpression = create(terms.subList(2, terms.size() - 1));
+            ExpressionBuilder eb = new ExpressionBuilder();
+            returnExpression = eb.constructExpression(terms.get(0), innerExpression);
         }
 
         // Recursive step
@@ -54,6 +51,7 @@ public class ExpressionCreator {
 
             // Go through the different types of operators in reverse order of precedence.
             // TODO: use a better empty expression representation than null
+            // TODO: maybe replace the expressionType argument with a candidateOperators argument
             returnExpression = createExpressionRecursiveHelper("Logical", operatorAndIndices, terms);
             if (returnExpression == null) {
                 returnExpression = createExpressionRecursiveHelper("Comparator", operatorAndIndices, terms);
@@ -106,30 +104,12 @@ public class ExpressionCreator {
                 Expression lExpression = create(leftTerms);
                 Expression rExpression = create(rightTerms);
 
-                switch (expressionType){
-                    case "Operator":
-                        return new OperatorExpression(op, lExpression, rExpression);
-                    case "Comparator":
-                        return new ComparatorExpression(op, lExpression, rExpression);
-                    case "Logical":
-                        return new LogicalOperatorExpression(op, lExpression, rExpression);
-                }
+                ExpressionBuilder eb = new ExpressionBuilder();
+                return eb.constructExpression(lExpression, op, rExpression);
             }
         }
 
         return null;
-    }
-
-
-    private Expression buildBuiltInFunctionExpression(List<String> terms){
-        Expression innerExpression = create(terms.subList(2, terms.size() - 1));
-        switch (terms.get(0)){
-            case "cos": return new CosExpression(innerExpression);
-            case "sin": return new SinExpression(innerExpression);
-            case "tan": return new TanExpression(innerExpression);
-            case "sqrt": return new SqrtExpression(innerExpression);
-            default: throw new IllegalArgumentException("Unrecognised function");
-        }
     }
 
     /** Returns a map of operators that are not in any brackets (in the order that they appear)
