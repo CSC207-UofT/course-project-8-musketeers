@@ -14,9 +14,9 @@ public class ExpressionCreator {
     private final Constants constants = new Constants();
 
 
-    /** Converts a (valid) expression (represented as a list) into an Backend.Expression
-     * @param terms A list of terms in the expression (see below for how they should be broken up
-     * @return An Backend.Expression (AST) representation of the expression
+    /**
+     * @param terms list of terms as the create method accepts
+     * @return a 'built-in' function expression (usually things like cos, sin, sqrt, etc.)
      */
     // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
     // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
@@ -168,9 +168,7 @@ public class ExpressionCreator {
      */
     private boolean containsOuterBrackets(List<String> terms){
 
-        if (terms.size() == 1){
-            return false;
-        }
+        if (terms.size() == 1){ return false; }
 
         // Same bracketCounter idea as in getOuterOperators
         // However in this case we want to ensure that we only reach 0
@@ -194,23 +192,4 @@ public class ExpressionCreator {
         }
         return true;
     }
-
-    private int findCorrespondingBracket(List<String> terms, int startInd){
-        int bracketCounter = 0;
-
-        for (int i = startInd; i < terms.size(); i++){
-            if (terms.get(i).equals("(")){
-                bracketCounter += 1;
-            } else if (terms.get(i).equals(")")){
-                bracketCounter -= 1;
-            }
-
-            if (bracketCounter == 0){
-                return i;
-            }
-        }
-
-        return -1;
-    }
-
 }

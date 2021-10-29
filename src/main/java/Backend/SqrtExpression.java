@@ -9,7 +9,7 @@ public class SqrtExpression extends Expression{
     // Only one input for cos of course
     // But the input can be an expression of any kind
     public SqrtExpression(Expression input){
-        super("tan");
+        super("sqrt");
         this.input = input;
     }
 
