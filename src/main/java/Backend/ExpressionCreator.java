@@ -1,7 +1,5 @@
 package Backend;
 
-import Backend.BuiltinExpressions.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,22 +13,54 @@ public class ExpressionCreator {
 
     private final Constants constants = new Constants();
 
-
-    /**
-     * @param terms list of terms as the create method accepts
-     * @return a 'built-in' function expression (usually things like cos, sin, sqrt, etc.)
+    /** Converts a (valid) expression (represented as a list) into an Backend.Expression
+     * @param terms A list of terms in the expression (see below for how they should be broken up
+     * @return An Backend.Expression (AST) representation of the expression
      */
-    private Expression buildBuiltInFunctionExpression(List<String> terms){
-        Expression innerExpression = create(terms.subList(2, terms.size() - 1));
-        Expression[] inputs = findFunctionInputs(terms);
-        switch (terms.get(0)){
-            case "cos": return new CosExpression(inputs);
-            case "sin": return new SinExpression(inputs);
-            case "tan": return new TanExpression(inputs);
-            case "sqrt": return new SqrtExpression(inputs);
-            case "mandel": return new MandelExpression(inputs);
-            default: throw new IllegalArgumentException("Unrecognised function");
+    // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
+    // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
+    // e.g. cos(x) -> ["cos", "(", "x", ")"]
+    public Expression create(List<String> terms) {
+        Expression returnExpression = null;
+
+        // Base case for the recursion
+        // One term means it's a variable, number or a function that takes in some input
+        if (terms.size() == 1) {
+            String term = terms.get(0);
+            ExpressionBuilder eb = new ExpressionBuilder();
+            returnExpression = eb.constructExpression(term);
         }
+
+        // check that we have only one expression that we are composing with our built-in functions
+        else if (constants.getFunctions().contains(terms.get(0)) &&
+                containsOuterBrackets(terms.subList(1, terms.size()))) {
+            Expression innerExpression = create(terms.subList(2, terms.size() - 1));
+            ExpressionBuilder eb = new ExpressionBuilder();
+            returnExpression = eb.constructExpression(terms.get(0), innerExpression);
+        }
+
+        // Recursive step
+        else {
+            // We first find what operators are not inside any brackets
+            // (operators inside brackets are dealt with deeper in the recursion)
+            // Then we sort them by (reverse) order of precedence to ensure
+            // that order of operations is maintained
+
+            // TODO: Don't need to get all the necessary operators, only one with the lowest precedence
+            Map<String, Integer> operatorAndIndices = getOuterOperators(terms);
+
+            // Go through the different types of operators in reverse order of precedence.
+            // TODO: use a better empty expression representation than null
+            returnExpression = createExpressionRecursiveHelper("Logical", operatorAndIndices, terms);
+            if (returnExpression == null) {
+                returnExpression = createExpressionRecursiveHelper("Comparator", operatorAndIndices, terms);
+            }
+            if (returnExpression == null) {
+                returnExpression = createExpressionRecursiveHelper("Operator", operatorAndIndices, terms);
+            }
+        }
+
+        return returnExpression;
     }
 
     /** Returns a map of operators that are not in any brackets (in the order that they appear)
@@ -153,115 +183,11 @@ public class ExpressionCreator {
                 Expression lExpression = create(leftTerms);
                 Expression rExpression = create(rightTerms);
 
-                switch (expressionType) {
-                    case "Operator":
-                        return new OperatorExpression(op, lExpression, rExpression);
-                    case "Comparator":
-                        return new ComparatorExpression(op, lExpression, rExpression);
-                    case "Logical":
-                        return new LogicalOperatorExpression(op, lExpression, rExpression);
-                }
+                ExpressionBuilder eb = new ExpressionBuilder();
+                return eb.constructExpression(lExpression, op, rExpression);
             }
         }
 
         return null;
-    }
-
-
-    /**
-     * @param terms List of terms as accepted by create, assumed to be of the form [func, (, ..., )]
-     * @return A list of Expressions where each expression is an input to some function
-     */
-    private Expression[] findFunctionInputs (List<String> terms){
-        List<Integer> commaIndices = findCommaIndices(terms);
-        // we add the final index (corresponding to ')' )
-        // this ensures that between every pair of indices in commaIndices
-        // we have an input expression
-        commaIndices.add(terms.size() - 1);
-
-        Expression[] inputs = new Expression[commaIndices.size()];
-        // start at 2 because first item if function name and second item is '('
-        int startInd = 2;
-
-        for (int i = 0; i < inputs.length; i++){
-            inputs[i] = create(terms.subList(startInd, commaIndices.get(i)));
-            startInd = commaIndices.get(i) + 1;
-        }
-
-        return inputs;
-
-    }
-
-
-    /**
-     * Assumed to be for inputs like [min, (, x, y, )] but could be used for anything
-     * @param terms List of terms as accepted by create
-     * @return List of indices corresponding to where the "," character appears
-     */
-    private List<Integer> findCommaIndices(List<String> terms){
-        List<Integer> commaIndices = new ArrayList<>();
-
-        int startInd = 0;
-
-        while (terms.subList(startInd, terms.size()).contains(",")){
-            commaIndices.add(terms.indexOf(","));
-            startInd = terms.indexOf(",") + 1;
-        }
-
-        return commaIndices;
-    }
-
-
-    /** Converts a (valid) expression (represented as a list) into an Backend.Expression
-     * @param terms A list of terms in the expression (see below for how they should be broken up
-     * @return An Backend.Expression (AST) representation of the expression
-     */
-    // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
-    // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
-    // e.g. cos(x) -> ["cos", "(", "x", ")"]
-    public Expression create(List<String> terms) {
-        Expression returnExpression = null;
-
-        // Base case for the recursion
-        // One term means it's a variable, number or a function that takes in some input
-        if (terms.size() == 1) {
-            String term = terms.get(0);
-            if (constants.getVariables().contains(term)) {
-                returnExpression = new VariableExpression(term);
-            }
-            // Assuming that if we don't have a variable or function, we just have a number
-            else {
-                returnExpression = new NumberExpression(term);
-            }
-        }
-
-        // check that we have only one expression that we are composing with our built-in functions
-        else if (constants.getFunctions().contains(terms.get(0)) &&
-                containsOuterBrackets(terms.subList(1, terms.size()))) {
-            returnExpression = buildBuiltInFunctionExpression(terms);
-        }
-
-        // Recursive step
-        else {
-            // We first find what operators are not inside any brackets
-            // (operators inside brackets are dealt with deeper in the recursion)
-            // Then we sort them by (reverse) order of precedence to ensure
-            // that order of operations is maintained
-
-            // TODO: Don't need to get all the necessary operators, only one with the lowest precedence
-            Map<String, Integer> operatorAndIndices = getOuterOperators(terms);
-
-            // Go through the different types of operators in reverse order of precedence.
-            // TODO: use a better empty expression representation than null
-            returnExpression = createExpressionRecursiveHelper("Logical", operatorAndIndices, terms);
-            if (returnExpression == null) {
-                returnExpression = createExpressionRecursiveHelper("Comparator", operatorAndIndices, terms);
-            }
-            if (returnExpression == null) {
-                returnExpression = createExpressionRecursiveHelper("Operator", operatorAndIndices, terms);
-            }
-        }
-
-        return returnExpression;
     }
 }
