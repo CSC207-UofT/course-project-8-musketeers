@@ -46,7 +46,7 @@ public class ExpressionReader {
         ExpressionReader er = new ExpressionReader();
 
         System.out.println("Please ensure that each 'unit' of information in" +
-                "the input is spaced out:");
+                " the input is spaced out:");
         System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
         String test = "mandel ( ( x ^ 2 - y ^ 2 ) / ( x ^ 2 + y ^ 2 ) ^ 2 , ( 0 - 2 * x * y ) / ( x ^ 2 + y ^ 2 ) ^ 2 )";
         Expression func = er.read(test);
