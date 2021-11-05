@@ -14,7 +14,7 @@ public class CosExpression extends FunctionExpression {
     }
 
     @Override
-    public double evaluate(Map<String, Double> arguments) {
-        return Math.cos(getInputs()[0].evaluate(arguments));
+    public float evaluate(Map<String, Float> arguments) {
+        return (float) Math.cos(getInputs()[0].evaluate(arguments));
     }
 }

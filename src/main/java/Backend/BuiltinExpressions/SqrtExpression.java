@@ -14,7 +14,7 @@ public class SqrtExpression extends FunctionExpression {
     }
 
     @Override
-    public double evaluate(Map<String, Double> arguments) {
-        return Math.sqrt(getInputs()[0].evaluate(arguments));
+    public float evaluate(Map<String, Float> arguments) {
+        return (float) Math.sqrt(getInputs()[0].evaluate(arguments));
     }
 }

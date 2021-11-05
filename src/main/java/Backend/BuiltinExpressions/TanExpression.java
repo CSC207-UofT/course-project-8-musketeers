@@ -14,7 +14,7 @@ public class TanExpression extends FunctionExpression {
     }
 
     @Override
-    public double evaluate(Map<String, Double> arguments) {
-        return Math.tan(getInputs()[0].evaluate(arguments));
+    public float evaluate(Map<String, Float> arguments) {
+        return (float) Math.tan(getInputs()[0].evaluate(arguments));
     }
 }

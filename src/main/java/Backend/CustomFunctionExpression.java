@@ -28,8 +28,8 @@ public class CustomFunctionExpression extends FunctionExpression{
     }
 
     @Override
-    public double evaluate(Map<String, Double> arguments) {
-        Map<String, Double> varMap = new HashMap<>();
+    public float evaluate(Map<String, Float> arguments) {
+        Map<String, Float> varMap = new HashMap<>();
         for (int i = 0; i < variables.length; i++){
             varMap.put(variables[i], getInputs()[i].evaluate(arguments));
         }

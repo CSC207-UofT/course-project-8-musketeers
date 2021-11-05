@@ -14,7 +14,7 @@ public class SinExpression extends FunctionExpression {
     }
 
     @Override
-    public double evaluate(Map<String, Double> arguments) {
-        return Math.sin(getInputs()[0].evaluate(arguments));
+    public float evaluate(Map<String, Float> arguments) {
+        return (float) Math.sin(getInputs()[0].evaluate(arguments));
     }
 }

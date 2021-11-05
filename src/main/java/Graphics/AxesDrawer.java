@@ -1,7 +1,7 @@
 package Graphics;
 
 import static Graphics.ImageTest.*;
-import static Graphics.ImplicitGrapherTest.*;
+import static Graphics.ImplicitGrapher.*;
 
 
 public class AxesDrawer {
@@ -16,11 +16,11 @@ public class AxesDrawer {
       float xpos = -0.f;
       float ypos = 0.f;
 
-      Evaluatable f1 = new MandelFunc();
-      graphImplicit(mainPixels, dims1[0], dims1[1], f1, scale, xpos, ypos, false);
-      drawAxes(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
-      drawGrid(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
-      writeImage(mainPixels, dims1[0], dims1[1], "sampleOutMandelAxes.png");
+//      Evaluatable f1 = new MandelFunc();
+//      graphImplicit(mainPixels, dims1[0], dims1[1], f1, scale, xpos, ypos, false);
+//      drawAxes(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
+//      drawGrid(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
+//      writeImage(mainPixels, dims1[0], dims1[1], "sampleOutMandelAxes.png");
    }
 
   public static void drawAxes(int[] pixels, int w, int h,
