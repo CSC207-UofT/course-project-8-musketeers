@@ -5,8 +5,7 @@ import static Graphics.RGBA.fmtHex255;
 
 import Backend.Expression;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class ImplicitGrapherTest {
     public static class CoolFunc implements Evaluatable {
@@ -36,11 +35,11 @@ public class ImplicitGrapherTest {
       int[] dims1 = {size,size};
 
       Evaluatable f1 = new MandelFunc();
-      graphImplicit(mainPixels, dims1[0], dims1[1], f1, 0.01f, 0.6f, 0.f, false);
+      graphImplicit(mainPixels, dims1[0], dims1[1], f1, 2f, 0.6f, 0.f, false);
       writeImage(mainPixels, dims1[0], dims1[1], "sampleOutMandel.png");
 
       Evaluatable f2 = new CoolFunc();
-      graphImplicit(mainPixels, dims1[0], dims1[1], f2, 0.1f, 0.f, 0.f, true);
+      graphImplicit(mainPixels, dims1[0], dims1[1], f2, 20f, 0.f, 0.f, true);
       writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
    }
 
@@ -49,8 +48,8 @@ public class ImplicitGrapherTest {
                                    boolean useThreshold) {
       for (int y = 0; y < h; y++) {
          for (int x = 0; x < w; x++) {
-            float cx = (x - w/2) * scale - xpos;
-            float cy = (y - h/2) * scale - ypos;
+            float cx = (x / (float)w - 0.5f) * scale - xpos;
+            float cy = -((y / (float)h - 0.5f) * scale - ypos);
             if (useThreshold) {
                 if (func.evaluate(cx, cy) > 0) {
                     pixels[y * w + x] = (int) Long.parseLong("FFFFFFFF", 16);
