@@ -1,16 +1,13 @@
 package Graphics;
 
 import static Graphics.ImageTest.*;
+import static Graphics.RGBA.fmtHex255;
+
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.Math.sin;
 
 public class RaymarcherTest {
-    public static String fmtHex255(int i) {
-        // String.valueOf is necessary otherwise it treats char as numeric.
-        return String.valueOf("0123456789ABCDEF".charAt(i>>4))
-                + String.valueOf("0123456789ABCDEF".charAt(i&15));
-    }
 
     // IQ polynomial smooth min
     public static float sminCubic( float a, float b, float k ) {

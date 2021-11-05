@@ -1,7 +1,7 @@
 package Graphics;
 
 import static Graphics.ImageTest.*;
-import static Graphics.RaymarcherTest.fmtHex255;
+import static Graphics.RGBA.fmtHex255;
 
 import Backend.Expression;
 
