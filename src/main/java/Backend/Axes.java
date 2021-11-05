@@ -1,7 +1,7 @@
 package Backend;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
+//import java.awt.*;
+//import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +21,7 @@ public class Axes {
         this.exprCollection = new ArrayList<>();
 
     }
+
     public Axes(float a, float b, float c){
         this.scale = a;
         this.origin = new float[]{b, c};
@@ -47,6 +48,7 @@ public class Axes {
     public List<Expression> getExpressions(){
         return this.exprCollection;
     }
+
     public void addExpression(Expression expr){
         exprCollection.add(expr);
     }
