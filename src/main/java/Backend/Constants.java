@@ -16,6 +16,7 @@ public class Constants {
     private final List<String> LOGICALOPERATORS = new ArrayList<>(List.of(new String[]{"&", "|", "!"}));
     private final Set<String> VARIABLES = Set.of("x", "y", "z");
     private final Set<String> FUNCTIONS = Set.of("cos", "sin", "tan", "sqrt");
+    private final Set<String> SPECIAL_CHARS = Set.of("(", ")"); // Ted: TODO: In future there may be all kind of special characters to handle (e.g. "\"...).
 
     public List<String> getOperators() {
         return OPERATORS;
@@ -36,4 +37,6 @@ public class Constants {
     public Set<String> getVariables() {
         return VARIABLES;
     }
+
+    public Set<String> getSPECIAL_CHARS() {return SPECIAL_CHARS; }
 }
