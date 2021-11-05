@@ -1,6 +1,10 @@
 package Backend;
 
-import java.util.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 import Graphics.ImplicitGrapherTest;
 
@@ -127,12 +131,16 @@ public class ExpressionReader {
         int[] dims1 = {size,size};
 
         ExpressionReader er = new ExpressionReader();
-        String test = "  23*cos(x ) +2";
-        System.out.println(er.expressionParser(test));
+
+        System.out.println("Please ensure that each 'unit' of information in" +
+                " the input is spaced out:");
+        System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
+        String test = "mandel ( ( x ^ 2 - y ^ 2 ) / ( x ^ 2 + y ^ 2 ) ^ 2 , ( 0 - 2 * x * y ) / ( x ^ 2 + y ^ 2 ) ^ 2 )";
         Expression func = er.read(test);
         axes.addExpression(func);
 
-        ImplicitGrapherTest.graphImplicit(mainPixels, dims1[0], dims1[1], func, 0.01f, 0.f, 0.f, true);
+        ImplicitGrapherTest.graphImplicit(mainPixels, dims1[0], dims1[1], func, 0.01f, 0.f, 0.f, false);
+
         writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
         System.out.println("...Done!");
     }

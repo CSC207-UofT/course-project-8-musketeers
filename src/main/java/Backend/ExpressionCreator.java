@@ -13,7 +13,6 @@ public class ExpressionCreator {
 
     private final Constants constants = new Constants();
 
-
     /** Converts a (valid) expression (represented as a list) into an Backend.Expression
      * @param terms A list of terms in the expression (see below for how they should be broken up
      * @return An Backend.Expression (AST) representation of the expression
@@ -21,25 +20,23 @@ public class ExpressionCreator {
     // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
     // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
     // e.g. cos(x) -> ["cos", "(", "x", ")"]
-    public Expression create(List<String> terms){
+    public Expression create(List<String> terms) {
         Expression returnExpression = null;
 
         // Base case for the recursion
         // One term means it's a variable, number or a function that takes in some input
-        if (terms.size() == 1){
+        if (terms.size() == 1) {
             String term = terms.get(0);
-            if (constants.getVariables().contains(term)){
-                returnExpression = new VariableExpression(term);
-            }
-            // Assuming that if we don't have a variable or function, we just have a number
-            else{
-                returnExpression = new NumberExpression(term);
-            }
+            ExpressionBuilder eb = new ExpressionBuilder();
+            returnExpression = eb.constructExpression(term);
         }
 
-        else if(constants.getFunctions().contains(terms.get(0)) &&
+        // check that we have only one expression that we are composing with our built-in functions
+        else if (constants.getFunctions().contains(terms.get(0)) &&
                 containsOuterBrackets(terms.subList(1, terms.size()))) {
-            returnExpression = buildBuiltInFunctionExpression(terms);
+            Expression[] inputs = findFunctionInputs(terms);
+            ExpressionBuilder eb = new ExpressionBuilder();
+            returnExpression = eb.constructExpression(terms.get(0), inputs);
         }
 
         // Recursive step
@@ -58,78 +55,12 @@ public class ExpressionCreator {
             if (returnExpression == null) {
                 returnExpression = createExpressionRecursiveHelper("Comparator", operatorAndIndices, terms);
             }
-            if (returnExpression == null){
+            if (returnExpression == null) {
                 returnExpression = createExpressionRecursiveHelper("Operator", operatorAndIndices, terms);
             }
         }
 
         return returnExpression;
-    }
-
-
-    private Expression createExpressionRecursiveHelper(String expressionType, Map<String, Integer> operatorAndIndices,
-                                              List<String> terms){
-        // TODO: javadoc
-        List<String> candidateOperators = new ArrayList<>();
-        switch (expressionType){
-            case "Operator":
-                candidateOperators = constants.getOperators();
-                break;
-            case "Comparator":
-                candidateOperators = constants.getComparators();
-                break;
-            case "Logical":
-                candidateOperators = constants.getLogicalOperators();
-                break;
-        }
-
-        for(String op: candidateOperators){
-            if(operatorAndIndices.containsKey(op)) {
-                int opIndex = operatorAndIndices.get(op);
-
-                List<String> leftTerms = terms.subList(0, opIndex);
-                List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
-
-                // Via induction, we only need to deal with cases
-                // where the left or right expressions are contained in a pair of brackets
-                // e.g. (2 + 3) * 5
-                // If this is not the case, we will get to such a case recursively
-                if (containsOuterBrackets(leftTerms)) {
-                    // we remove the first and last term which we know are '(' and ')' respectively
-                    leftTerms = leftTerms.subList(1, leftTerms.size() - 1);
-                }
-                if (containsOuterBrackets(rightTerms)) {
-                    rightTerms = rightTerms.subList(1, rightTerms.size() - 1);
-                }
-
-                // Recursively create expressions for the left and right terms
-                Expression lExpression = create(leftTerms);
-                Expression rExpression = create(rightTerms);
-
-                switch (expressionType){
-                    case "Operator":
-                        return new OperatorExpression(op, lExpression, rExpression);
-                    case "Comparator":
-                        return new ComparatorExpression(op, lExpression, rExpression);
-                    case "Logical":
-                        return new LogicalOperatorExpression(op, lExpression, rExpression);
-                }
-            }
-        }
-
-        return null;
-    }
-
-
-    private Expression buildBuiltInFunctionExpression(List<String> terms){
-        Expression innerExpression = create(terms.subList(2, terms.size() - 1));
-        switch (terms.get(0)){
-            case "cos": return new CosExpression(innerExpression);
-            case "sin": return new SinExpression(innerExpression);
-            case "tan": return new TanExpression(innerExpression);
-            case "sqrt": return new SqrtExpression(innerExpression);
-            default: throw new IllegalArgumentException("Unrecognised function");
-        }
     }
 
     /** Returns a map of operators that are not in any brackets (in the order that they appear)
@@ -188,9 +119,7 @@ public class ExpressionCreator {
      */
     private boolean containsOuterBrackets(List<String> terms){
 
-        if (terms.size() == 1){
-            return false;
-        }
+        if (terms.size() == 1){ return false; }
 
         // Same bracketCounter idea as in getOuterOperators
         // However in this case we want to ensure that we only reach 0
@@ -215,22 +144,94 @@ public class ExpressionCreator {
         return true;
     }
 
-    private int findCorrespondingBracket(List<String> terms, int startInd){
-        int bracketCounter = 0;
+    private Expression createExpressionRecursiveHelper(String expressionType, Map<String, Integer> operatorAndIndices,
+                                                       List<String> terms) {
+        // TODO: javadoc
+        List<String> candidateOperators = new ArrayList<>();
+        switch (expressionType) {
+            case "Operator":
+                candidateOperators = constants.getOperators();
+                break;
+            case "Comparator":
+                candidateOperators = constants.getComparators();
+                break;
+            case "Logical":
+                candidateOperators = constants.getLogicalOperators();
+                break;
+        }
 
-        for (int i = startInd; i < terms.size(); i++){
-            if (terms.get(i).equals("(")){
-                bracketCounter += 1;
-            } else if (terms.get(i).equals(")")){
-                bracketCounter -= 1;
-            }
+        for (String op : candidateOperators) {
+            if (operatorAndIndices.containsKey(op)) {
+                int opIndex = operatorAndIndices.get(op);
 
-            if (bracketCounter == 0){
-                return i;
+                List<String> leftTerms = terms.subList(0, opIndex);
+                List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
+
+                // Via induction, we only need to deal with cases
+                // where the left or right expressions are contained in a pair of brackets
+                // e.g. (2 + 3) * 5
+                // If this is not the case, we will get to such a case recursively
+                if (containsOuterBrackets(leftTerms)) {
+                    // we remove the first and last term which we know are '(' and ')' respectively
+                    leftTerms = leftTerms.subList(1, leftTerms.size() - 1);
+                }
+                if (containsOuterBrackets(rightTerms)) {
+                    rightTerms = rightTerms.subList(1, rightTerms.size() - 1);
+                }
+
+                // Recursively create expressions for the left and right terms
+                Expression lExpression = create(leftTerms);
+                Expression rExpression = create(rightTerms);
+
+                ExpressionBuilder eb = new ExpressionBuilder();
+                return eb.constructExpression(lExpression, op, rExpression);
             }
         }
 
-        return -1;
+        return null;
     }
 
+
+    /**
+     * @param terms List of terms as accepted by create, assumed to be of the form [func, (, ..., )]
+     * @return A list of Expressions where each expression is an input to some function
+     */
+    private Expression[] findFunctionInputs (List<String> terms){
+        List<Integer> commaIndices = findCommaIndices(terms);
+        // we add the final index (corresponding to ')' )
+        // this ensures that between every pair of indices in commaIndices
+        // we have an input expression
+        commaIndices.add(terms.size() - 1);
+
+        Expression[] inputs = new Expression[commaIndices.size()];
+        // start at 2 because first item if function name and second item is '('
+        int startInd = 2;
+
+        for (int i = 0; i < inputs.length; i++){
+            inputs[i] = create(terms.subList(startInd, commaIndices.get(i)));
+            startInd = commaIndices.get(i) + 1;
+        }
+
+        return inputs;
+
+    }
+
+
+    /**
+     * Assumed to be for inputs like [min, (, x, y, )] but could be used for anything
+     * @param terms List of terms as accepted by create
+     * @return List of indices corresponding to where the "," character appears
+     */
+    private List<Integer> findCommaIndices(List<String> terms){
+        List<Integer> commaIndices = new ArrayList<>();
+
+        int startInd = 0;
+
+        while (terms.subList(startInd, terms.size()).contains(",")){
+            commaIndices.add(terms.indexOf(","));
+            startInd = terms.indexOf(",") + 1;
+        }
+
+        return commaIndices;
+    }
 }
