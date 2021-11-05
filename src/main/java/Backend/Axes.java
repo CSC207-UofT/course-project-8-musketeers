@@ -12,18 +12,18 @@ import java.util.List;
 //        - a getter for the collection of Expressions
 public class Axes {
     private float scale;
-    private Point2D.Float origin;
+    private float[] origin;
     private final List<Expression> exprCollection; //should be final right??
 
     public Axes(){
         this.scale = 1;
-        this.origin = new Point2D.Float();
+        this.origin = new float[2];
         this.exprCollection = new ArrayList<>();
 
     }
     public Axes(float a, float b, float c){
         this.scale = a;
-        this.origin = new Point2D.Float(b, c);
+        this.origin = new float[]{b, c};
         this.exprCollection = new ArrayList<>();
 
     }
@@ -36,11 +36,11 @@ public class Axes {
 //    public int getxO(){return this.xO;}
 //    public int gety0(){return this.y0;}
 
-    public Point2D.Float getOrigin(){return this.origin;}
+    public float[] getOrigin(){return this.origin;}
 
-    public void setOrigin(float x, float y){this.origin = new Point2D.Float(x, y);}
+    public void setOrigin(float x, float y){this.origin = new float[]{x, y};}
     //overload setter origin. can take a point or 2 ints
-    public void setOrigin(Point2D.Float p){this.origin = p;}
+    public void setOrigin(float[] p){this.origin = p;}
 
 
 
