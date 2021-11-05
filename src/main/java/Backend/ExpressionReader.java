@@ -46,7 +46,7 @@ public class ExpressionReader {
         ExpressionReader er = new ExpressionReader();
 
         System.out.println("Please ensure that each 'unit' of information in" +
-                "the input is spaced out:");
+                " the input is spaced out:");
         System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
 //        String test = args[0];
         String test = "4 - 5 + 1";
