@@ -48,18 +48,13 @@ public class ExpressionReader {
         System.out.println("Please ensure that each 'unit' of information in" +
                 "the input is spaced out:");
         System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
-//        String test = args[0];
-        String test = "4 - 5 + 1";
+        String test = "mandel ( ( x ^ 2 - y ^ 2 ) / ( x ^ 2 + y ^ 2 ) ^ 2 , ( 0 - 2 * x * y ) / ( x ^ 2 + y ^ 2 ) ^ 2 )";
         Expression func = er.read(test);
         axes.addExpression(func);
 
-        Map<String, Double> varMap = new HashMap<>();
-
-        System.out.println(test + " = " + func.evaluate(varMap));
-
-//        ImplicitGrapherTest.graphImplicit(mainPixels, dims1[0], dims1[1], func, 0.1f, 0.f, 0.f, true);
-//        writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
-//        System.out.println("...Done!");
+        ImplicitGrapherTest.graphImplicit(mainPixels, dims1[0], dims1[1], func, 0.01f, 0.f, 0.f, false);
+        writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
+        System.out.println("...Done!");
     }
 
 }

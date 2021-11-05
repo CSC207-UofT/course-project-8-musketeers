@@ -34,9 +34,9 @@ public class ExpressionCreator {
         // check that we have only one expression that we are composing with our built-in functions
         else if (constants.getFunctions().contains(terms.get(0)) &&
                 containsOuterBrackets(terms.subList(1, terms.size()))) {
-            Expression innerExpression = create(terms.subList(2, terms.size() - 1));
+            Expression[] inputs = findFunctionInputs(terms);
             ExpressionBuilder eb = new ExpressionBuilder();
-            returnExpression = eb.constructExpression(terms.get(0), innerExpression);
+            returnExpression = eb.constructExpression(terms.get(0), inputs);
         }
 
         // Recursive step
@@ -189,5 +189,49 @@ public class ExpressionCreator {
         }
 
         return null;
+    }
+
+
+    /**
+     * @param terms List of terms as accepted by create, assumed to be of the form [func, (, ..., )]
+     * @return A list of Expressions where each expression is an input to some function
+     */
+    private Expression[] findFunctionInputs (List<String> terms){
+        List<Integer> commaIndices = findCommaIndices(terms);
+        // we add the final index (corresponding to ')' )
+        // this ensures that between every pair of indices in commaIndices
+        // we have an input expression
+        commaIndices.add(terms.size() - 1);
+
+        Expression[] inputs = new Expression[commaIndices.size()];
+        // start at 2 because first item if function name and second item is '('
+        int startInd = 2;
+
+        for (int i = 0; i < inputs.length; i++){
+            inputs[i] = create(terms.subList(startInd, commaIndices.get(i)));
+            startInd = commaIndices.get(i) + 1;
+        }
+
+        return inputs;
+
+    }
+
+
+    /**
+     * Assumed to be for inputs like [min, (, x, y, )] but could be used for anything
+     * @param terms List of terms as accepted by create
+     * @return List of indices corresponding to where the "," character appears
+     */
+    private List<Integer> findCommaIndices(List<String> terms){
+        List<Integer> commaIndices = new ArrayList<>();
+
+        int startInd = 0;
+
+        while (terms.subList(startInd, terms.size()).contains(",")){
+            commaIndices.add(terms.indexOf(","));
+            startInd = terms.indexOf(",") + 1;
+        }
+
+        return commaIndices;
     }
 }
