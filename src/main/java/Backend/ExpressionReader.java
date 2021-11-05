@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 
-import Graphics.ImplicitGrapherTest;
+import Graphics.ImplicitGrapher;
 
 import static Graphics.ImageTest.writeImage;
 
@@ -139,8 +139,11 @@ public class ExpressionReader {
         String test = "mandel ( ( x ^ 2 - y ^ 2 ) / ( x ^ 2 + y ^ 2 ) ^ 2 , ( 0 - 2 * x * y ) / ( x ^ 2 + y ^ 2 ) ^ 2 )";
         Expression func = er.read(test);
         axes.addExpression(func);
+        axes.setScale(4f);
+        float[] pos = {0.f, 0.f};
+        axes.setOrigin(pos);
 
-        ImplicitGrapherTest.graphImplicit(mainPixels, dims1[0], dims1[1], func, 0.01f, 0.f, 0.f, false);
+        ImplicitGrapher.graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
 
         writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
         System.out.println("...Done!");
