@@ -12,7 +12,7 @@ public class VariableExpression extends Expression {
     // Evaluating a variable is simply using the map to figure out
     // what value has been assigned to it
     @Override
-    public double evaluate(Map<String, Double> arguments) {
+    public float evaluate(Map<String, Float> arguments) {
         return arguments.get(getItem());
     }
 }

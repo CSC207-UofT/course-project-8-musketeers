@@ -19,12 +19,12 @@ public class ComparatorExpression extends Expression {
     }
 
     @Override
-    public double evaluate(Map<String, Double> arguments) {
+    public float evaluate(Map<String, Float> arguments) {
         boolean comparisonHolds;
-        double pixelValue;
+        float pixelValue;
 
-        double lExpressionVal = this.lExpression.evaluate(arguments);
-        double rExpressionVal = this.rExpression.evaluate(arguments);
+        float lExpressionVal = this.lExpression.evaluate(arguments);
+        float rExpressionVal = this.rExpression.evaluate(arguments);
 
         switch(getItem()){
             case ">=":
@@ -43,6 +43,8 @@ public class ComparatorExpression extends Expression {
                 comparisonHolds = lExpressionVal == rExpressionVal;
                 break;
             default:
+                // TODO: Should this be the default?
+                // Throw exception instead?
                 comparisonHolds = false;
                 break;
         }

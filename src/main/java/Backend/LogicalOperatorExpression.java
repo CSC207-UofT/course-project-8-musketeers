@@ -8,28 +8,28 @@ public class LogicalOperatorExpression extends OperatorExpression {
     }
 
     @Override
-    public double evaluate(Map<String, Double> arguments) {
+    public float evaluate(Map<String, Float> arguments) {
         boolean trueComparison;
 
         switch (getItem()){
             case "&":
                 trueComparison = this.lExpression.evaluate(arguments) == 1 &&
                         this.rExpression.evaluate(arguments) == 1;
-                return booleanToDouble(trueComparison);
+                return booleanToFloat(trueComparison);
             case "|":
                 trueComparison = this.lExpression.evaluate(arguments) == 1 ||
                         this.rExpression.evaluate(arguments) == 1;
-                return booleanToDouble(trueComparison);
+                return booleanToFloat(trueComparison);
             case "!":
                 trueComparison = this.rExpression.evaluate(arguments) == 1;
-                return booleanToDouble(trueComparison);
+                return booleanToFloat(trueComparison);
             default:
-                return 0.0;
+                return 0.f;
         }
     }
 
-    private double booleanToDouble(boolean trueComparison){
-        if (trueComparison) {return 1.0;}
-        else {return -1.0;}
+    private float booleanToFloat(boolean trueComparison){
+        if (trueComparison) {return 1.f;}
+        else {return -1.f;}
     }
 }

@@ -13,7 +13,7 @@ public class NumberExpression extends Expression {
 
     // Evaluating a number just means returning itself
     @Override
-    public double evaluate(Map<String, Double> arguments) {
-        return Double.parseDouble(getItem());
+    public float evaluate(Map<String, Float> arguments) {
+        return Float.parseFloat(getItem());
     }
 }

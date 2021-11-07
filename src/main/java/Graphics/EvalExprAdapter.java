@@ -9,16 +9,16 @@ import java.util.Map;
 
 public class EvalExprAdapter implements Evaluatable {
     private final Expression ex;
-    private final Map<String, Double> varMap;
+    private final Map<String, Float> varMap;
 
     public EvalExprAdapter(Expression expr) {
         this.ex = expr;
         this.varMap = new HashMap<>();
     }
     public float evaluate(float x, float y) {
-        varMap.put("x", (double)x);
-        varMap.put("y", (double)y);
-        return (float)ex.evaluate(varMap);
+        varMap.put("x", x);
+        varMap.put("y", y);
+        return ex.evaluate(varMap);
     }
 
     public static void main(String[] args) {

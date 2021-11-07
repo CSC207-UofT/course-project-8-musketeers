@@ -10,27 +10,27 @@ import Backend.ExpressionReader;
 public class AxesDrawer {
 
    public static void main(String args[]) throws Exception {
-      int size = 256;
-      int[] mainPixels = new int[size*size];
-      int[] dims1 = {size,size};
+     int size = 256;
+     int[] mainPixels = new int[size*size];
+     int[] dims1 = {size,size};
 
-      float scale = 4.5f;
-      float xpos = -0.f;
-      float ypos = 0.f;
+     float scale = 4.5f;
+     float xpos = -0.f;
+     float ypos = 0.f;
 
-       Axes axes = new Axes();
-       axes.setScale(scale);
-       float[] pos = {xpos, ypos};
-       axes.setOrigin(pos);
-       ExpressionReader er = new ExpressionReader();
+     Axes axes = new Axes();
+     axes.setScale(scale);
+     float[] pos = {xpos, ypos};
+     axes.setOrigin(pos);
+     ExpressionReader er = new ExpressionReader();
 
-       Expression func = er.read("mandel ( x , y )");
-       axes.addExpression(func);
+     Expression func = er.read("mandel ( x , y )");
+     axes.addExpression(func);
 
-      graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
-      drawAxes(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
-      drawGrid(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
-      writeImage(mainPixels, dims1[0], dims1[1], "sampleOutMandelAxes.png");
+     graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
+     drawAxes(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
+     drawGrid(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
+     writeImage(mainPixels, dims1[0], dims1[1], "sampleOutMandelAxes.png");
    }
 
   public static void drawAxes(int[] pixels, int w, int h,

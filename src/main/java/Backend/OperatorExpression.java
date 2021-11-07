@@ -20,7 +20,7 @@ public class OperatorExpression extends Expression {
 
     // We evaluate this expression based on what the operator is
     @Override
-    public double evaluate(Map<String, Double> arguments) {
+    public float evaluate(Map<String, Float> arguments) {
         switch (getItem()) {
             case "+":
                 return lExpression.evaluate(arguments) + rExpression.evaluate(arguments);
@@ -31,8 +31,10 @@ public class OperatorExpression extends Expression {
             case "/":
                 return lExpression.evaluate(arguments) / rExpression.evaluate(arguments);
             case "^":
-                return Math.pow(lExpression.evaluate(arguments), rExpression.evaluate(arguments));
+                return (float) Math.pow(lExpression.evaluate(arguments), rExpression.evaluate(arguments));
             default:
+                // TODO: Should this be the default?
+                // Throw some kind of custom exception?
                 throw new IllegalArgumentException("Unexpected operator");
         }
 
