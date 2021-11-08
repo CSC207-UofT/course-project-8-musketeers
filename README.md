@@ -1,4 +1,13 @@
-## Initial test
+## GL GUI
+
+In IntelliJ go `File -> Project Structure -> Libraries -> + -> Java` and select the lwjgl folder. Then Ok.
+
+Then still in Project Structure go to `Modules -> course-project... -> Dependencies -> + -> Library` and select lwjgl. Then Ok.
+
+Now run DemoTest. Move mouse around the window and click.
+
+----
+
 
 Includes image I/O, a 2D implicit function grapher, and a 3D raymarcher.
 
