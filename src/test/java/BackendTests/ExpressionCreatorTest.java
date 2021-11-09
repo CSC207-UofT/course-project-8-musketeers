@@ -1,14 +1,12 @@
 package BackendTests;
 
-import Backend.Expression;
+import Backend.*;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
 
 import static org.junit.Assert.*;
-
-import Backend.ExpressionCreator;
 
 public class ExpressionCreatorTest {
 
@@ -242,4 +240,35 @@ public class ExpressionCreatorTest {
         assertEquals(exp.evaluate(varMap), -1.0, delta);
     }
 
+    @Test(timeout = 50)
+    public void testSqrtDomain(){
+        Expression exp = ec.create(List.of("sqrt", "(", "x", ")"));
+        varMap.put("x", -1.f);
+        assertTrue(Float.isNaN(exp.evaluate(varMap)));
+    }
+
+    @Test(timeout = 50)
+    public void testCustomFunctions(){
+        String funcName = "f";
+        Expression[] inputs = {new VariableExpression("x")};
+        Expression func = ec.create(List.of("x", "^", "2"));
+        String[] variables = {"x"};
+        Expression myFunc = new CustomFunctionExpression(funcName, inputs, func, variables);
+
+        varMap.put("x", 1.f);
+        assertEquals(myFunc.evaluate(varMap), 1.f, delta);
+    }
+
+    @Test(timeout = 50)
+    public void testCustomFunctionDomain(){
+        String funcName = "f";
+        Expression[] inputs = {new VariableExpression("x")};
+        Expression func = ec.create(List.of("x", "^", "2"));
+        String[] variables = {"x"};
+        ComparatorExpression domain = (ComparatorExpression) ec.create(List.of("x", ">", "0"));
+        Expression myFunc = new CustomFunctionExpression(funcName, inputs, func, variables, domain);
+
+        varMap.put("x", -1.f);
+        assertTrue(Float.isNaN(myFunc.evaluate(varMap)));
+    }
 }

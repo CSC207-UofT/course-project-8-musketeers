@@ -27,11 +27,36 @@ public class CustomFunctionExpression extends FunctionExpression{
         this.variables = variables;
     }
 
+    public CustomFunctionExpression(String funcName, Expression[] inputs,
+                                    Expression function, String[] variables, ComparatorExpression domain){
+        super(funcName, inputs, domain);
+        this.function = function;
+        this.variables = variables;
+    }
+
     @Override
     public float evaluate(Map<String, Float> arguments) {
         Map<String, Float> varMap = new HashMap<>();
         for (int i = 0; i < variables.length; i++){
+            // If we have f(2x) for example, we must evaluate 2x first.
+            // This is what this for loop is for
+            Expression exp = getInputs()[i];
+
+            if (exp instanceof FunctionExpression){
+                ComparatorExpression expDomain = ((FunctionExpression) exp).getDomain();
+                if (expDomain.evaluate(arguments) == -1){
+                    // means the values are out of the domain for at least one of inputs
+                    return Float.NaN;
+                }
+            }
+
             varMap.put(variables[i], getInputs()[i].evaluate(arguments));
+        }
+
+        // we check that the final input is in the domain of our function
+        // For the example, above, we check that 2x is in the domain of f
+        if (getDomain().evaluate(varMap) == -1){
+            return Float.NaN;
         }
         return function.evaluate(varMap);
     }
