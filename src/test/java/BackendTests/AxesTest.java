@@ -3,16 +3,17 @@ package BackendTests;
 
 import Backend.Axes;
 import Backend.Expression;
+import Backend.NumberExpression;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.*;
 
 import static org.junit.Assert.*;
 
-
+/**
+ * Test for the Entity Class Axes
+ */
 
 
 public class AxesTest {
@@ -20,11 +21,14 @@ public class AxesTest {
 
 
     Axes ax;
-
+    Expression expr5;
+    Expression expr0;
 
     @Before
     public void setUp(){
         ax = new Axes();
+        expr5 = new NumberExpression("5");
+        expr0 = new NumberExpression("0");
 
     }
 
@@ -65,6 +69,41 @@ public class AxesTest {
         ax.setScale(3f);
         assertEquals(ax.getScale(), 3f, 0.0001);
 
+    }
+
+
+    /**
+     * Test adding and removing expressions from the Axes
+     */
+    @Test(timeout = 50)
+    public void testAxesAddExpression(){
+        ax.addExpression(expr5);
+        ArrayList<Expression> eList = new ArrayList<Expression>();
+        eList.add(expr5);
+        assertEquals(ax.getExpressions(), eList);
+    }
+
+    @Test(timeout = 50)
+    public void testAxesRemoveExpression(){
+        ax.addExpression(expr5);
+        ax.removeExpression(expr5);
+
+        ArrayList<Expression> eList = new ArrayList<Expression>();
+
+        assertEquals(ax.getExpressions(), eList);
+    }
+
+    //Test what happens when we try to remove an expression that is not stored in axes
+    @Test(timeout = 50)
+    public void testAxesRemoveNonExistentExpression(){
+        ax.addExpression(expr5);
+
+        ArrayList<Expression> eList = new ArrayList<Expression>();
+        eList.add(expr5);
+
+        ax.removeExpression(expr0);
+
+        assertEquals(ax.getExpressions(), eList);
     }
 
 }
