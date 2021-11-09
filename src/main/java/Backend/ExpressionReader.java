@@ -125,6 +125,7 @@ public class ExpressionReader {
 
 
     // Try "( x ^ 2 + y ^ 2 - 1 ) ^ 3 - x ^ 2 * y ^ 3"!
+    // mandel ( (x^2 - y^2 ) / (x^2 + y^2)^2 , (0 - 2 * x * y) / (x^2 + y^2)^2 )
     public static void main(String[] args) throws Exception {
         Axes axes = new Axes();
         int size = 512;
@@ -136,14 +137,14 @@ public class ExpressionReader {
         System.out.println("Please ensure that each 'unit' of information in" +
                 " the input is spaced out:");
         System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
-        String test = "mandel ( ( x ^ 2 - y ^ 2 ) / ( x ^ 2 + y ^ 2 ) ^ 2 , ( 0 - 2 * x * y ) / ( x ^ 2 + y ^ 2 ) ^ 2 )";
+        String test = "y - sqrt(x)";
         Expression func = er.read(test);
         axes.addExpression(func);
         axes.setScale(4f);
         float[] pos = {0.f, 0.f};
         axes.setOrigin(pos);
 
-        ImplicitGrapher.graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
+        ImplicitGrapher.graphImplicit(mainPixels, dims1[0], dims1[1], axes, true);
 
         writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
         System.out.println("...Done!");
