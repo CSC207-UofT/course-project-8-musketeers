@@ -20,15 +20,24 @@ public class ExpressionBuilder {
             return new OperatorExpression(op, lExpression, rExpression);
         }
 
-        if (this.constants.getComparators().contains(op)){
-            return new ComparatorExpression(op, lExpression, rExpression);
-        }
-
         if (this.constants.getLogicalOperators().contains(op)){
             return new LogicalOperatorExpression(op, lExpression, rExpression);
         }
 
+        // This is the case where the user has not inputted a valid op String.
+        // TODO: use a better error return Expression
         return new NumberExpression("5");
+    }
+
+    /**
+     * This method currently only constructs comparator expressions.
+     *
+     * @param expressions The
+     * @param ops
+     * @return
+     */
+    public Expression constructExpression(List<Expression> expressions, List<String> ops){
+        return new ComparatorExpression(expressions, ops);
     }
 
     public Expression constructExpression(String funcName, Expression[] inputs){

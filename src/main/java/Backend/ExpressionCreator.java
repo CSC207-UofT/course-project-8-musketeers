@@ -12,6 +12,7 @@ import java.util.Map;
 public class ExpressionCreator {
 
     private final Constants constants = new Constants();
+    private final ExpressionBuilder eb = new ExpressionBuilder();
 
     /** Converts a (valid) expression (represented as a list) into an Backend.Expression
      * @param terms A list of terms in the expression (see below for how they should be broken up
@@ -27,16 +28,14 @@ public class ExpressionCreator {
         // One term means it's a variable, number or a function that takes in some input
         if (terms.size() == 1) {
             String term = terms.get(0);
-            ExpressionBuilder eb = new ExpressionBuilder();
-            returnExpression = eb.constructExpression(term);
+            returnExpression = this.eb.constructExpression(term);
         }
 
         // check that we have only one expression that we are composing with our built-in functions
         else if (constants.getFunctions().contains(terms.get(0)) &&
                 containsOuterBrackets(terms.subList(1, terms.size()))) {
             Expression[] inputs = findFunctionInputs(terms);
-            ExpressionBuilder eb = new ExpressionBuilder();
-            returnExpression = eb.constructExpression(terms.get(0), inputs);
+            returnExpression = this.eb.constructExpression(terms.get(0), inputs);
         }
 
         // Recursive step
@@ -47,13 +46,14 @@ public class ExpressionCreator {
             // that order of operations is maintained
 
             // TODO: Don't need to get all the necessary operators, only one with the lowest precedence
-            Map<String, Integer> operatorAndIndices = getOuterOperators(terms);
+            Map<String, List<Integer>> operatorAndIndices = getOuterOperators(terms);
 
             // Go through the different types of operators in reverse order of precedence.
             // TODO: use a better empty expression representation than null
             returnExpression = createExpressionRecursiveHelper("Logical", operatorAndIndices, terms);
             if (returnExpression == null) {
-                returnExpression = createExpressionRecursiveHelper("Comparator", operatorAndIndices, terms);
+                // for comparator expressions
+                returnExpression = createChainedExpressionRecursiveHelper(operatorAndIndices, terms);
             }
             if (returnExpression == null) {
                 returnExpression = createExpressionRecursiveHelper("Operator", operatorAndIndices, terms);
@@ -72,9 +72,9 @@ public class ExpressionCreator {
      * @return The list of operators that are not in any brackets. For the example above, we get
      *              {"*": 1, "-": 7}
      */
-    private Map<String, Integer> getOuterOperators(List<String> terms){
+    private Map<String, List<Integer>> getOuterOperators(List<String> terms){
 
-        Map<String, Integer> operatorAndIndex= new HashMap<>();
+        Map<String, List<Integer>> operatorAndIndex = new HashMap<>();
 
         // We use the bracketCounter to track whether we are inside
         // a pair of brackets or not
@@ -96,12 +96,23 @@ public class ExpressionCreator {
             }
 
             if (bracketCounter == 0){
-                boolean bOperatorFound = constants.getOperators().contains(term) ||
-                        constants.getComparators().contains(term) ||
-                        constants.getLogicalOperators().contains(term);
-
-                if (bOperatorFound && !operatorAndIndex.containsKey(term)){
-                    operatorAndIndex.put(term, i);
+                // If term is an operator/logical operator and operatorAndIndex doesn't already have an index for
+                // that operator stored.
+                if (!operatorAndIndex.containsKey(term) && constants.getOperators().contains(term)
+                        || constants.getLogicalOperators().contains(term)){
+                    // if term is an operator or logical operator
+                    operatorAndIndex.put(term, List.of(i));
+                }
+                // if term is a comparator
+                else if (constants.getComparators().contains(term)){
+                    if (operatorAndIndex.containsKey("Comparators")){
+                        List<Integer> comparatorIndices = new ArrayList<>(operatorAndIndex.get("Comparators"));
+                        comparatorIndices.add(0, i);
+                        operatorAndIndex.put("Comparators", comparatorIndices);
+                    }
+                    else{
+                        operatorAndIndex.put("Comparators", List.of(i));
+                    }
                 }
             }
         }
@@ -144,7 +155,18 @@ public class ExpressionCreator {
         return true;
     }
 
-    private Expression createExpressionRecursiveHelper(String expressionType, Map<String, Integer> operatorAndIndices,
+    /**
+     * @param expressionType The type of Expression that needs to be created. Can only be 'Operator', 'Comparator'
+     *                       or 'Logical'.
+     * @param operatorAndIndices A Map whose keys are either operators/logical operators (e.g. '+', '-') or the
+     *                           String "Comparator", which contains the indices of all comparators not contained in
+     *                           brackets. This method doesn't construct ComparatorExpression objects and so ignores
+     *                           this "Comparator" key.
+     * @param terms The list of terms representing an expression for which to create an Expression object.
+     * @return Returns the Expression object corresponding to terms.
+     */
+    private Expression createExpressionRecursiveHelper(String expressionType,
+                                                       Map<String, List<Integer>> operatorAndIndices,
                                                        List<String> terms) {
         // TODO: javadoc
         List<String> candidateOperators = new ArrayList<>();
@@ -152,17 +174,19 @@ public class ExpressionCreator {
             case "Operator":
                 candidateOperators = constants.getOperators();
                 break;
-            case "Comparator":
-                candidateOperators = constants.getComparators();
-                break;
             case "Logical":
                 candidateOperators = constants.getLogicalOperators();
                 break;
+            default:
+                // TODO: raise exception here instead
+                return null;
         }
 
         for (String op : candidateOperators) {
             if (operatorAndIndices.containsKey(op)) {
-                int opIndex = operatorAndIndices.get(op);
+                // when op is an operator or logical operator, operatorAndIndices.get(op) can only contain one index
+                // as designed in the getOuterOperators method
+                int opIndex = operatorAndIndices.get(op).get(0);
 
                 List<String> leftTerms = terms.subList(0, opIndex);
                 List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
@@ -183,9 +207,58 @@ public class ExpressionCreator {
                 Expression lExpression = create(leftTerms);
                 Expression rExpression = create(rightTerms);
 
-                ExpressionBuilder eb = new ExpressionBuilder();
-                return eb.constructExpression(lExpression, op, rExpression);
+                return this.eb.constructExpression(lExpression, op, rExpression);
             }
+        }
+
+        return null;
+    }
+
+    /**
+     * @param operatorAndIndices A Map whose keys are either operators/logical operators (e.g. '+', '-') or the
+     *                           String "Comparator", which contains the indices of all comparators not contained in
+     *                           brackets. This method only constructs ComparatorExpressions right now, so it only
+     *                           uses this "Comparator" key.
+     * @param terms The list of terms representing an expression for which to create an Expression object.
+     * @return Returns the Expression object corresponding to terms.
+     */
+    private Expression createChainedExpressionRecursiveHelper(Map<String, List<Integer>> operatorAndIndices,
+                                                              List<String> terms) {
+        if (operatorAndIndices.containsKey("Comparators")) {
+            List<Integer> opIndices = operatorAndIndices.get("Comparators");
+
+            List<List<String>> subExpressionLists = new ArrayList<>();
+            // add the sublist between the start of terms and the first comparator
+            subExpressionLists.add(terms.subList(0,opIndices.get(0)));
+            for (int i=0; i < opIndices.size() - 1; ++i){
+                // extract sublists between adjacent comparators
+                List<String> subExpressionList = terms.subList(opIndices.get(i) + 1, opIndices.get(i + 1));
+                subExpressionLists.add(subExpressionList);
+            }
+            // add the sublist between the last comparator and the end of terms
+            List<String> lastSublist = terms.subList(opIndices.get(opIndices.size() - 1) + 1, terms.size());
+            subExpressionLists.add(lastSublist);
+
+            // Via induction, we only need to deal with cases
+            // where the left or right expressions are contained in a pair of brackets
+            // e.g. (2 + 3) * 5
+            // If this is not the case, we will get to such a case recursively
+            List<Expression> subExpressions = new ArrayList<>();
+            for (List<String> subExpressionList: subExpressionLists){
+                if (containsOuterBrackets(subExpressionList)){
+                    // we remove the first and last term which we know are '(' and ')' respectively
+                    subExpressionList = subExpressionList.subList(1, subExpressionList.size() - 1);
+                }
+                // create Expression from each sublist
+                subExpressions.add(create(subExpressionList));
+            }
+
+            List<String> comparatorOps = new ArrayList<>();
+            for (int index: opIndices){
+                comparatorOps.add(terms.get(index));
+            }
+
+            return this.eb.constructExpression(subExpressions, comparatorOps);
         }
 
         return null;
@@ -213,7 +286,6 @@ public class ExpressionCreator {
         }
 
         return inputs;
-
     }
 
 

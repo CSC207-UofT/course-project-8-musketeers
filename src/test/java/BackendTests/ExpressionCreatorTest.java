@@ -204,18 +204,23 @@ public class ExpressionCreatorTest {
     public void testMultipleComparators(){
         // This assumes that chained comparators are treated like regular operations i.e. 1 < 2 < 3 means (1 < 2) < 3.
         // Should we make chained comparators behave like a logical operator i.e. 1 < 2 < 3 means 1 < 2 & 2 < 3.
-        Expression exp = ec.create(List.of("x", "<=", "y", "<=", "-1"));
-        varMap.put("x", 5.0f);
-        varMap.put("y", 4.9f);
+        Expression exp = ec.create(List.of("0", "<", "x", "<=", "y", "<=", "1"));
+        varMap.put("x", 0.0f);
+        varMap.put("y", 0.9f);
+        assertEquals(exp.evaluate(varMap), -1.0, delta);
+        varMap.put("x", 0.1f);
+        varMap.put("y", 0.9f);
         assertEquals(exp.evaluate(varMap), 1.0, delta);
-        varMap.put("x", 5.0f);
-        varMap.put("y", 5.1f);
+        varMap.put("x", 0.1f);
+        varMap.put("y", 1.0f);
+        assertEquals(exp.evaluate(varMap), 1.0, delta);
+        varMap.put("x", 0.1f);
+        varMap.put("y", 1.1f);
         assertEquals(exp.evaluate(varMap), -1.0, delta);
     }
 
     @Test(timeout = 50)
     public void testSingleLogicalOperator(){
-        // currently fails
         Expression exp = ec.create(List.of("x", "&", "y"));
         varMap.put("x", 1.0f);
         varMap.put("y", 1.0f);
@@ -228,8 +233,7 @@ public class ExpressionCreatorTest {
     @Test(timeout = 50)
     public void testLogicalOperatorWithOtherOperators(){
         // currently fails
-        Expression exp = ec.create(List.of("1", "<", "x", "&", "x", "<=", "5"));
-
+        Expression exp = ec.create(List.of("1", "<", "x", "&", "x", "<=", "4", "+", "1"));
         varMap.put("x", 1.0f);
         assertEquals(exp.evaluate(varMap), -1.0, delta);
         varMap.put("x", 2.0f);
