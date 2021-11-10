@@ -33,9 +33,7 @@ public class OperatorExpression extends Expression {
             case "^":
                 return (float) Math.pow(lExpression.evaluate(arguments), rExpression.evaluate(arguments));
             default:
-                // TODO: Should this be the default?
-                // Throw some kind of custom exception?
-                throw new IllegalArgumentException("Unexpected operator");
+                return Float.NaN;
         }
 
     }
