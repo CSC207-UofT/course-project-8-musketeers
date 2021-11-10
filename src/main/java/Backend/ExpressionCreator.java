@@ -20,8 +20,8 @@ public class ExpressionCreator {
     // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
     // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
     // e.g. cos(x) -> ["cos", "(", "x", ")"]
-    public Expression create(List<String> terms) {
-        Expression returnExpression;
-        List<String> minimalTerms = bracketsReduction(terms);
+//    public <T extends Expression> T create(List<String> terms, ) {
+//        T returnExpression;
+//        List<String> minimalTerms = bracketsReduction(terms);
 
 }

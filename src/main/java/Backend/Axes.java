@@ -15,7 +15,7 @@ import java.util.List;
 public class Axes {
     private float scale;
     private float[] origin;
-    private final List<Expression> exprCollection; //should be final right??
+    private final List<Expression> exprCollection;
 
     public Axes(){
         this.scale = 1;
