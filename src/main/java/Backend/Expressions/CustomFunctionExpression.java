@@ -28,7 +28,7 @@ public class CustomFunctionExpression extends FunctionExpression {
     }
 
     public CustomFunctionExpression(String funcName, RealValuedExpression[] inputs,
-                                    RealValuedExpression function, String[] variables, ComparatorExpression domain){
+                                    RealValuedExpression function, String[] variables, BooleanValuedExpression domain){
         super(funcName, inputs, domain);
         this.function = function;
         this.variables = variables;
@@ -43,7 +43,7 @@ public class CustomFunctionExpression extends FunctionExpression {
             RealValuedExpression exp = getInputs()[i];
 
             if (exp instanceof FunctionExpression){
-                ComparatorExpression expDomain = ((FunctionExpression) exp).getDomain();
+                BooleanValuedExpression expDomain = ((FunctionExpression) exp).getDomain();
                 if (!expDomain.evaluate(arguments)){
                     // means the values are out of the domain for at least one of inputs
                     return Float.NaN;

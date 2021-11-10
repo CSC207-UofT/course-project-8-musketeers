@@ -6,7 +6,7 @@ package Backend.Expressions;
 public abstract class FunctionExpression extends RealValuedExpression { // TODO: Confirm with Rishibh that we agree to have all Build-In functions to be real-valued.
 
     private final RealValuedExpression[] inputs;
-    private ComparatorExpression domain;
+    private BooleanValuedExpression domain;
 
     public FunctionExpression(String funcName, RealValuedExpression[] inputs){
         super(funcName);
@@ -14,7 +14,7 @@ public abstract class FunctionExpression extends RealValuedExpression { // TODO:
         this.domain = trivialDomain();
     }
 
-    public FunctionExpression(String funcName, RealValuedExpression[] inputs, ComparatorExpression domain){
+    public FunctionExpression(String funcName, RealValuedExpression[] inputs, BooleanValuedExpression domain){
         this(funcName, inputs);
         this.domain = domain;
     }
@@ -25,7 +25,7 @@ public abstract class FunctionExpression extends RealValuedExpression { // TODO:
         return new ComparatorExpression(">", lExpr, rExpr);
     }
 
-    public ComparatorExpression getDomain(){
+    public BooleanValuedExpression getDomain(){
         return this.domain;
     }
 
