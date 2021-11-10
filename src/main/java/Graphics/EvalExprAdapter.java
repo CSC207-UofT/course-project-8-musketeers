@@ -1,7 +1,7 @@
 
 package Graphics;
 
-import Backend.Expression;
+import Backend.Expressions.Expression;
 import Backend.ExpressionReader;
 
 import java.util.HashMap;

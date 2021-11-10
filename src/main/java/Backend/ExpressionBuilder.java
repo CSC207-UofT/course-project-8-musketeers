@@ -1,7 +1,7 @@
 package Backend;
 
-import java.util.List;
-import Backend.BuiltinExpressions.*;
+import Backend.Expressions.*;
+import Backend.Expressions.BuiltInFunctions.*;
 
 public class ExpressionBuilder {
     private final Constants constants = new Constants();
@@ -33,11 +33,11 @@ public class ExpressionBuilder {
 
     public Expression constructExpression(String funcName, Expression[] inputs){
         switch (funcName){
-            case "cos": return new CosExpression(inputs);
-            case "sin": return new SinExpression(inputs);
-            case "tan": return new TanExpression(inputs);
-            case "sqrt": return new SqrtExpression(inputs);
-            case "mandel": return new MandelExpression(inputs);
+            case "cos": return new Cosine(inputs);
+            case "sin": return new Sine(inputs);
+            case "tan": return new Tangent(inputs);
+            case "sqrt": return new SquareRoot(inputs);
+            case "mandel": return new Mandel(inputs);
             default: throw new IllegalArgumentException("Unrecognised function");
         }
     }

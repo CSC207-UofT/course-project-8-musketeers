@@ -1,6 +1,10 @@
 package BackendTests;
 
 import Backend.*;
+import Backend.Expressions.ComparatorExpression;
+import Backend.Expressions.CustomFunctionExpression;
+import Backend.Expressions.Expression;
+import Backend.Expressions.VariableExpression;
 import org.junit.Before;
 import org.junit.Test;
 

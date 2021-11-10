@@ -2,12 +2,10 @@ package BackendTests;
 
 
 import Backend.Axes;
-import Backend.Expression;
+import Backend.Expressions.Expression;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.*;
 
 import static org.junit.Assert.*;

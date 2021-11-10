@@ -2,25 +2,20 @@ package Backend;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
+import Backend.Expressions.Expression;
 import Graphics.ImplicitGrapher;
 
 import static Graphics.ImageTest.writeImage;
 
-// TODO: for now Backend.ExpressionReader.read assumes that there are spaces between the necessary
-// characters. Also Backend.ExpressionCreator assumes that all the brackets are appropriately
-// placed. Might want to add a check for that
-
 public class ExpressionReader {
     private final Constants constants = new Constants();
 
-    /** Converts a string representation of an expression into an instance of Backend.Expression
+    /** Converts a string representation of an expression into an instance of Backend.Expressions.Expression
      * @param expression The string representation of the expression to be converted
-     * @return Backend.Expression object for the string provided
+     * @return Backend.Expressions.Expression object for the string provided
      */
     // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
     // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]

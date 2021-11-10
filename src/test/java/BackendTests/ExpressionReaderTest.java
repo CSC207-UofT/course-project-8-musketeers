@@ -1,17 +1,13 @@
 package BackendTests;
 
-import Backend.Expression;
+import Backend.Expressions.Expression;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 import Backend.ExpressionReader;
-import Backend.Expression;
 
 public class ExpressionReaderTest {
 

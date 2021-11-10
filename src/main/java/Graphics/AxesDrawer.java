@@ -3,7 +3,7 @@ package Graphics;
 import static Graphics.ImageTest.*;
 import static Graphics.ImplicitGrapher.*;
 
-import Backend.Expression;
+import Backend.Expressions.Expression;
 import Backend.Axes;
 import Backend.ExpressionReader;
 
