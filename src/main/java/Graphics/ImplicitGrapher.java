@@ -73,7 +73,7 @@ public class ImplicitGrapher {
                 }
                 else if (gtype == GraphType.BOUNDARY) {
                     pixels[y * w + x] = (int) Long.parseLong("FFFFFFFF", 16);
-                    if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx + pixelSize, cy) > 0)) {
+                    if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx + pixelSize, cy) > 0)) { // '^' is java bitwise exclusive OR.
                         pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
                     }
                     if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx, cy + pixelSize) > 0)) {
