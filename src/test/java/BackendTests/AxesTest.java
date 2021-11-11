@@ -71,6 +71,12 @@ public class AxesTest {
 
     }
 
+    @Test(timeout = 50)
+    public void testAxesCreation3(){
+        Axes ax2 = new Axes(5, new float[]{1,0,-1});
+        assertArrayEquals(ax2.getOrigin(), new float[]{1,0,-1}, 0);
+    }
+
 
     /**
      * Test adding and removing expressions from the Axes
@@ -78,7 +84,7 @@ public class AxesTest {
     @Test(timeout = 50)
     public void testAxesAddExpression(){
         ax.addExpression(expr5);
-        ArrayList<Expression> eList = new ArrayList<Expression>();
+        ArrayList<Expression> eList = new ArrayList<>();
         eList.add(expr5);
         assertEquals(ax.getExpressions(), eList);
     }
@@ -88,7 +94,7 @@ public class AxesTest {
         ax.addExpression(expr5);
         ax.removeExpression(expr5);
 
-        ArrayList<Expression> eList = new ArrayList<Expression>();
+        ArrayList<Expression> eList = new ArrayList<>();
 
         assertEquals(ax.getExpressions(), eList);
     }
@@ -98,12 +104,13 @@ public class AxesTest {
     public void testAxesRemoveNonExistentExpression(){
         ax.addExpression(expr5);
 
-        ArrayList<Expression> eList = new ArrayList<Expression>();
+        ArrayList<Expression> eList = new ArrayList<>();
         eList.add(expr5);
 
         ax.removeExpression(expr0);
 
         assertEquals(ax.getExpressions(), eList);
     }
+
 
 }
