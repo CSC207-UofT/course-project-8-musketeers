@@ -10,14 +10,14 @@ import Backend.ExpressionReader;
 
 public class ImplicitGrapher {
 
-   public static void main(String args[]) throws Exception {
+   public static void main(String[] args) throws Exception {
       int size = 256;
       int[] mainPixels = new int[size*size];
       int[] dims1 = {size,size};
 
 
       Axes axes = new Axes();
-      axes.setScale(1f);
+      axes.setScale(8f);
       float[] pos = {-1.2f, 0.f};
       axes.setOrigin(pos);
       ExpressionReader er = new ExpressionReader();
