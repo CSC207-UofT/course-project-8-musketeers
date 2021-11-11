@@ -18,5 +18,5 @@ public abstract class Expression {
 
     // All Expressions can be evaluated
     // The arguments Map tells us what values the variables should take
-    public abstract double evaluate(Map<String, Double> arguments);
+    public abstract float evaluate(Map<String, Float> arguments);
 }

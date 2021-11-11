@@ -3,16 +3,17 @@ package BackendTests;
 
 import Backend.Axes;
 import Backend.Expression;
+import Backend.NumberExpression;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.*;
 
 import static org.junit.Assert.*;
 
-
+/**
+ * Test for the Entity Class Axes
+ */
 
 
 public class AxesTest {
@@ -20,11 +21,14 @@ public class AxesTest {
 
 
     Axes ax;
-
+    Expression expr5;
+    Expression expr0;
 
     @Before
     public void setUp(){
         ax = new Axes();
+        expr5 = new NumberExpression("5");
+        expr0 = new NumberExpression("0");
 
     }
 
@@ -33,8 +37,8 @@ public class AxesTest {
     @Test(timeout = 50)
     public void testAxesCreation(){
         assertEquals(ax.getScale(),1,0);
-        assertEquals(ax.getOrigin(),
-                new Point2D.Float(0,0));
+        float[] p = {0,0};
+        assertArrayEquals(ax.getOrigin(), p, 0.0F);
         assertEquals(ax.getExpressions(), new ArrayList<Expression>() {
         });
     }
@@ -44,27 +48,62 @@ public class AxesTest {
         ax = new Axes(5, 6, 7);
 
         assertEquals(ax.getScale(),5,0);
-        assertEquals(ax.getOrigin(),
-                new Point2D.Float(6,7));
+        assertArrayEquals(ax.getOrigin(), new float[]{6, 7}, 0.0F);
         assertEquals(ax.getExpressions(), new ArrayList<Expression>() {});
     }
 
     @Test(timeout = 50)
     public void testAxesSetOrigin(){
-        assertEquals(ax.getOrigin(), new Point2D.Float(0,0));
+        assertArrayEquals(ax.getOrigin(), new float[]{0, 0}, 0.0F);
+
         ax.setOrigin(2,3);
-        assertEquals(ax.getOrigin(), new Point2D.Float(2,3));
-        Point2D.Float p = new Point2D.Float(-5,7.55f);
-        ax.setOrigin(p);
-        assertEquals(ax.getOrigin(),new Point2D.Float(-5,7.55f));
+        assertArrayEquals(ax.getOrigin(), new float[]{2, 3}, 0.0F);
+
+        ax.setOrigin(new float[]{-5f,7.55f});
+        assertArrayEquals(ax.getOrigin(), new float[]{-5, 7.55f}, 0.0F);
     }
 
     @Test(timeout = 50)
     public void testAxesSetScale(){
-        assertEquals(ax.getScale(), 1F, 0.0001);
-        ax.setScale(3F);
-        assertEquals(ax.getScale(), 3F, 0.0001);
+        assertEquals(ax.getScale(), 1f, 0.0001);
+        ax.setScale(3f);
+        assertEquals(ax.getScale(), 3f, 0.0001);
 
+    }
+
+
+    /**
+     * Test adding and removing expressions from the Axes
+     */
+    @Test(timeout = 50)
+    public void testAxesAddExpression(){
+        ax.addExpression(expr5);
+        ArrayList<Expression> eList = new ArrayList<Expression>();
+        eList.add(expr5);
+        assertEquals(ax.getExpressions(), eList);
+    }
+
+    @Test(timeout = 50)
+    public void testAxesRemoveExpression(){
+        ax.addExpression(expr5);
+        ax.removeExpression(expr5);
+
+        ArrayList<Expression> eList = new ArrayList<Expression>();
+
+        assertEquals(ax.getExpressions(), eList);
+    }
+
+    //Test what happens when we try to remove an expression that is not stored in axes
+    @Test(timeout = 50)
+    public void testAxesRemoveNonExistentExpression(){
+        ax.addExpression(expr5);
+
+        ArrayList<Expression> eList = new ArrayList<Expression>();
+        eList.add(expr5);
+
+        ax.removeExpression(expr0);
+
+        assertEquals(ax.getExpressions(), eList);
     }
 
 }

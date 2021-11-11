@@ -1,54 +1,70 @@
 package Backend;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
+//import java.awt.*;
+//import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-//        - stores a 'scale' attribute (type float)
-//        - stores attributes for the x and y coordinates of the origin
-//        - collection of Expressions
-//        - a method to add functions to the above collection
-//        - a getter for the collection of Expressions
-public class Axes {
+
+/**
+ * Axes represents the Euclidean Space in which our Expressions will be graphed.
+ * - stores a 'scale' attribute (type float)
+ * - stores attributes for the x and y coordinates of the origin
+ * - collection of Expressions
+ * - methods to add/remove functions to the above collection
+ * - a getter for the collection of Expressions
+ */
+
+public class Axes implements Serializable {
     private float scale;
-    private Point2D.Float origin;
+    private float[] origin;
     private final List<Expression> exprCollection; //should be final right??
 
+    //Constructors
     public Axes(){
         this.scale = 1;
-        this.origin = new Point2D.Float();
+        this.origin = new float[2];
         this.exprCollection = new ArrayList<>();
 
     }
+
+    /**
+     * Constructor that accepts 3 floats as input
+     * @param a The Scale of Axes
+     * @param b The x coordinate of the origin
+     * @param c The y coordinate of the origin
+     */
     public Axes(float a, float b, float c){
         this.scale = a;
-        this.origin = new Point2D.Float(b, c);
+        this.origin = new float[]{b, c};
         this.exprCollection = new ArrayList<>();
 
     }
 
-    //private List<Expression> expressionList = new ArrayList<>();
+    //Getter and Setter methods for scale, origin:
     public float getScale(){return this.scale;}
 
     public void setScale(Float scale){this.scale = scale;}
 
-//    public int getxO(){return this.xO;}
-//    public int gety0(){return this.y0;}
+    public float[] getOrigin(){return this.origin;}
 
-    public Point2D.Float getOrigin(){return this.origin;}
-
-    public void setOrigin(float x, float y){this.origin = new Point2D.Float(x, y);}
-    //overload setter origin. can take a point or 2 ints
-    public void setOrigin(Point2D.Float p){this.origin = p;}
+    public void setOrigin(float x, float y){this.origin = new float[]{x, y};}
+    //overload setter for origin. can take a point or 2 ints
+    public void setOrigin(float[] p){this.origin = p;}
 
 
 
     public List<Expression> getExpressions(){
         return this.exprCollection;
     }
+
     public void addExpression(Expression expr){
-        exprCollection.add(expr);
+        this.exprCollection.add(expr);
+    }
+
+    public void removeExpression(Expression expr){
+        this.exprCollection.remove(expr);
     }
 
 
