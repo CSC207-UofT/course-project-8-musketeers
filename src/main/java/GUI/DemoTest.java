@@ -4,7 +4,10 @@
 
 package GUI;
 
+import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.system.MemoryUtil.*;
@@ -21,45 +24,13 @@ public class DemoTest {
     static float mousex;
     static float mousey;
 
-    public static void makeShader() {
-        String vertShader = """
-				#version 330
-				layout (location = 0) in vec3 aPos;
+    public static void makeShader() throws IOException {
+        String vertShader;
+        String fragShader;
 
-				void main() {
-				    gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
-				}""";
-        String fragShader = """
-				#version 330
-				out vec4 fragColor;
-				uniform float xpos;
-				uniform float ypos;
-				uniform float vscale;
+        vertShader = new String(Files.readAllBytes(Paths.get("src/main/java/GUI/basicVertex.c")));
+        fragShader = new String(Files.readAllBytes(Paths.get("src/main/java/GUI/demoFrag.c")));
 
-				float mandel (float cx, float cy) {
-					float x = 0;
-					float y = 0;
-					int i;
-					for (i = 0; i < 100; i++) {
-						if ((x*x + y*y) > 4) {
-						  break;
-						}
-						float xtemp = x*x - y*y + cx;
-						y = 2*x*y + cy;
-						x = xtemp;
-					}
-					return sqrt(i / 100.f);
-				}
-
-				void main() {
-				  vec2 tc = gl_FragCoord.xy;
-				  vec2 wh = 1 / vec2(800, 800);
-				  float cx = (((tc*wh).x - 0.5f) * 1.f + xpos);
-				  float cy = (((tc*wh).y - 0.5f) * 1.f + ypos);
-				  float m = mandel(cx * vscale, cy * vscale);
-				  fragColor = vec4(m, m, m, 1.0);
-				  //fragColor = vec4((tc*wh).x, (tc*wh).y, 0.6, 1.0);
-				}""";
 
         progID = glCreateProgram();
         int vsID = glCreateShader(GL_VERTEX_SHADER);
@@ -99,7 +70,7 @@ public class DemoTest {
      * <p>
      * The example here will upload the position vectors of a simple triangle to an OpenGL Vertex Buffer Object.
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         glfwInit();
         long window = createWindow();
         glfwSetMouseButtonCallback(window, DemoTest::mouseCallback);
