@@ -2,9 +2,15 @@ package Backend;
 
 //import java.awt.*;
 //import java.awt.geom.Point2D;
+import Backend.BuiltinExpressions.CosExpression;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import static java.util.Map.entry;
+
 
 
 /**
@@ -18,12 +24,23 @@ import java.util.List;
 
 public class Axes implements Serializable {
     private float scale;
+    private float dimensionSize;
     private float[] origin;
-    private final List<Expression> exprCollection; //should be final right??
+    private final List<Expression> exprCollection;
+
+//    private final Map<String, Expression> builtinExpr= new HashMap<String, Expression>();
+
+
+//    Map<String, Expression> builtinExpr = Map.ofEntries(
+//            entry("cos", new CosExpression())
+//
+//    );
+
 
     //Constructors
     public Axes(){
         this.scale = 1;
+        this.dimensionSize = 2;
         this.origin = new float[2];
         this.exprCollection = new ArrayList<>();
 
@@ -42,6 +59,15 @@ public class Axes implements Serializable {
 
     }
 
+    public Axes(float a, float[] origin){
+        this.scale = a;
+        this.dimensionSize = origin.length;
+        this.origin = origin;
+        this.exprCollection = new ArrayList<>();
+    }
+
+
+
     //Getter and Setter methods for scale, origin:
     public float getScale(){return this.scale;}
 
@@ -50,7 +76,8 @@ public class Axes implements Serializable {
     public float[] getOrigin(){return this.origin;}
 
     public void setOrigin(float x, float y){this.origin = new float[]{x, y};}
-    //overload setter for origin. can take a point or 2 ints
+
+    //overload setter for origin. can take an array of floats
     public void setOrigin(float[] p){this.origin = p;}
 
 
@@ -66,6 +93,9 @@ public class Axes implements Serializable {
     public void removeExpression(Expression expr){
         this.exprCollection.remove(expr);
     }
+
+
+
 
 
 
