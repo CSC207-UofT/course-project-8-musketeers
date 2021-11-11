@@ -34,4 +34,10 @@ public class Constants {
     public Set<String> getVariables() {
         return VARIABLES;
     }
+
+    public ComparatorExpression trivialDomain(){
+        Expression lExpr = new NumberExpression("1");
+        Expression rExpr = new NumberExpression("0");
+        return new ComparatorExpression(List.of(lExpr, rExpr), List.of(">"));
+    }
 }
