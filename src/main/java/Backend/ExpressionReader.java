@@ -1,10 +1,7 @@
 package Backend;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 import Graphics.ImplicitGrapher;
@@ -104,17 +101,20 @@ public class ExpressionReader {
      * @param parsed The list we have parsed in the first pass through expression parser.
      */
 
-    public void fixparsedlist (List<String> parsed) {
+    private void fixparsedlist (List<String> parsed) {
         //
+        fixlogicaloperators(parsed);
         handleoperators(parsed);
         handlesign(parsed);
+
     }
 
     /** We want to go through the list and replace any sequences of  "+" and "-" with the resulting sign.
      *
      * @param parsed The list we have parsed in the first pass through expression parser.
      */
-    public void handleoperators(List<String> parsed) {
+    private void handleoperators(List<String> parsed) {
+
         int size = parsed.size();
         for (int i = 0; i < size - 1; i++) {
             if (parsed.get(i).equals("-") || parsed.get(i).equals("+")) {
@@ -132,7 +132,7 @@ public class ExpressionReader {
      * @param index the current index at which we have a "+" or "-"
      * @param parsed The parsed list that we are editing.
      */
-    public void removedifferent(int index, List<String> parsed) {
+    private void removedifferent(int index, List<String> parsed) {
         if (parsed.get(index).equals(parsed.get(index + 1))) {
             parsed.remove(index);
             parsed.remove(index);
@@ -147,7 +147,7 @@ public class ExpressionReader {
         }
     }
 
-    public void handlesign(List<String> parsed) {
+    private void handlesign(List<String> parsed) {
         for (int i = 0; i < parsed.size(); i++) {
             String current = parsed.get(i);
             if (i ==0 && (current.equals("-") || current.equals("+"))) {
@@ -167,25 +167,45 @@ public class ExpressionReader {
     }
 
     private void replaceunaryoperatorswithone(int i, List<String> parsed) {
-        if (parsed.get(i).equals("-")) {
-
-            if (parsed.get(i-1).equals("(") || (constants.getOperators().contains(parsed.get(i-1)) &&
-                    !parsed.get(i-1).equals("/") && !parsed.get(i-1).equals("^"))) {
+        List<String> specialcharacters = constants.getOperators();
+        specialcharacters.addAll(constants.getComparators());
+        specialcharacters.addAll(constants.getLogicalOperators());
+        specialcharacters.remove("/");
+        specialcharacters.remove("^");
+        specialcharacters.add("(");
+        if (specialcharacters.contains(parsed.get(i-1))) {
+            if (parsed.get(i).equals("-")) {
                 parsed.remove(i);
-                parsed.add(i,"*");
-                parsed.add(i,"-1");
+                parsed.add(i, "*");
+                parsed.add(i, "-1");
+            }
+
+
+             else if (parsed.get(i).equals("+")) {
+                parsed.remove(i);
+                parsed.add(i, "*");
+                parsed.add(i, "1");
             }
         }
-        else if (parsed.get(i).equals("+")) {
-            if (parsed.get(i-1).equals("(") || (constants.getOperators().contains(parsed.get(i-1)) &&
-                    (!parsed.get(i-1).equals("/") && !parsed.get(i-1).equals("^")))) {
-                parsed.remove(i);
-                parsed.add(i,"*");
-                parsed.add(i,"1");
+
+    }
+    private void fixlogicaloperators (List<String> parsed) {
+        int size = parsed.size();
+        for (int i = 0; i < size - 1; i++) {
+            StringBuilder current = new StringBuilder(parsed.get(i));
+            if ((current.toString().equals("<") || current.toString().equals(">")) && parsed.get(i+1).equals("=")) {
+                concatenateoperators(parsed, current, i);
             }
+        size = parsed.size();
         }
     }
 
+    private void concatenateoperators(List<String> parsed, StringBuilder current, int i) {
+        parsed.remove(i);
+        parsed.remove(i);
+        current.append("=");
+        parsed.add(i, current.toString());
+    }
 
 
     // Try "( x ^ 2 + y ^ 2 - 1 ) ^ 3 - x ^ 2 * y ^ 3"!
