@@ -61,7 +61,7 @@ public class ExpressionReader {
             String letter = String.valueOf(expression.charAt(character));
             //If its not alphanumeric, its a special character, in which case we add whatever section refers to into parsed
             //and add the special character aftwerwards.
-            if (letter.matches("^.*[^a-zA-Z0-9 ].*$")){
+            if (letter.matches("^.*[^a-zA-Z0-9. ].*$")){
                 //we want to be sure that section does not refer to an empty string.
                 if (!section.toString().equals("")) {
                     parsed.add(section.toString());
@@ -115,11 +115,15 @@ public class ExpressionReader {
      * @param parsed The list we have parsed in the first pass through expression parser.
      */
     public void handleoperators(List<String> parsed) {
-        for (int i = 0; i < parsed.size() - 1; i++) {
+        int size = parsed.size();
+        for (int i = 0; i < size - 1; i++) {
             if (parsed.get(i).equals("-") || parsed.get(i).equals("+")) {
                 removedifferent(i, parsed);
             }
-
+            if (size != parsed.size()) {
+                size = parsed.size();
+                i--;
+            }
         }
     }
 
@@ -198,7 +202,6 @@ public class ExpressionReader {
                 " the input is spaced out:");
         System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
         String test = "y - sqrt(x)";
-
         Expression func = er.read(test);
         axes.addExpression(func);
         axes.setScale(4f);

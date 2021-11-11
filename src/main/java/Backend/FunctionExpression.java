@@ -1,5 +1,7 @@
 package Backend;
 
+import java.util.List;
+
 /**
  * An abstract class that both builtin functions and user-defined functions inherit from
  */
@@ -22,7 +24,7 @@ public abstract class FunctionExpression extends Expression {
     private ComparatorExpression trivialDomain(){
         Expression lExpr = new NumberExpression("1");
         Expression rExpr = new NumberExpression("0");
-        return new ComparatorExpression(">", lExpr, rExpr);
+        return new ComparatorExpression(List.of(lExpr, rExpr), List.of(">"));
     }
 
     public ComparatorExpression getDomain(){

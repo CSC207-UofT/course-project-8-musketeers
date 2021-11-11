@@ -7,6 +7,12 @@ import Backend.Expression;
 import Backend.Axes;
 import Backend.ExpressionReader;
 
+enum GraphType {
+	BOUNDARY,
+	REGION,
+	GRAYSCALE
+}
+
 
 public class ImplicitGrapher {
 
@@ -17,21 +23,29 @@ public class ImplicitGrapher {
 
 
       Axes axes = new Axes();
-      axes.setScale(1f);
-      float[] pos = {-1.2f, 0.f};
+      axes.setScale(2f);
+      float[] pos = {-0.8f, 0.f};
       axes.setOrigin(pos);
       ExpressionReader er = new ExpressionReader();
 
       //Expression func = er.read("( cos ( x * y ) + sin ( x + y ) ) * 0.8 - 0.1");
-      Expression func = er.read("mandel ( x , y )");
+      Expression func = er.read("mandel ( x , y ) - 1 / 4");
       axes.addExpression(func);
-      graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
+      graphImplicit(mainPixels, dims1[0], dims1[1], axes, GraphType.BOUNDARY);
       writeImage(mainPixels, dims1[0], dims1[1], "sampleOutHmm.png");
       System.out.println("...Done!");
    }
 
+    public static void graphImplicit(int[] pixels, int w, int h, Axes ax,
+                                     boolean useThreshold) {
+        GraphType gtype = GraphType.GRAYSCALE;
+        if (useThreshold) gtype = GraphType.REGION;
+       graphImplicit(pixels, w, h, ax, gtype);
+    }
+
   public static void graphImplicit(int[] pixels, int w, int h, Axes ax,
-                                   boolean useThreshold) {
+                                   GraphType gtype) {
+
       Expression e1 = ax.getExpressions().get(0);
       Evaluatable func = new EvalExprAdapter(e1);
 
@@ -39,21 +53,33 @@ public class ImplicitGrapher {
       float xpos = ax.getOrigin()[0];
       float ypos = ax.getOrigin()[1];
 
+      float pixelSize = scale / (float)w;
+
       for (int y = 0; y < h; y++) {
          for (int x = 0; x < w; x++) {
             float cx = (x / (float)w - 0.5f) * scale + xpos;
             float cy = -(y / (float)h - 0.5f) * scale + ypos;
-            if (useThreshold) {
+            if (gtype == GraphType.REGION) {
                 if (func.evaluate(cx, cy) > 0) {
                     pixels[y * w + x] = (int) Long.parseLong("FFFFFFFF", 16);
                 } else {
                     pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
                 }
-            } else {
+            }
+            else if (gtype == GraphType.GRAYSCALE) {
                 float result = func.evaluate(cx, cy);
                 String outR = fmtHex255((int) (255 * Math.sqrt(result)));
                 pixels[y * w + x] = (int) Long.parseLong("FF" + outR + outR + outR, 16);
             }
+            else if (gtype == GraphType.BOUNDARY) {
+				pixels[y * w + x] = (int) Long.parseLong("FFFFFFFF", 16);
+				if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx + pixelSize, cy) > 0)) {
+					pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
+				}
+				if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx, cy + pixelSize) > 0)) {
+					pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
+				}
+			}
          }
       }
   }
