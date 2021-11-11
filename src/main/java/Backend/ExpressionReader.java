@@ -114,6 +114,7 @@ public class ExpressionReader {
      * @param parsed The list we have parsed in the first pass through expression parser.
      */
     private void handleoperators(List<String> parsed) {
+
         int size = parsed.size();
         for (int i = 0; i < size - 1; i++) {
             if (parsed.get(i).equals("-") || parsed.get(i).equals("+")) {
