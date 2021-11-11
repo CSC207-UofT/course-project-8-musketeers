@@ -223,8 +223,6 @@ public class ExpressionReader {
         System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
         String test = "y - sqrt(x)";
         Expression func = er.read(test);
-        String plop = "x+y=0 AND x >= -0";
-        System.out.println(er.expressionParser(plop));
         axes.addExpression(func);
         axes.setScale(4f);
         float[] pos = {0.f, 0.f};
