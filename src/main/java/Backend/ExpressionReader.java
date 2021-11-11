@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import Backend.Expressions.BooleanValuedExpression;
 import Backend.Expressions.Expression;
+import Backend.Expressions.RealValuedExpression;
 import Graphics.ImplicitGrapher;
 
 import static Graphics.ImageTest.writeImage;
@@ -13,27 +15,52 @@ import static Graphics.ImageTest.writeImage;
 public class ExpressionReader {
     private final Constants constants = new Constants();
 
-    /** Converts a string representation of an expression into an instance of Backend.Expressions.Expression
-     * @param expression The string representation of the expression to be converted
-     * @return Backend.Expressions.Expression object for the string provided
-     */
-    // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
-    // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
-    // e.g. cos(x) -> ["cos", "(", "x", ")"]
-    public Expression read(String expression){
+//    /** Converts a string representation of an expression into an instance of Backend.Expressions.Expression
+//     * @param expression The string representation of the expression to be converted
+//     * @return Backend.Expressions.Expression object for the string provided
+//     */
+//    // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
+//    // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
+//    // e.g. cos(x) -> ["cos", "(", "x", ")"]
+//    public Expression read(String expression){
+//        ExpressionCreator ec = new ExpressionCreator();
+//
+//        List<String> expressionList = expressionParser(expression);
+//        int equalsIndex = expressionList.indexOf("=");
+//
+//        if (equalsIndex > 0) {
+//            return ec.create(expressionList.subList(equalsIndex + 1, expressionList.size()));
+//        }
+//        else{
+//            return ec.create(expressionList);
+//        }
+//    }
+
+    // Below precondition: Should be real-valued expressions, so if there's logicals or comparators, then some exception
+    // will be thrown, or program crashes, depends.. // TODO:!!!
+    // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
+    // TODO: Or use generic type? so have only one "read" method?
+    public RealValuedExpression realValuedRead(String expression) { // TODO: Check OH Class<T extends Expression>?
         ExpressionCreator ec = new ExpressionCreator();
-
         List<String> expressionList = expressionParser(expression);
-        int equalsIndex = expressionList.indexOf("=");
-
-        if (equalsIndex > 0) {
-            return ec.create(expressionList.subList(equalsIndex + 1, expressionList.size()));
-        }
-        else{
-            return ec.create(expressionList);
-        }
+        return ec.realValuedCreate(expressionList);
     }
 
+    // Below precondition: Should be boolean-valued expressions, so if there's no logicals or comparators at all, then
+    // some exception will be thrown.
+    // E.g. "x = 4" is acceptable; "x^2 + y" will evoke some exceptions.
+    public BooleanValuedExpression booleanValuedRead(String expression) {
+        ExpressionCreator ec = new ExpressionCreator();
+        List<String> expressionList = expressionParser(expression);
+        return ec.booleanValuedCreate(expressionList);
+    }
+
+    // TODO: Alternatively, ask OH Class<T extends Expression>?
+    // TODO: Another alternative, just treat above two as helpers, then have another "read" method
+    //  to combine them together.
+//    public <T> T read(String expression, class<T> type) { // TODO: Class<T extends Expression>?
+//
+//    }
 
 
 

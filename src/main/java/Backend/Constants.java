@@ -14,11 +14,10 @@ public class Constants {
     private final List<String> LOGICALOPERATORS = new ArrayList<>(List.of(new String[]{"AND", "OR", "NOT"}));
     private final Set<String> VARIABLES = Set.of("x", "y", "z");
     private final Set<String> BUILDINFUNCTIONS = Set.of("cos", "sin", "tan", "sqrt", "mandel");
-    public Set<String> USERDEFINEDFUNCTIONS = Set.of();
+    private final Set<String> SPECIALCHARACTERS = Set.of("(", ")", ","); // Ted: TODO: Future maybe "\" for "\pi", "\floor", ...
+    // public Set<String> USERDEFINEDFUNCTIONS = Set.of();
 
-    public List<String> getOperators() {
-        return OPERATORS;
-    }
+    public List<String> getOperators() { return OPERATORS; }
 
     public List<String> getComparators() {
         return COMPARATORS;
@@ -32,11 +31,11 @@ public class Constants {
         return BUILDINFUNCTIONS;
     }
 
-    public Set<String> getUserDefinedFunctions() {
-        return USERDEFINEDFUNCTIONS;
-    }
+//    public Set<String> getUserDefinedFunctions() { return USERDEFINEDFUNCTIONS; }
 
     public Set<String> getVariables() {
         return VARIABLES;
     }
+
+    public Set<String> getSpecialCharacters() { return SPECIALCHARACTERS; }
 }
