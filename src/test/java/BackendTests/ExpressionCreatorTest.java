@@ -1,6 +1,7 @@
 package BackendTests;
 
 import Backend.*;
+import Backend.BuiltinExpressions.CosExpression;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -289,5 +290,19 @@ public class ExpressionCreatorTest {
         varMap.put("x", 1f);
         varMap.put("y", 0f);
         assertFalse(Float.isFinite(myFunc.evaluate(varMap)));
+    }
+
+    @Test(timeout = 50)
+    public void testCustomFunctionComposition(){
+        String funcName = "f";
+        String[] variables = {"x"};
+        Expression func = ec.create(List.of("x", "^", "2"));
+
+        FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
+        Expression f2 = new CosExpression(new String[]{"x"});
+        myFunc.setInputs(new Expression[] {f2});
+
+        varMap.put("x", 0f);
+        assertEquals(myFunc.evaluate(varMap), 1, delta);
     }
 }
