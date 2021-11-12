@@ -5,6 +5,8 @@ import java.util.Arrays;
 
 public class CommandLineInterface {
     public static void main(String[] args) {
+        CommandLineInterface cli = new CommandLineInterface();
+
         boolean userInputIsValid = true;
         String[] acceptedCommands = {"-eq", "-save", "-domain", "-dim", "-load", "-graph"};
         ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
@@ -24,7 +26,7 @@ public class CommandLineInterface {
                 System.out.println("\"" + firstElementOfPair + "\" has no valid response. Please try again.");
                 userInputIsValid = false;
                 break;
-            } else if (firstElementOfPair.equals("-dim") && !isPositiveInteger(secondElementOfPair)) {
+            } else if (firstElementOfPair.equals("-dim") && !cli.isPositiveInteger(secondElementOfPair)) {
                 System.out.println("-dim needs to be followed by a positive integer. Please try again.");
                 userInputIsValid = false;
                 break;
@@ -44,7 +46,7 @@ public class CommandLineInterface {
      * @param userInput The user input
      * @return whether the user input is a valid positive integer
      */
-    private static boolean isPositiveInteger(String userInput) {
+    private boolean isPositiveInteger(String userInput) {
         if (userInput == null) {
             return false;
         }
