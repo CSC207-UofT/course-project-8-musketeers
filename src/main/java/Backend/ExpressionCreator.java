@@ -4,7 +4,9 @@ import Backend.Expressions.BooleanValuedExpression;
 import Backend.Expressions.Expression;
 import Backend.Expressions.RealValuedExpression;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExpressionCreator {
 
@@ -79,8 +81,28 @@ public class ExpressionCreator {
         return resultingExpression;
     }
 
-    private RealValuedExpression createOnRealValuedOperators(List<String> terms) {
-
+    private RealValuedExpression createOnRealValuedOperators(List<String> terms) throws CompoundCaseCreatorException {
+        Map<Integer, String> indicesAndOperators = getOuterOperators(terms);
+        Expression lExpression, rExpression;
+        for (String op : constants.getOperators()) {
+            if (indicesAndOperators.containsValue(op)) {
+                // TODO NTNTNTNTNTNTint opIndex = indicesAndOperators.get(op);
+                List<String> leftTerms = terms.subList(0, opIndex);
+                List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
+                try {
+                    lExpression = create(leftTerms);
+                } catch (BaseCaseCreatorException e) {
+                    throw new CompoundCaseCreatorException("LeftOperandException");
+                }
+                try {
+                    rExpression = create(rightTerms);
+                } catch (BaseCaseCreatorException e) {
+                    throw new CompoundCaseCreatorException("RightOperandException");
+                }
+                return new OperatorExpression(op, lExpression, rExpression);
+            }
+        }
+        throw new NonCreatorException("ExpressionReaderWrongException");
     }
 
     private BooleanValuedExpression createOnBooleanValuedOperators(List<String> terms) {
@@ -174,6 +196,49 @@ public class ExpressionCreator {
         }
 
         return commaIndices;
+    }
+
+    /** Returns a map of operators that are not in any brackets (in the order that they appear)
+     *  along with the indices that they appear at.
+     *  If multiple instances of the same operator are present (outside any brackets),
+     *  then only the first appearance is noted
+     * @param terms The list of terms as accepted by the create method
+     *              e.g. ["2", "*", "(", "5", "+", "6", ")", "-", "9"]
+     * @return The list of operators that are not in any brackets. For the example above, we get
+     *              {"*": 1, "-": 7}.
+     */
+
+    private Map<Integer, String> getOuterOperators(List<String> terms){
+
+        Map<Integer, String> indexAndOperator = new HashMap<>();
+
+        // We use the bracketCounter to track whether we are inside
+        // a pair of brackets or not
+        int bracketCounter = 0;
+
+        // We iterate over the terms, if we encounter ')', we increment counter
+        // by 1 and if we encounter '(' we decrement it by 1
+        // Thus we know we are outside every pair of brackets when counter is 0
+        // We need to go in reverse order as the operators at the end
+        // have lower precedence and those up ahead.
+        // e.g. 2 - 1 - 3 == (2 - 1) - 3 != 2 - (1 - 3)
+        for (int i = terms.size() - 1; i > -1; i--){
+            String term = terms.get(i);
+
+            if (term.equals(")")){
+                bracketCounter += 1;
+            } else if (term.equals("(")){
+                bracketCounter -= 1;
+            }
+
+            if (bracketCounter == 0){
+                if (constants.getOperators().contains(term) &&
+                        !indexAndOperator.containsValue(term)) {
+                    indexAndOperator.put(i, term);
+                }
+            }
+        }
+        return indexAndOperator;
     }
 
 }
