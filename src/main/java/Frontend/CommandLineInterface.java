@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CommandLineInterface {
-    private static final String[] acceptedCommands = {"-eq", "-save", "-domain", "-2d", "-3d",
-            "-load", "-graph"};
-
     public static void main(String[] args) {
+        String[] acceptedCommands = {"-eq", "-save", "-domain", "-2d", "-3d",
+                "-load", "-graph"};
         ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
         if (userInputs.size() % 2 != 0) {
             // There is an issue -- the (command, response) pair doesn't match up
