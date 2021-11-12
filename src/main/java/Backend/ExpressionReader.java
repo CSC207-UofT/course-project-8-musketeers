@@ -39,8 +39,7 @@ public class ExpressionReader {
     // Below precondition: Should be real-valued expressions, so if there's logicals or comparators, then some exception
     // will be thrown, or program crashes, depends.. // TODO:!!!
     // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
-    // TODO: Or use generic type? so have only one "read" method?
-    public RealValuedExpression realValuedRead(String expression) { // TODO: Check OH Class<T extends Expression>?
+    public RealValuedExpression realValuedRead(String expression) {
         ExpressionCreator ec = new ExpressionCreator();
         List<String> expressionList = expressionParser(expression);
         return ec.realValuedCreate(expressionList);
@@ -55,12 +54,8 @@ public class ExpressionReader {
         return ec.booleanValuedCreate(expressionList);
     }
 
-    // TODO: Alternatively, ask OH Class<T extends Expression>?
-    // TODO: Another alternative, just treat above two as helpers, then have another "read" method
-    //  to combine them together.
-//    public <T> T read(String expression, class<T> type) { // TODO: Class<T extends Expression>?
-//
-//    }
+    // TODO: Perhaps, if everyone wants, we can use generic type and wildcard to merge these two (as we did in "ExpressionCreator" and "ExpressionBuilder"!).
+//    public Expression<?> read(String expression) {}
 
 
 

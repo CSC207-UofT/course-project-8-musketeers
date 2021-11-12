@@ -3,7 +3,6 @@ package Backend;
 import Backend.Expressions.BooleanValuedExpression;
 import Backend.Expressions.Expression;
 import Backend.Expressions.RealValuedExpression;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,21 @@ public class ExpressionCreator {
     private final ExpressionValidityChecker vc = new ExpressionValidityChecker();
     private final ExpressionBuilder eb = new ExpressionBuilder();
 
-    // TODO: Have one create method which takes realVal and boolVal as helpers. Use generic type.
+    // TODO: Have one create method which takes realVal and boolVal as helpers. Use JAVA WILDCARD AND (UP/DOWN)CASTING.
+
+    public Expression<?> create(List<String> terms) {
+        List<String> minimalTerms = bracketsReduction(terms);
+        int minimalTermsSize = minimalTerms.size();
+
+        vc.preCheck(minimalTerms); // A basic current-level, NON-RECURSIVE check for the validity of the expression. // TODO: Precheck will be shared in realVal and boolVal, especially the "InvalidTermException" shouldn't be thrown because of logicals or comparators in realVal as we have the precondition.
+
+        if (containComparatorOrLogical(minimalTerms)) {
+            return booleanValuedCreate(minimalTerms);
+        }
+        else {
+            return realValuedCreate(minimalTerms);
+        }
+    }
 
     /** Converts a (valid) expression (represented as a list) into an Backend.Expression
      * @param terms A list of terms in the expression (see below for how they should be broken up
@@ -29,28 +42,24 @@ public class ExpressionCreator {
     //  will be thrown, or program crashes, depends..
     public RealValuedExpression realValuedCreate(List<String> terms) {
         RealValuedExpression resultingExpression;
-        // Below minimalTerms is redundant-outer-brackets-reduced.
-        List<String> minimalTerms = bracketsReduction(terms);
-        int minimalTermsSize = minimalTerms.size();
+        int termsSize = terms.size();
 
-        vc.checkBasics(minimalTerms); // A basic current-level, NON-RECURSIVE check for the validity of the expression. // TODO: Precheck will be shared in realVal and boolVal, especially the "InvalidTermException" shouldn't be thrown because of logicals or comparators in realVal as we have the precondition.
-
-        if (minimalTermsSize == 1) {
-            String term = minimalTerms.get(0);
-            vc.checkSingleTerm(term);
+        if (termsSize == 1) {
+            String term = terms.get(0);
+            vc.singleTermCheck(term);
             resultingExpression = eb.constructExpression(term);
         }
 
         // TODO: Below should also add User-Defined Function check (function names stored in Axes)
-        else if (constants.getBuildInFunctions().contains(minimalTerms.get(0)) &&
-                containsOuterBrackets(minimalTerms.subList(1, minimalTermsSize))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms arenot entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
-            RealValuedExpression[] inputs = findFunctionInputs(minimalTerms);
-            resultingExpression = eb.constructExpression(minimalTerms.get(0), inputs);
+        else if (constants.getBuildInFunctions().contains(terms.get(0)) &&
+                containsOuterBrackets(terms.subList(1, termsSize))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms arenot entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
+            RealValuedExpression[] inputs = findFunctionInputs(terms);
+            resultingExpression = eb.constructExpression(terms.get(0), inputs);
         }
 
         else {
-            vc.arithmeticOperatorCheck(minimalTerms); // TODO: Should we make this checker more recursive and less static (i.e. only check for curr level?)
-            resultingExpression = createOnRealValuedOperators(minimalTerms);
+            vc.arithmeticOperatorCheck(terms); // TODO: Should we make this checker more recursive and less static (i.e. only check for curr level?)
+            resultingExpression = createOnRealValuedOperators(terms);
         }
 
         return resultingExpression;
@@ -59,17 +68,11 @@ public class ExpressionCreator {
     // Below precondition: There exists at least one comparator or logical in "terms".
     public BooleanValuedExpression booleanValuedCreate(List<String> terms) {
         BooleanValuedExpression resultingExpression;
-        // Below minimalTerms is redundant-outer-brackets-reduced.
-        List<String> minimalTerms = bracketsReduction(terms);
-        int minimalTermSize = minimalTerms.size();
-
-        vc.preCheck(minimalTerms);
-
         // No base case with minimalTermSize == 0 because "no term => no logical and comparator => realVal".
         // TODO: Base case with incomplete operands!
 
         // TODO: Convert chained comparators to ... AND/& ...
-        List<String> unchainedTerms = unchainComparators(minimalTerms); // Only unchain the outer ones.
+        List<String> unchainedTerms = unchainComparators(terms); // Only unchain the outer ones.
         vc.logicalOperatorCheck(unchainedTerms); // Only check the outer ones.
         vc.comparatorCheck(unchainedTerms); // Only check the outer ones.
         resultingExpression = createOnBooleanValuedOperators(unchainedTerms);
@@ -78,15 +81,19 @@ public class ExpressionCreator {
     }
 
     private RealValuedExpression createOnRealValuedOperators(List<String> terms) {
+        // TODO TEDTEDTED DO
+    }
+
+    private BooleanValuedExpression createOnBooleanValuedOperators(List<String> terms) {
+        // TODO TEDTEDTED DO
+    }
+
+    private boolean containComparatorOrLogical(List<String> terms) { // TODO: Decide whether only checker for outer ones or everything (including ones within a pair of bracket)?
         // TODO
     }
 
     private List<String> unchainComparators(List<String> terms) { // Only unchain the outer ones.
         // TODO: Convert chained comparators to ... AND/& ...
-    }
-
-    private BooleanValuedExpression createOnBooleanValuedOperators(List<String> terms) {
-        // TODO
     }
 
     private List<String> bracketsReduction(List<String> terms) {
@@ -142,7 +149,7 @@ public class ExpressionCreator {
 
         for (int i = 0; i < inputs.length; i++){
             RealValuedExpression inputExp = realValuedCreate(terms.subList(startInd, commaIndices.get(i))); // If two commas adjacent to each other (i.e. has nothing in between, then there will be NullExpression thrown, but we should catch it!)
-            // TODO: Don't accept NullExpression!
+            // TODO: Have changed my mind, now we don't accept NullExpression!
             // TODO: Catch some exception to convert them to some InvalidFunctionInputsException!
 
             inputs[i] = inputExp;
@@ -170,5 +177,4 @@ public class ExpressionCreator {
         return commaIndices;
     }
 
-    // TODO: Add a (pre)checker for all comma within some function. To reject inputs like ",,," which will be converted to [",", ",", ","] and if we don't add a checker for this, then nothing will be crated.
 }

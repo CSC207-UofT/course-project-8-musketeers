@@ -34,7 +34,7 @@ public class ExpressionBuilder {
 
         else {
             // If our program is correct, below should never happen.
-            throw new IllegalArgumentException("Unrecognized operator!"); // TODO: Or user-defined exception?
+            throw new IllegalArgumentException("Unrecognized operator!"); // TODO: Or user-defined exception? Considering that this is technically a runtime exception, as it only happens when program is incorrect.
         }
     }
 
