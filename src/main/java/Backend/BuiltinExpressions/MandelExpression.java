@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class MandelExpression extends FunctionExpression {
 
-    public MandelExpression(Expression[] inputs){
-        super("mandel", inputs);
+    public MandelExpression(String[] variables){
+        super("mandel", variables);
     }
 
     @Override

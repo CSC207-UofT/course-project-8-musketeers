@@ -9,8 +9,8 @@ public class SqrtExpression extends FunctionExpression {
 
     // Only one input for cos of course
     // But the input can be an expression of any kind
-    public SqrtExpression(Expression[] inputs){
-        super("sqrt", inputs);
+    public SqrtExpression(String[] variables){
+        super("sqrt", variables);
     }
 
     @Override

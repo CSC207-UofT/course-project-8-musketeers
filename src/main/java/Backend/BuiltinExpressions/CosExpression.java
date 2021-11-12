@@ -9,7 +9,7 @@ public class CosExpression extends FunctionExpression {
 
     // Only one input for cos of course
     // But the input can be an expression of any kind
-    public CosExpression(Expression[] inputs){
+    public CosExpression(String[] inputs){
         super("cos", inputs);
     }
 
