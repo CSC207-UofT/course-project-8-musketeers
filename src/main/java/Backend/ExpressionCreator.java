@@ -58,7 +58,7 @@ public class ExpressionCreator {
         }
 
         else {
-            vc.arithmeticOperatorCheck(terms); // TODO: Should we make this checker more recursive and less static (i.e. only check for curr level?)
+            // vc.arithmeticOperatorCheck(terms); // Should we make this checker more recursive and less static (i.e. only check for curr level?)
             resultingExpression = createOnRealValuedOperators(terms);
         }
 
@@ -71,17 +71,16 @@ public class ExpressionCreator {
         // No base case with minimalTermSize == 0 because "no term => no logical and comparator => realVal".
         // TODO: Base case with incomplete operands!
 
-        // TODO: Convert chained comparators to ... AND/& ...
         List<String> unchainedTerms = unchainComparators(terms); // Only unchain the outer ones.
-        vc.logicalOperatorCheck(unchainedTerms); // Only check the outer ones.
-        vc.comparatorCheck(unchainedTerms); // Only check the outer ones.
+        // vc.logicalOperatorCheck(unchainedTerms); // Only check the outer ones.
+        // vc.comparatorCheck(unchainedTerms); // Only check the outer ones.
         resultingExpression = createOnBooleanValuedOperators(unchainedTerms);
 
         return resultingExpression;
     }
 
     private RealValuedExpression createOnRealValuedOperators(List<String> terms) {
-        // TODO TEDTEDTED DO
+
     }
 
     private BooleanValuedExpression createOnBooleanValuedOperators(List<String> terms) {
