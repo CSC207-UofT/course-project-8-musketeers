@@ -9,8 +9,8 @@ public class TanExpression extends FunctionExpression {
 
     // Only one input for cos of course
     // But the input can be an expression of any kind
-    public TanExpression(Expression[] inputs){
-        super("tan", inputs);
+    public TanExpression(String[] variables){
+        super("tan", variables);
     }
 
     @Override

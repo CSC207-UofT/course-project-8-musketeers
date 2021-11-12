@@ -254,10 +254,9 @@ public class ExpressionCreatorTest {
     @Test(timeout = 50)
     public void testCustomFunctions(){
         String funcName = "f";
-        Expression[] inputs = {new VariableExpression("x")};
-        Expression func = ec.create(List.of("x", "^", "2"));
         String[] variables = {"x"};
-        Expression myFunc = new CustomFunctionExpression(funcName, inputs, func, variables);
+        Expression func = ec.create(List.of("x", "^", "2"));
+        Expression myFunc = new CustomFunctionExpression(funcName, variables, func);
 
         varMap.put("x", 1.f);
         assertEquals(myFunc.evaluate(varMap), 1.f, delta);
@@ -266,13 +265,29 @@ public class ExpressionCreatorTest {
     @Test(timeout = 50)
     public void testCustomFunctionDomain(){
         String funcName = "f";
-        Expression[] inputs = {new VariableExpression("x")};
-        Expression func = ec.create(List.of("x", "^", "2"));
         String[] variables = {"x"};
+        Expression func = ec.create(List.of("x", "^", "2"));
+
         ComparatorExpression domain = (ComparatorExpression) ec.create(List.of("x", ">", "0"));
-        Expression myFunc = new CustomFunctionExpression(funcName, inputs, func, variables, domain);
+        Expression myFunc = new CustomFunctionExpression(funcName, variables, func, domain);
 
         varMap.put("x", -1.f);
         assertTrue(Float.isNaN(myFunc.evaluate(varMap)));
+    }
+
+    @Test(timeout = 50)
+    public void testCustomFunctionMultivariable(){
+        String funcName = "divide";
+        String[] variables = {"x", "y"};
+        Expression func = ec.create(List.of("x", "/", "y"));
+        Expression myFunc = new CustomFunctionExpression(funcName, variables, func);
+
+        varMap.put("x", 2f);
+        varMap.put("y", 1f);
+        assertEquals(myFunc.evaluate(varMap), 2, delta);
+
+        varMap.put("x", 1f);
+        varMap.put("y", 0f);
+        assertFalse(Float.isFinite(myFunc.evaluate(varMap)));
     }
 }

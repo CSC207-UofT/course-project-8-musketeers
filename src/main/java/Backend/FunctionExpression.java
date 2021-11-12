@@ -7,17 +7,23 @@ import java.util.List;
  */
 public abstract class FunctionExpression extends Expression {
 
-    private final Expression[] inputs;
+    private final String[] variables;
+    private Expression[] inputs;
     private ComparatorExpression domain;
 
-    public FunctionExpression(String funcName, Expression[] inputs){
+    public FunctionExpression(String funcName, String[] variables){
         super(funcName);
-        this.inputs = inputs;
+        this.variables = variables;
         this.domain = trivialDomain();
+        Expression[] inputs = new Expression[variables.length];
+        for(int i = 0; i < inputs.length; i++){
+            inputs[i] = new VariableExpression(variables[i]);
+        }
+        this.inputs = inputs;
     }
 
-    public FunctionExpression(String funcName, Expression[] inputs, ComparatorExpression domain){
-        this(funcName, inputs);
+    public FunctionExpression(String funcName, String[] variables, ComparatorExpression domain){
+        this(funcName, variables);
         this.domain = domain;
     }
 
@@ -33,6 +39,14 @@ public abstract class FunctionExpression extends Expression {
 
     public Expression[] getInputs(){
         return inputs;
+    }
+
+    public void setInputs(Expression[] inputs){
+        this.inputs = inputs;
+    }
+
+    public String[] getVariables(){
+        return this.variables;
     }
 
 }

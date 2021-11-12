@@ -41,13 +41,27 @@ public class ExpressionBuilder {
     }
 
     public Expression constructExpression(String funcName, Expression[] inputs){
+        String[] variables = new String[inputs.length];
+        FunctionExpression func;
         switch (funcName){
-            case "cos": return new CosExpression(inputs);
-            case "sin": return new SinExpression(inputs);
-            case "tan": return new TanExpression(inputs);
-            case "sqrt": return new SqrtExpression(inputs);
-            case "mandel": return new MandelExpression(inputs);
+            case "cos":
+                func = new CosExpression(variables);
+                break;
+            case "sin":
+                func = new SinExpression(variables);
+                break;
+            case "tan":
+                func = new TanExpression(variables);
+                break;
+            case "sqrt":
+                func = new SqrtExpression(variables);
+                break;
+            case "mandel":
+                func = new MandelExpression(variables);
+                break;
             default: throw new IllegalArgumentException("Unrecognised function");
         }
+        func.setInputs(inputs);
+        return func;
     }
 }

@@ -9,8 +9,8 @@ public class SinExpression extends FunctionExpression {
 
     // Only one input for cos of course
     // But the input can be an expression of any kind
-    public SinExpression(Expression[] inputs){
-        super("sin", inputs);
+    public SinExpression(String[] variables){
+        super("sin", variables);
     }
 
     @Override
