@@ -1,7 +1,5 @@
 package Backend.Expressions;
 
-import Backend.Expressions.Expression;
-
 import java.util.Map;
 
 public abstract class BooleanValuedExpression extends Expression<Boolean> {

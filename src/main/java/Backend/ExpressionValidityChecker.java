@@ -3,7 +3,6 @@ package Backend;
 import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
 import Backend.Exceptions.InvalidTermException;
-import Backend.Expressions.FunctionExpression;
 
 import java.util.HashMap;
 import java.util.List;
