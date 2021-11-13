@@ -1,10 +1,12 @@
 package Backend;
 
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
 
+import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.BooleanValuedExpression;
 import Backend.Expressions.Expression;
 import Backend.Expressions.RealValuedExpression;
@@ -45,7 +47,7 @@ public class ExpressionReader {
     // Below precondition: Should be real-valued expressions, so if there's logicals or comparators, then some exception
     // will be thrown, or program crashes, depends.. //
     // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
-    public RealValuedExpression realValuedRead(List<String> expressionList) throws BaseCaseCreatorException, CompoundCaseCreatorException {
+    public RealValuedExpression realValuedRead(List<String> expressionList) throws InvalidTermException {
         ExpressionCreator ec = new ExpressionCreator();
         return (RealValuedExpression) ec.create(expressionList);
     }
@@ -53,7 +55,7 @@ public class ExpressionReader {
     // Below precondition: Should be boolean-valued expressions, so if there's no logicals or comparators at all, then
     // some exception will be thrown.
     // E.g. "x = 4" is acceptable; "x^2 + y" will evoke some exceptions.
-    public BooleanValuedExpression booleanValuedRead(List<String> expressionList) throws BaseCaseCreatorException, CompoundCaseCreatorException {
+    public BooleanValuedExpression booleanValuedRead(List<String> expressionList) throws InvalidTermException {
         ExpressionCreator ec = new ExpressionCreator();
         return (BooleanValuedExpression) ec.create(expressionList);
     }
@@ -181,7 +183,7 @@ public class ExpressionReader {
     private void replaceunaryoperatorswithone(int i, List<String> parsed) {
         if (parsed.get(i).equals("-")) {
 
-            if (parsed.get(i-1).equals("(") || (constants.getOperators().contains(parsed.get(i-1)) &&
+            if (parsed.get(i-1).equals("(") || (constants.getArithmeticOperators().contains(parsed.get(i-1)) &&
                     !parsed.get(i-1).equals("/") && !parsed.get(i-1).equals("^"))) {
                 parsed.remove(i);
                 parsed.add(i,"*");
@@ -189,7 +191,7 @@ public class ExpressionReader {
             }
         }
         else if (parsed.get(i).equals("+")) {
-            if (parsed.get(i-1).equals("(") || (constants.getOperators().contains(parsed.get(i-1)) &&
+            if (parsed.get(i-1).equals("(") || (constants.getArithmeticOperators().contains(parsed.get(i-1)) &&
                     (!parsed.get(i-1).equals("/") && !parsed.get(i-1).equals("^")))) {
                 parsed.remove(i);
                 parsed.add(i,"*");
@@ -216,7 +218,7 @@ public class ExpressionReader {
         String test = "y - sqrt(x)";
 
         // TODO: Use Wildcard or Casting... As we know the type beforehand!
-        Expression func = er.read(test);
+        RealValuedExpression func = (RealValuedExpression) er.read(test);
         axes.addExpression(func);
         axes.setScale(4f);
         float[] pos = {0.f, 0.f};

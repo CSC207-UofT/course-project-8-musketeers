@@ -2,10 +2,10 @@ package Backend;
 
 import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
+import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +17,7 @@ public class ExpressionCreator {
 
     /* IMPORTANT FOR EVERYONE TO KNOW!!! ONLY "create" CAN CALL ITS TWO HELPERS BELOW!!! BECAUSE "create" IS THE
        COMPLETE VERSION OF CREATION AS IT HAS ALL CHECKER!!! */
-    public Expression<?> create(List<String> terms) throws BaseCaseCreatorException, CompoundCaseCreatorException {
+    public Expression<?> create(List<String> terms) throws InvalidTermException {
         List<String> minimalTerms = bracketsReduction(terms);
         int minimalTermsSize = minimalTerms.size();
 
@@ -27,7 +27,7 @@ public class ExpressionCreator {
            words, in "realValCreate", we don't check for the existence of comparator or logical operator, thanks to the
            precondition. */
 
-        if (containsLogicalOperator(minimalTerms) || containsComparator(minimalTerms)) {
+        if (vc.containsOperator(minimalTerms, "Logical") || vc.containsOperator(minimalTerms, "Comparator")) {
             return booleanValuedCreate(minimalTerms);
         }
         else {
@@ -41,7 +41,7 @@ public class ExpressionCreator {
      */
     /* Below precondition: Should be real-valued expressions, so if there are logicals or comparators, then it's likely
        to get into infinite recursion, and example input would be "<<". */
-    private RealValuedExpression realValuedCreate(List<String> terms) throws CompoundCaseCreatorException {
+    private RealValuedExpression realValuedCreate(List<String> terms) throws InvalidTermException {
         RealValuedExpression resultingExpression;
         int termsSize = terms.size();
         String operatorType = "Arithmetic";
@@ -52,7 +52,7 @@ public class ExpressionCreator {
         }
         // TODO: Below should also add User-Defined Function check (function names stored in Axes)
         else if (constants.getBuildInFunctions().contains(terms.get(0)) &&
-                vc.containsOuterBrackets(terms.subList(1, termsSize))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
+                vc.enclosedByOuterBrackets(terms.subList(1, termsSize))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
             RealValuedExpression[] inputs = findFunctionInputs(terms);
             resultingExpression = eb.constructExpression(terms.get(0), inputs);
         }
@@ -64,16 +64,16 @@ public class ExpressionCreator {
     }
 
     // Below precondition: There exists at least one comparator or logical in input "terms".
-    public BooleanValuedExpression booleanValuedCreate(List<String> terms) throws CompoundCaseCreatorException {
+    public BooleanValuedExpression booleanValuedCreate(List<String> terms) throws InvalidTermException {
         BooleanValuedExpression resultingExpression;
         String operatorType;
         // No base case with terms.size() == 0 because "no term => no logical and comparator => realVal".
 
         List<String> unchainedTerms = unchainComparators(terms); // Only unchain the outer comparators.
-        if (containsLogicalOperator(unchainedTerms)) {
+        if (vc.containsOperator(unchainedTerms, "Logical")) {
             operatorType = "Logical";
         }
-        else {
+        else { // Thanks to the precondition.
             operatorType = "Comparator";
         }
         resultingExpression = (BooleanValuedExpression) createOnOperators(unchainedTerms, operatorType);
@@ -81,8 +81,7 @@ public class ExpressionCreator {
         return resultingExpression;
     }
 
-    private Expression<?> createOnOperators(List<String> terms, String operatorType) throws CompoundCaseCreatorException {
-        Map<String, List<Integer>> operatorsAndIndices = getOuterOperators(terms, operatorType);
+    private Expression<?> createOnOperators(List<String> terms, String operatorType) throws InvalidTermException {
         Expression<?> lExpr, rExpr;
         List<String> operators;
 
@@ -93,9 +92,11 @@ public class ExpressionCreator {
             default -> throw new IllegalStateException("Unrecognized Operator Type!");
         }
 
+        Map<String, List<Integer>> operatorsAndIndices = vc.getOuterItems(terms, operators);
+
         for (String op : operators) {
-            if (operatorsAndIndices.containsValue(op)) {
-                int opIndex = operatorsAndIndices.get(op);
+            if (operatorsAndIndices.containsKey(op)) {
+                int opIndex = operatorsAndIndices.get(op).get(operatorsAndIndices.size());
                 List<String> leftTerms = terms.subList(0, opIndex);
                 List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
                 vc.operandsTypeCheck(leftTerms, operatorType, rightTerms);
@@ -114,40 +115,28 @@ public class ExpressionCreator {
         throw new CompoundCaseCreatorException("SomethingExceptionUncaughtException");
     }
 
-    // TODO: Decide whether only checker for outer ones or everything (including ones within a pair of bracket)?
-    private boolean containsLogicalOperator(List<String> terms) {
-        // TODO Maybe merge this and below into one.
-    }
-
-    private boolean containsComparator(List<String> terms) {
-        // TODO
-    }
-
     private List<String> unchainComparators(List<String> terms) { // Only unchain the outer ones.
         // TODO: Convert chained comparators to ... AND/& ...
     }
 
     private List<String> bracketsReduction(List<String> terms) {
         List<String> terms_copy = terms;
-        while (vc.containsOuterBrackets(terms_copy)) {
+        while (vc.enclosedByOuterBrackets(terms_copy)) {
             terms_copy = terms_copy.subList(1, terms_copy.size() - 1);
         }
         return terms_copy;
     }
 
-
-
     /**
      * @param terms List of terms as accepted by create, assumed to be of the form [func, (, ..., )]
      * @return A list of Expressions where each expression is an input to some function
      */
-    private RealValuedExpression[] findFunctionInputs (List<String> terms) throws CompoundCaseCreatorException {
+    private RealValuedExpression[] findFunctionInputs (List<String> terms) throws InvalidTermException {
         List<Integer> commaIndices = findCommaIndices(terms);
         // we add the final index (corresponding to ')' )
         // this ensures that between every pair of indices in commaIndices
         // we have an input expression
-        commaIndices.add(terms.size() - 1);
-
+        commaIndices.add(terms.size() - 1); // TODO: Recheck Correctness (logical sense).
         RealValuedExpression[] inputs = new RealValuedExpression[commaIndices.size()];
         // start at 2 because first item if function name and second item is '('
         int startInd = 2;
@@ -173,7 +162,8 @@ public class ExpressionCreator {
      * @param terms List of terms as accepted by create
      * @return List of indices corresponding to where the "," character appears
      */
-    private List<Integer> findCommaIndices(List<String> terms){
+    // TODO: Actually how about using "getOuterItems"?
+    private List<Integer> findCommaIndices(List<String> terms){ // TODO: Check correctness: WB f(x, g(x, y))?
         List<Integer> commaIndices = new ArrayList<>();
 
         int startInd = 0;
@@ -186,48 +176,4 @@ public class ExpressionCreator {
         return commaIndices;
     }
 
-    /** Returns a map of operators that are not in any brackets (in the order that they appear)
-     *  along with the indices that they appear at.
-     *  If multiple instances of the same operator are present (outside any brackets),
-     *  then only the first appearance is noted
-     * @param terms The list of terms as accepted by the create method
-     *              e.g. ["2", "*", "(", "5", "+", "6", ")", "-", "9"]
-     * @param operatorType Can only be one of the following three
-     * @return The list of operators that are not in any brackets. For the example above, we get
-     *              {"*": 1, "-": 7}.
-     */
-    // Below precondition: "operatorType" can ONLY be one of the following three: "Arithmetic", "Logical", or "Comparator".
-    // TODO: Have "getOuterOperators", "getOuterFunctions", "getOuter..." the same structure, but STRING TO LIST OF INTEGERS IN EXPRVC!
-    private Map<Integer, String> getOuterOperators(List<String> terms, String operatorType){
-
-        Map<Integer, String> indexAndOperator = new HashMap<>();
-
-        // We use the bracketCounter to track whether we are inside
-        // a pair of brackets or not
-        int bracketCounter = 0;
-
-        // We iterate over the terms, if we encounter ')', we increment counter
-        // by 1 and if we encounter '(' we decrement it by 1
-        // Thus we know we are outside every pair of brackets when counter is 0
-        // We need to go in reverse order as the operators at the end
-        // have lower precedence and those up ahead.
-        // e.g. 2 - 1 - 3 == (2 - 1) - 3 != 2 - (1 - 3)
-        for (int i = terms.size() - 1; i > -1; i--){
-            String term = terms.get(i);
-
-            if (term.equals(")")){
-                bracketCounter += 1;
-            } else if (term.equals("(")){
-                bracketCounter -= 1;
-            }
-
-            if (bracketCounter == 0){
-                if (constants.getOperators().contains(term) &&
-                        !indexAndOperator.containsValue(term)) {
-                    indexAndOperator.put(i, term);
-                }
-            }
-        }
-        return indexAndOperator;
-    }
 }

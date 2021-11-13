@@ -2,14 +2,11 @@ package Backend;
 
 import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
+import Backend.Exceptions.InvalidTermException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-// TODO: Exception tree. Have "InvalidInputsException" as a parent exception of below two.
-
-
-
 
 
 public class ExpressionValidityChecker {
@@ -19,7 +16,7 @@ public class ExpressionValidityChecker {
         this.constants = new Constants();
     }
 
-    public void preCheck(List<String> terms) throws BaseCaseCreatorException, CompoundCaseCreatorException {
+    public void preCheck(List<String> terms) throws InvalidTermException {
         if (terms.size() == 0) {
             throw new BaseCaseCreatorException("NullExpressionException!");
         }
@@ -30,7 +27,7 @@ public class ExpressionValidityChecker {
                 throw new BaseCaseCreatorException("InvalidSingleExpressionException!");
             }
         }
-        else{ // TODO: Perhaps below have the "check..." to throw exceptions to avoid (if/else if) blocks?
+        else{ // TODO: Perhaps below have the "check..." to throw exceptions to avoid (if/else-if) blocks?
             if (!checkAllTermsValid(terms)) {
                 throw new CompoundCaseCreatorException("InvalidTermException!");
             } else if (!checkMatchingBrackets(terms)) {
@@ -57,8 +54,25 @@ public class ExpressionValidityChecker {
     // Don't need the three recursive checker since we implicitly have them checked in "ExpressionCreator" already!
 
     // Below method: First input is one (left or right) operand, and the second input is the operator type.
-    public void operandsTypeCheck(List<String> leftTerms, String operatorType, List<String> rightTerms) {
-        // TODO
+    public void operandsTypeCheck(List<String> leftTerms, String operatorType, List<String> rightTerms) throws CompoundCaseCreatorException {
+        switch (operatorType) {
+            case "Logical" -> {
+                if (!(containsOperator(leftTerms, "Logical") || containsOperator(rightTerms, "Logical"))) {
+                    throw new CompoundCaseCreatorException("OperandTypeException!");
+                }
+            }
+            case "Comparator" -> {
+                if (!(containsOperator(leftTerms, "Comparator") || containsOperator(rightTerms, "Comparator"))) {
+                    throw new CompoundCaseCreatorException("OperandTypeException!");
+                }
+            }
+            case "Arithmetic" -> {
+                if (!(containsOperator(leftTerms, "Arithmetic") || containsOperator(rightTerms, "Arithmetic"))) {
+                    throw new CompoundCaseCreatorException("OperandTypeException!");
+                }
+            }
+            default -> throw new IllegalStateException("Unrecognized Operator Type!");
+        }
     }
 
     private boolean checkNumber(String term) { // TODO: Is this good practice by using RuntimeException?
@@ -128,20 +142,55 @@ public class ExpressionValidityChecker {
 
     private boolean checkFunctionInputSize(List<String> terms) {
         // TODO: NTNTNTNTNT Implementation structure similar to "checkFunctionBrackets" and need "varNum" attribute in all functions (Built-in) for now!
+
     }
 
     private boolean checkMultipleTermsConnection(List<String> terms) { // TODO: Recheck correctness (logically)!
         if (!(constants.getBuildInFunctions().contains(terms.get(0)) &&
-                containsOuterBrackets(terms.subList(1, terms.size())))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
+                enclosedByOuterBrackets(terms.subList(1, terms.size())))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
             return !(getOuterItems(terms, constants.getAllOperators()).isEmpty());
         }
         return true;
     }
 
-    public Map<String, List<Integer>> getOuterItems(List<String> terms, List<String> items) {
-        // TODO
+    // TODO: Update below method documentation!
+    /** Returns a map of operators that are not in any brackets (in the order that they appear)
+     *  along with the indices that they appear at.
+     *  If multiple instances of the same operator are present (outside any brackets),
+     *  then only the first appearance is noted
+     * @param terms The list of terms as accepted by the create method
+     *              e.g. ["2", "*", "(", "5", "+", "6", ")", "-", "9"]
+     * @param items Can only be one of the following three
+     * @return The list of operators that are not in any brackets. For the example above, we get
+     *              {"*": 1, "-": 7}.
+     */
+    // TODO: Update the second parameter to "Collection<String>" type. Similarly for all other helpers!!!
+    public Map<String, List<Integer>> getOuterItems(List<String> terms, List<String> items) { // TODO: Change the implementation to using "findCorrespondingBracket"!
+        Map<String, List<Integer>> operatorsAndIndices = new HashMap<>();
+        int bracketCounter = 0;
+        for (int i = terms.size() - 1; i > -1; i--){
+            String term = terms.get(i);
+
+            if (term.equals(")")){
+                bracketCounter += 1;
+            } else if (term.equals("(")){
+                bracketCounter -= 1;
+            }
+
+            if (bracketCounter == 0){
+                if (items.contains(term) && !operatorsAndIndices.containsKey(term)) {
+                    operatorsAndIndices.put(term, List.of(i));
+                }
+                else if (items.contains(term) && operatorsAndIndices.containsKey(term)) {
+                    operatorsAndIndices.get(term).add(i);
+                }
+            }
+        }
+        return operatorsAndIndices;
+
     }
 
+    // TODO: IMPORTANT!!! ADD BELOW PRECONDITION 2 TO MOST HELPER IN "ExpresionValidityChecker" and "ExpressionCreator"!
     // Below precondition:
     //     1. terms.get(index) must be either "(" or ")" to derive the right functionality it promises.
     //     2. Use this helper before ensuring that checkMatchingBrackets(terms) is true.
@@ -170,7 +219,7 @@ public class ExpressionValidityChecker {
         throw new IllegalArgumentException("Precondition Violated When Finding The Corresponding Bracket!");
     }
 
-    public boolean containsOuterBrackets(List<String> terms){ // TODO: Check the correctness of this helper!
+    public boolean enclosedByOuterBrackets(List<String> terms){ // TODO: Could have used "fidnCorrespondingBracket" to improve readability but unsure if it's a good thing to exert precondition (that checkMatchingBrackets(terms) evaluates to true)).
 
         if (terms.size() <= 1){
             return false;
@@ -199,6 +248,31 @@ public class ExpressionValidityChecker {
     //  "findCorrespondingBracket" helper would help with the implementation of all these checkers to skip index! To
     //  reduce runtime! Or no because "findCorrespondingBracket" helper also takes much runtime! Or maybe yes, since
     //  runtime is likely to be the same, and we improve code readability and reduce the likelihood of bugs.
+
+    // TODO: Decide whether only checker for outer ones or everything (including ones within a pair of bracket)?
+    // Below for now only check for comparator and logical operator. In case we want more, we just add another case.
+    // I think for now let's do a THROUGHOUT/STATIC check, highly likely to do the same in future though.
+    public boolean containsOperator(List<String> terms, String operatorType) {
+        List<String> operators; // TODO: Confirm with Rishibh whether we should have all constants in list form? Be careful if it is a Set in Constants.
+        switch (operatorType) {
+            case "Logical" -> {
+                operators = constants.getLogicalOperators();
+            }
+            case "Comparator" -> {
+                operators = constants.getComparators();
+            }
+            default -> throw new IllegalStateException("Unrecognized Operator Type!");
+        }
+        for (String term: terms) { // This way saves expected runtime by a lot!
+            for (String op: operators) {
+                if (term.equals(op)) { // TODO: Recheck Java "equals" and "==".
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }
 
 
