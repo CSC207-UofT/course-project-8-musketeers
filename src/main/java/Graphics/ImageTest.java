@@ -9,7 +9,7 @@ public class ImageTest {
    public ImageTest() {
 
    }
-   public static void main(String args[]) throws Exception {
+   public static void main(String [] args) throws Exception {
       int[] mainPixels = readImage("sample.png");
       int[] dims1 = getImDims("sample.png");
       mainPixels[5] = (int)Long.parseLong("FFFF00FF", 16);
@@ -39,6 +39,7 @@ public class ImageTest {
       BufferedImage outImage = new BufferedImage(iw, ih, BufferedImage.TYPE_INT_ARGB);
 
       outImage.setRGB(0, 0, iw, ih, pixels, 0, iw);
+
       ImageIO.write(outImage, "png", new File(fname));
    }
 }
