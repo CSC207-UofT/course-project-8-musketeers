@@ -26,7 +26,14 @@ public class AxesUseCase {
 
     public float getScale(Axes ax){return ax.getScale();}
 
-    public void setScale(float scale, Axes ax) throws InvalidCommandArguments {ax.setScale(scale);}
+    public void setScale(float scale, Axes ax) throws InvalidCommandArguments {
+        if (scale <= 0) {
+            throw new InvalidCommandArguments("Invalid Command Argument: " + scale +
+                    " must be a positive float");
+        } else {
+            ax.setScale(scale);
+        }
+    }
 
     public float[] getOrigin(Axes ax){return ax.getOrigin();}
 
