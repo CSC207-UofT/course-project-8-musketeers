@@ -6,6 +6,7 @@ import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -117,6 +118,47 @@ public class ExpressionCreator {
 
     private List<String> unchainComparators(List<String> terms) { // Only unchain the outer ones.
         // TODO: Convert chained comparators to ... AND/& ...
+        List<String> unchainedTerms = new ArrayList<>();
+//        int counter = 0;
+//        for (String term: terms) {
+//            if (constants.getComparators().contains(term)) {
+//                counter++;
+//            }
+//            if (counter >= 2) {
+//                break;
+//            }
+//        }
+//
+//        if (counter <= 1) {
+//            return terms;
+//        }
+
+        Map<String, List<Integer>> comparatorsAndIndices = vc.getOuterItems(terms, constants.getComparators()); // TODO: For the time being, let's use this helper, but in future, we can improve runtime by writing a more specific helper!
+
+        // TODO: Make below a helper: Or future have another more efficient helper.
+        List<Integer> indices = new ArrayList<>();
+        for (List<Integer> subIndices: comparatorsAndIndices.values()) {
+            indices.addAll(subIndices);
+        }
+        Collections.sort(indices);
+
+        int firstComparatorIndex = indices.get(0);
+        int secondComparatorIndex = indices.get(1);
+
+        List<String> inBetweenTerms = terms.subList(firstComparatorIndex + 1, secondComparatorIndex);
+
+        if (!vc.containsOperator(inBetweenTerms, "Logical")) {
+            unchainedTerms.addAll(terms.subList(0, secondComparatorIndex));
+            unchainedTerms.add("&");
+            unchainedTerms.addAll(unchainComparators(terms.subList(firstComparatorIndex + 1, terms.size())));
+        }
+        else {
+            unchainedTerms.addAll(terms.subList(0, secondComparatorIndex + 1));
+            if (secondComparatorIndex <= terms.size() - 2) {
+                unchainedTerms.addAll(unchainComparators(terms.subList(secondComparatorIndex + 1, terms.size())));
+            }
+        }
+        return unchainedTerms;
     }
 
     private List<String> bracketsReduction(List<String> terms) {
