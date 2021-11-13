@@ -1,6 +1,8 @@
 package Backend;
 
 import java.util.List;
+import java.util.Map;
+
 import Backend.BuiltinExpressions.*;
 
 public class ExpressionBuilder {
@@ -40,27 +42,16 @@ public class ExpressionBuilder {
         return new ComparatorExpression(expressions, ops);
     }
 
-    public Expression constructExpression(String funcName, Expression[] inputs){
-        String[] variables = new String[inputs.length];
-        FunctionExpression func;
-        switch (funcName){
-            case "cos":
-                func = new CosExpression(variables);
-                break;
-            case "sin":
-                func = new SinExpression(variables);
-                break;
-            case "tan":
-                func = new TanExpression(variables);
-                break;
-            case "sqrt":
-                func = new SqrtExpression(variables);
-                break;
-            case "mandel":
-                func = new MandelExpression(variables);
-                break;
-            default: throw new IllegalArgumentException("Unrecognised function");
-        }
+    /** Used to build FunctionExpression like cos, sin or user-defined functions.
+     * Also allows us to incorporate composition of functions (e.g. f(2x)) using the inputs parameter
+     * @param funcName The name of a function
+     * @param inputs The inputs to the function, likely to be variables but could be more complex
+     * @param funcMap A map between the names of functions and their corresponding Expressions
+     * @return Returns an expression of the corresponding where the inputs are as given
+     */
+    public Expression constructExpression(String funcName, Expression[] inputs,
+                                          Map<String, FunctionExpression> funcMap){
+        FunctionExpression func = funcMap.get(funcName);
         func.setInputs(inputs);
         return func;
     }

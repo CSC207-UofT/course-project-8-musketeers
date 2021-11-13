@@ -26,7 +26,7 @@ public class ImplicitGrapher {
       axes.setScale(2f);
       float[] pos = {-0.8f, 0.f};
       axes.setOrigin(pos);
-      ExpressionReader er = new ExpressionReader();
+      ExpressionReader er = new ExpressionReader(axes);
 
       //Expression func = er.read("( cos ( x * y ) + sin ( x + y ) ) * 0.8 - 0.1");
       Expression func = er.read("mandel ( x , y ) - 1 / 4");

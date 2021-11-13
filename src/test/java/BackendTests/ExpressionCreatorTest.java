@@ -305,4 +305,32 @@ public class ExpressionCreatorTest {
         varMap.put("x", 0f);
         assertEquals(myFunc.evaluate(varMap), 1, delta);
     }
+
+    @Test(timeout = 50)
+    public void testCompositionOfCustomFunctions(){
+        Axes axes = new Axes();
+        ExpressionCreator ec2 = new ExpressionCreator();
+
+        String funcName = "f";
+        String[] variables = {"x"};
+        Expression func = ec2.create(List.of("x", "^", "2"));
+        FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
+        axes.addExpression(myFunc);
+
+        String funcName2 = "g";
+        String[] variables2 = {"x", "y"};
+        Expression func2 = ec2.create(List.of("x", "*", "y"));
+        FunctionExpression myFunc2 = new CustomFunctionExpression(funcName2, variables2, func2);
+        axes.addExpression(myFunc2);
+
+        ExpressionReader er2 = new ExpressionReader(axes);
+        Expression composeFunc = er2.read("f(g(x, y))");
+        varMap.put("x", 2f);
+        varMap.put("y", 3f);
+        assertEquals(func2.evaluate(varMap), 6, delta);
+
+
+        assertEquals(composeFunc.evaluate(varMap), 36, delta);
+    }
+
 }

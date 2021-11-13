@@ -1,8 +1,7 @@
 package Backend;
 
-//import java.awt.*;
-//import java.awt.geom.Point2D;
-import Backend.BuiltinExpressions.CosExpression;
+
+import Backend.BuiltinExpressions.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,15 +26,7 @@ public class Axes implements Serializable {
     private float dimensionSize;
     private float[] origin;
     private final List<Expression> exprCollection;
-
-//    private final Map<String, Expression> builtinExpr= new HashMap<String, Expression>();
-
-
-//    Map<String, Expression> builtinExpr = Map.ofEntries(
-//            entry("cos", new CosExpression())
-//
-//    );
-
+    private final Map<String, FunctionExpression> namedExpressions = initialNamedExpressions();
 
     //Constructors
     public Axes(){
@@ -43,7 +34,6 @@ public class Axes implements Serializable {
         this.dimensionSize = 2;
         this.origin = new float[2];
         this.exprCollection = new ArrayList<>();
-
     }
 
     /**
@@ -56,7 +46,21 @@ public class Axes implements Serializable {
         this.scale = a;
         this.origin = new float[]{b, c};
         this.exprCollection = new ArrayList<>();
+    }
 
+    /** This is just to find what our initial named functions are, i.e. the ones that are builtin
+     * @return A map between the name of a function and the corresponding expression
+     */
+    private Map<String, FunctionExpression> initialNamedExpressions(){
+        String[] oneVarInput = new String[] {"x"};
+        String[] twoVarInput = new String[] {"x", "y"};
+        return new HashMap<>(Map.ofEntries(
+                entry("cos", new CosExpression(oneVarInput)),
+                entry("sin", new SinExpression(oneVarInput)),
+                entry("tan", new TanExpression(oneVarInput)),
+                entry("sqrt", new SqrtExpression(oneVarInput)),
+                entry("mandel", new MandelExpression(twoVarInput)))
+        );
     }
 
     public Axes(float a, float[] origin){
@@ -80,23 +84,28 @@ public class Axes implements Serializable {
     //overload setter for origin. can take an array of floats
     public void setOrigin(float[] p){this.origin = p;}
 
-
-
     public List<Expression> getExpressions(){
         return this.exprCollection;
     }
 
     public void addExpression(Expression expr){
         this.exprCollection.add(expr);
+
+        // if a user adds a named function, we want to add it our collection
+        if (expr instanceof FunctionExpression){
+            namedExpressions.put(expr.getItem(), (FunctionExpression) expr);
+        }
     }
 
     public void removeExpression(Expression expr){
         this.exprCollection.remove(expr);
+
+        if (namedExpressions.containsKey(expr.getItem())){
+            namedExpressions.remove(expr.getItem(), (FunctionExpression) expr);
+        }
     }
 
-
-
-
-
-
+    public Map<String, FunctionExpression> getNamedExpressions() {
+        return namedExpressions;
+    }
 }
