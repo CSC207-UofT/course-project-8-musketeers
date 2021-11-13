@@ -2,6 +2,7 @@ package BackendTests;
 
 
 import Backend.Axes;
+import Backend.Exceptions.InvalidCommandArguments;
 import Backend.Expression;
 import Backend.NumberExpression;
 import org.junit.Before;
@@ -64,7 +65,7 @@ public class AxesTest {
     }
 
     @Test(timeout = 50)
-    public void testAxesSetScale(){
+    public void testAxesSetScale() throws InvalidCommandArguments {
         assertEquals(ax.getScale(), 1f, 0.0001);
         ax.setScale(3f);
         assertEquals(ax.getScale(), 3f, 0.0001);
