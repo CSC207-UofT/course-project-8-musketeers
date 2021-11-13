@@ -39,15 +39,16 @@ public class ExpressionReader {
 //        }
 //    }
 
-    public Expression<?> read(String expression) {
-        List<String> expressionList = expressionParser(expression);
-        // TODO: Use helpers "containsLogicalOperator" and "containsComparator".
-    }
+//    public Expression<?> read(String expression) {
+//        List<String> expressionList = expressionParser(expression);
+//        // TODO: Use helpers "containsLogicalOperator" and "containsComparator".
+//    }
 
     // Below precondition: Should be real-valued expressions, so if there's logicals or comparators, then some exception
     // will be thrown, or program crashes, depends.. //
     // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
-    public RealValuedExpression realValuedRead(List<String> expressionList) throws InvalidTermException {
+    public RealValuedExpression realValuedRead(String expression) throws InvalidTermException {
+        List<String> expressionList = expressionParser(expression);
         ExpressionCreator ec = new ExpressionCreator();
         return (RealValuedExpression) ec.create(expressionList);
     }
@@ -55,7 +56,9 @@ public class ExpressionReader {
     // Below precondition: Should be boolean-valued expressions, so if there's no logicals or comparators at all, then
     // some exception will be thrown.
     // E.g. "x = 4" is acceptable; "x^2 + y" will evoke some exceptions.
-    public BooleanValuedExpression booleanValuedRead(List<String> expressionList) throws InvalidTermException {
+
+    public BooleanValuedExpression booleanValuedRead(String expression) throws InvalidTermException {
+        List<String> expressionList = expressionParser(expression);
         ExpressionCreator ec = new ExpressionCreator();
         return (BooleanValuedExpression) ec.create(expressionList);
     }
@@ -211,14 +214,11 @@ public class ExpressionReader {
         int[] dims1 = {size,size};
 
         ExpressionReader er = new ExpressionReader();
-
-        System.out.println("Please ensure that each 'unit' of information in" +
-                " the input is spaced out:");
-        System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
         String test = "y - sqrt(x)";
 
         // TODO: Use Wildcard or Casting... As we know the type beforehand!
-        RealValuedExpression func = (RealValuedExpression) er.read(test);
+
+        RealValuedExpression func = er.realValuedRead(test);
         axes.addExpression(func);
         axes.setScale(4f);
         float[] pos = {0.f, 0.f};

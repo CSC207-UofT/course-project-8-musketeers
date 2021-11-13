@@ -1,8 +1,10 @@
 
 package Graphics;
 
+import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.Expression;
 import Backend.ExpressionReader;
+import Backend.Expressions.RealValuedExpression;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,12 +20,12 @@ public class EvalExprAdapter implements Evaluatable {
     public float evaluate(float x, float y) {
         varMap.put("x", x);
         varMap.put("y", y);
-        return ex.evaluate(varMap);
+        return (Float) ex.evaluate(varMap);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvalidTermException {
         ExpressionReader er = new ExpressionReader();
-        Expression func = er.read("cos ( x + y )");
+        RealValuedExpression func = er.realValuedRead("cos ( x + y )");
         EvalExprAdapter a = new EvalExprAdapter(func);
         System.out.println(a.evaluate(0.5f,0.5f));
     }

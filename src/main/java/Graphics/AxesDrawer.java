@@ -24,7 +24,7 @@ public class AxesDrawer {
      axes.setOrigin(pos);
      ExpressionReader er = new ExpressionReader();
 
-     Expression func = er.read("mandel ( x , y )");
+     Expression func = er.realValuedRead("mandel ( x , y )");
      axes.addExpression(func);
 
      graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);

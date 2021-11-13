@@ -67,7 +67,10 @@ public class ExpressionValidityChecker {
                 }
             }
             case "Arithmetic" -> {
-                if (!(containsOperator(leftTerms, "Arithmetic") || containsOperator(rightTerms, "Arithmetic"))) {
+                if (containsOperator(leftTerms, "Comparator") ||
+                        containsOperator(leftTerms, "Logical") ||
+                        containsOperator(rightTerms, "Comparator") ||
+                        containsOperator(rightTerms, "Logical")) {
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
             }
@@ -142,7 +145,7 @@ public class ExpressionValidityChecker {
 
     private boolean checkFunctionInputSize(List<String> terms) {
         // TODO: NTNTNTNTNT Implementation structure similar to "checkFunctionBrackets" and need "varNum" attribute in all functions (Built-in) for now!
-
+        return true;
     }
 
     private boolean checkMultipleTermsConnection(List<String> terms) { // TODO: Recheck correctness (logically)!

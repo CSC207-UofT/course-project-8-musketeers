@@ -97,7 +97,7 @@ public class ExpressionCreator {
 
         for (String op : operators) {
             if (operatorsAndIndices.containsKey(op)) {
-                int opIndex = operatorsAndIndices.get(op).get(operatorsAndIndices.size());
+                int opIndex = operatorsAndIndices.get(op).get(operatorsAndIndices.size() - 1);
                 List<String> leftTerms = terms.subList(0, opIndex);
                 List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
                 vc.operandsTypeCheck(leftTerms, operatorType, rightTerms);
