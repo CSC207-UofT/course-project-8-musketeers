@@ -65,7 +65,7 @@ public class ExpressionCreator {
     }
 
     // Below precondition: There exists at least one comparator or logical in input "terms".
-    public BooleanValuedExpression booleanValuedCreate(List<String> terms) throws InvalidTermException {
+    private BooleanValuedExpression booleanValuedCreate(List<String> terms) throws InvalidTermException {
         BooleanValuedExpression resultingExpression;
         String operatorType;
         // No base case with terms.size() == 0 because "no term => no logical and comparator => realVal".
