@@ -37,7 +37,7 @@ public class ExpressionReader {
     // Below precondition: Should be real-valued expressions, so if there's logicals or comparators, then some exception
     // will be thrown, or program crashes, depends.. //
     // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
-    public RealValuedExpression realValuedRead(List<String> terms) throws InvalidTermException {
+    private RealValuedExpression realValuedRead(List<String> terms) throws InvalidTermException {
         ExpressionCreator ec = new ExpressionCreator();
         return (RealValuedExpression) ec.create(terms);
     }
@@ -45,7 +45,7 @@ public class ExpressionReader {
     // Below precondition: Should be boolean-valued expressions, so if there's no logicals or comparators at all, then
     // some exception will be thrown.
     // E.g. "x = 4" is acceptable; "x^2 + y" will evoke some exceptions.
-    public BooleanValuedExpression booleanValuedRead(List<String> terms) throws InvalidTermException {
+    private BooleanValuedExpression booleanValuedRead(List<String> terms) throws InvalidTermException {
         ExpressionCreator ec = new ExpressionCreator();
         return (BooleanValuedExpression) ec.create(terms);
     }
