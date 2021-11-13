@@ -7,7 +7,6 @@ import Backend.Expressions.RealValuedExpression;
 import java.util.Map;
 
 public class Sine extends FunctionExpression {
-
     // Only one input for cos of course
     // But the input can be an expression of any kind
     public Sine(RealValuedExpression[] inputs){

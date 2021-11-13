@@ -7,7 +7,6 @@ import Backend.Expressions.RealValuedExpression;
 import java.util.Map;
 
 public class Mandel extends FunctionExpression {
-
     public Mandel(RealValuedExpression[] inputs){
         super("mandel", inputs);
     }

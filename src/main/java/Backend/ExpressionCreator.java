@@ -52,7 +52,7 @@ public class ExpressionCreator {
             resultingExpression = eb.constructExpression(term);
         }
         // TODO: Below should also add User-Defined Function check (function names stored in Axes)
-        else if (constants.getBuildInFunctions().contains(terms.get(0)) &&
+        else if (constants.getBuiltInFunctions().contains(terms.get(0)) &&
                 vc.enclosedByOuterBrackets(terms.subList(1, termsSize))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
             RealValuedExpression[] inputs = findFunctionInputs(terms);
             resultingExpression = eb.constructExpression(terms.get(0), inputs);
@@ -117,25 +117,13 @@ public class ExpressionCreator {
     }
 
     private List<String> unchainComparators(List<String> terms) { // Only unchain the outer ones.
-        // TODO: Convert chained comparators to ... AND/& ...
+        // Convert chained comparators to ... AND ...
+        // E.g. 1 < x < 2 -> 1 < x & x < 2
         List<String> unchainedTerms = new ArrayList<>();
-//        int counter = 0;
-//        for (String term: terms) {
-//            if (constants.getComparators().contains(term)) {
-//                counter++;
-//            }
-//            if (counter >= 2) {
-//                break;
-//            }
-//        }
-//
-//        if (counter <= 1) {
-//            return terms;
-//        }
 
         Map<String, List<Integer>> comparatorsAndIndices = vc.getOuterItems(terms, constants.getComparators()); // TODO: For the time being, let's use this helper, but in future, we can improve runtime by writing a more specific helper!
 
-        // TODO: Make below a helper: Or future have another more efficient helper.
+        // TODO: Future have another more efficient helper.
         List<Integer> indices = new ArrayList<>();
         for (List<Integer> subIndices: comparatorsAndIndices.values()) {
             indices.addAll(subIndices);

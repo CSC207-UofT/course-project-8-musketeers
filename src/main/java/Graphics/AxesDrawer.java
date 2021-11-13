@@ -6,6 +6,7 @@ import static Graphics.ImplicitGrapher.*;
 import Backend.Expressions.Expression;
 import Backend.Axes;
 import Backend.ExpressionReader;
+import Backend.Expressions.RealValuedExpression;
 
 public class AxesDrawer {
 
@@ -24,7 +25,7 @@ public class AxesDrawer {
      axes.setOrigin(pos);
      ExpressionReader er = new ExpressionReader();
 
-     Expression func = er.realValuedRead("mandel ( x , y )");
+     RealValuedExpression func = (RealValuedExpression) er.read("mandel(2*x,y)");
      axes.addExpression(func);
 
      graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);

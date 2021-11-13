@@ -25,7 +25,7 @@ public class EvalExprAdapter implements Evaluatable {
 
     public static void main(String[] args) throws InvalidTermException {
         ExpressionReader er = new ExpressionReader();
-        RealValuedExpression func = er.realValuedRead("cos ( x + y )");
+        RealValuedExpression func = (RealValuedExpression) er.read("cos ( x + y )");
         EvalExprAdapter a = new EvalExprAdapter(func);
         System.out.println(a.evaluate(0.5f,0.5f));
     }

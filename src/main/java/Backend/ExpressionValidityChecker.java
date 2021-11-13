@@ -3,6 +3,7 @@ package Backend;
 import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
 import Backend.Exceptions.InvalidTermException;
+import Backend.Expressions.FunctionExpression;
 
 import java.util.HashMap;
 import java.util.List;
@@ -97,7 +98,7 @@ public class ExpressionValidityChecker {
             if (!(checkNumber(term) |
                     constants.getVariables().contains(term) |
                     constants.getAllOperators().contains(term) |
-                    constants.getBuildInFunctions().contains(term) |
+                    constants.getBuiltInFunctions().contains(term) |
                     constants.getSpecialCharacters().contains(term))
             ) { return false; }
         }
@@ -122,7 +123,7 @@ public class ExpressionValidityChecker {
 
     // Below one helper's precondition: checkMatchingBrackets(terms) is true.
     private boolean checkFunctionBrackets(List<String> terms) { // TODO: Check correctness!
-        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, constants.getBuildInFunctions().stream().toList());
+        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, constants.getBuiltInFunctions().stream().toList());
         for (List<Integer> indices: functionsAndIndexLists.values()) {
             for (Integer index: indices) {
                 // Below only checks for whether it's possible to have two brackets after the function, but doesn't care
@@ -143,13 +144,35 @@ public class ExpressionValidityChecker {
         return getOuterItems(terms, List.of(new String[]{","})).isEmpty();
     }
 
+    // TODO: Support User-Defined Functions!
     private boolean checkFunctionInputSize(List<String> terms) {
-        // TODO: NTNTNTNTNT Implementation structure similar to "checkFunctionBrackets" and need "varNum" attribute in all functions (Built-in) for now!
+        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, constants.getBuiltInFunctions().stream().toList());
+        List<String> functionInputTerms;
+        Map<String, List<Integer>> commaAndIndexLists;
+        int size;
+
+        for (List<Integer> indices: functionsAndIndexLists.values()) {
+            for (Integer index: indices) {
+                functionInputTerms = terms.subList(index + 1, findCorrespondingBracket(terms, index + 1) + 1);
+
+                if (getOuterItems(functionInputTerms, List.of(new String[]{","})).size() == 0) {
+                    size = 0;
+                }
+                else {
+                    commaAndIndexLists = getOuterItems(functionInputTerms, List.of(new String[]{","}));
+                    size = commaAndIndexLists.get(",").size();
+                }
+
+                if (constants.getBuiltInFunctionsAndInputSizes().get(terms.get(index)) - 1 != size) {
+                    return false;
+                }
+            } // This works thanks to checkers in "precheck" that is done before this checker.
+        }
         return true;
     }
 
     private boolean checkMultipleTermsConnection(List<String> terms) { // TODO: Recheck correctness (logically)!
-        if (!(constants.getBuildInFunctions().contains(terms.get(0)) &&
+        if (!(constants.getBuiltInFunctions().contains(terms.get(0)) &&
                 enclosedByOuterBrackets(terms.subList(1, terms.size())))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
             return !(getOuterItems(terms, constants.getAllOperators()).isEmpty());
         }

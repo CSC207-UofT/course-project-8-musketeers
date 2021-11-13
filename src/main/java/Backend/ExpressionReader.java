@@ -1,10 +1,7 @@
 package Backend;
 
-
-import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
-
 
 import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.BooleanValuedExpression;
@@ -17,50 +14,40 @@ import static Graphics.ImageTest.writeImage;
 public class ExpressionReader {
     private final Constants constants = new Constants();
 
-// Below old "read" method:
-//    /** Converts a string representation of an expression into an instance of Backend.Expressions.Expression
-//     * @param expression The string representation of the expression to be converted
-//     * @return Backend.Expressions.Expression object for the string provided
-//     */
-//    // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
-//    // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
-//    // e.g. cos(x) -> ["cos", "(", "x", ")"]
-//    public Expression read(String expression){
-//        ExpressionCreator ec = new ExpressionCreator();
-//
-//        List<String> expressionList = expressionParser(expression);
-//        int equalsIndex = expressionList.indexOf("=");
-//
-//        if (equalsIndex > 0) {
-//            return ec.create(expressionList.subList(equalsIndex + 1, expressionList.size()));
-//        }
-//        else{
-//            return ec.create(expressionList);
-//        }
-//    }
-
-//    public Expression<?> read(String expression) {
-//        List<String> expressionList = expressionParser(expression);
-//        // TODO: Use helpers "containsLogicalOperator" and "containsComparator".
-//    }
+    // TODO: Update below method documentation!
+    /** Converts a string representation of an expression into an instance of Backend.Expressions.Expression
+     * @param expression The string representation of the expression to be converted
+     * @return Backend.Expressions.Expression object for the string provided
+     */
+    // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
+    // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
+    // e.g. cos(x) -> ["cos", "(", "x", ")"]
+    public Expression<?> read(String expression) throws InvalidTermException {
+        List<String> terms = expressionParser(expression);
+        // TODO: Below is to use helpers "containsLogicalOperator" and "containsComparator" for now. In future we'll find another way to use this helper.
+        ExpressionValidityChecker vc = new ExpressionValidityChecker();
+        if (vc.containsOperator(terms, "Logical") || vc.containsOperator(terms, "Comparator")) {
+            return booleanValuedRead(terms);
+        }
+        else {
+            return realValuedRead(terms);
+        }
+    }
 
     // Below precondition: Should be real-valued expressions, so if there's logicals or comparators, then some exception
     // will be thrown, or program crashes, depends.. //
     // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
-    public RealValuedExpression realValuedRead(String expression) throws InvalidTermException {
-        List<String> expressionList = expressionParser(expression);
+    public RealValuedExpression realValuedRead(List<String> terms) throws InvalidTermException {
         ExpressionCreator ec = new ExpressionCreator();
-        return (RealValuedExpression) ec.create(expressionList);
+        return (RealValuedExpression) ec.create(terms);
     }
 
     // Below precondition: Should be boolean-valued expressions, so if there's no logicals or comparators at all, then
     // some exception will be thrown.
     // E.g. "x = 4" is acceptable; "x^2 + y" will evoke some exceptions.
-
-    public BooleanValuedExpression booleanValuedRead(String expression) throws InvalidTermException {
-        List<String> expressionList = expressionParser(expression);
+    public BooleanValuedExpression booleanValuedRead(List<String> terms) throws InvalidTermException {
         ExpressionCreator ec = new ExpressionCreator();
-        return (BooleanValuedExpression) ec.create(expressionList);
+        return (BooleanValuedExpression) ec.create(terms);
     }
 
     /** expressionParser takes an input string and parses it to form a list. If given valid input, it will form
@@ -203,8 +190,6 @@ public class ExpressionReader {
         }
     }
 
-
-
     // Try "( x ^ 2 + y ^ 2 - 1 ) ^ 3 - x ^ 2 * y ^ 3"!
     // mandel ( (x^2 - y^2 ) / (x^2 + y^2)^2 , (0 - 2 * x * y) / (x^2 + y^2)^2 )
     public static void main(String[] args) throws Exception {
@@ -218,7 +203,7 @@ public class ExpressionReader {
 
         // TODO: Use Wildcard or Casting... As we know the type beforehand!
 
-        RealValuedExpression func = er.realValuedRead(test);
+        RealValuedExpression func = (RealValuedExpression) er.read(test);
         axes.addExpression(func);
         axes.setScale(4f);
         float[] pos = {0.f, 0.f};

@@ -6,6 +6,7 @@ import static Graphics.RGBA.fmtHex255;
 import Backend.Expressions.Expression;
 import Backend.Axes;
 import Backend.ExpressionReader;
+import Backend.Expressions.RealValuedExpression;
 
 enum GraphType {
     BOUNDARY,
@@ -29,7 +30,7 @@ public class ImplicitGrapher {
         ExpressionReader er = new ExpressionReader();
 
         //Expression func = er.read("( cos ( x * y ) + sin ( x + y ) ) * 0.8 - 0.1");
-        Expression func = er.realValuedRead("mandel ( x , y ) - 1 / 4");
+        RealValuedExpression func = (RealValuedExpression) er.read("mandel ( x , y ) - 1 / 4");
         axes.addExpression(func);
         graphImplicit(mainPixels, dims1[0], dims1[1], axes, GraphType.BOUNDARY);
         writeImage(mainPixels, dims1[0], dims1[1], "sampleOutHmm.png");
