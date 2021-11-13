@@ -1,5 +1,6 @@
 package Backend;
 import Backend.DataReadWriter;
+import Backend.Exceptions.InvalidCommandArguments;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +26,7 @@ public class AxesUseCase {
 
     public float getScale(Axes ax){return ax.getScale();}
 
-    public void setScale(float scale, Axes ax){ax.setScale(scale);}
+    public void setScale(float scale, Axes ax) throws InvalidCommandArguments {ax.setScale(scale);}
 
     public float[] getOrigin(Axes ax){return ax.getOrigin();}
 
