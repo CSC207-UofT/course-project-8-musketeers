@@ -7,7 +7,7 @@ import java.util.List;
  */
 public abstract class FunctionExpression extends Expression {
 
-    private String[] variables;
+    private final String[] variables;
     private Expression[] inputs;
     private ComparatorExpression domain;
 
@@ -75,14 +75,6 @@ public abstract class FunctionExpression extends Expression {
     public String[] getVariables(){
         return this.variables;
     }
-
-    /** Sets the variables the function is expressed in terms of
-     * @param variables An array of variables the function is in terms of
-     */
-    public void setVariables(String[] variables){
-        this.variables = variables;
-    }
-
 
 
 }
