@@ -1,24 +1,16 @@
 package Backend;
 
-import Backend.Expressions.Expression;
+import Backend.Exceptions.BaseCaseCreatorException;
+import Backend.Exceptions.CompoundCaseCreatorException;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-// TODO: Exception tree.
+// TODO: Exception tree. Have "InvalidInputsException" as a parent exception of below two.
 
-class BaseCaseCreatorException extends Exception {
-    public BaseCaseCreatorException(String message) {
-        super(message);
-    }
-}
 
-class CompoundCaseCreatorException extends Exception {
-    public CompoundCaseCreatorException(String message) {
-        super(message);
-    }
-}
+
+
 
 public class ExpressionValidityChecker {
     Constants constants;
@@ -28,43 +20,48 @@ public class ExpressionValidityChecker {
     }
 
     public void preCheck(List<String> terms) throws BaseCaseCreatorException, CompoundCaseCreatorException {
-        if (terms.size() == 0){
+        if (terms.size() == 0) {
             throw new BaseCaseCreatorException("NullExpressionException!");
         }
-        else if (!checkAllTermsValid(terms)) {
-            throw new CompoundCaseCreatorException("InvalidTermException!");
+        else if (terms.size() == 1) { // Important (e.g. for "findFunctionInputs" and "createOnOperators" to catch the
+            // correct exception (BaseCaseException rather than potentially InvalidTermException)).
+            String term = terms.get(0);
+            if (!(checkNumber(term) | constants.getVariables().contains(term))) {
+                throw new BaseCaseCreatorException("InvalidSingleExpressionException!");
+            }
         }
-        else if (!checkMatchingBrackets(terms)) {
-            throw new CompoundCaseCreatorException("UnmatchedBracketsException!");
-        }
-        else if (!checkFunctionBrackets(terms)) {
-            throw new CompoundCaseCreatorException("FunctionBracketsException!");
-        }
-        else if (!checkCommasWithinFunctions(terms)) {
-            throw new CompoundCaseCreatorException("CommasNotWithinFunctions!");
-        }
-        else if (!checkFunctionInputsSize(terms)) {
-            throw new CompoundCaseCreatorException("FunctionInputsSizeException!");
+        else{ // TODO: Perhaps below have the "check..." to throw exceptions to avoid (if/else if) blocks?
+            if (!checkAllTermsValid(terms)) {
+                throw new CompoundCaseCreatorException("InvalidTermException!");
+            } else if (!checkMatchingBrackets(terms)) {
+                throw new CompoundCaseCreatorException("UnmatchedBracketsException!");
+            } else if (!checkFunctionBrackets(terms)) {
+                throw new CompoundCaseCreatorException("FunctionBracketsException!");
+            }
+            else if (!checkCommasWithinFunctions(terms)) {
+                throw new CompoundCaseCreatorException("CommasNotWithinFunctions!");
+            }
+            // TODO: Recheck whether above one block is redundant because of the below the newly added one block.
+            //  Furthermore, check whether above would have been regarded as "InvalidOperandException!" before?
+
+            // TODO: Below one block may be redundant as it's likely to work without it thanks to "ExpressionReader", as it
+            //  promises certain preconditions. But this is way safer.
+            else if (!checkMultipleTermsConnection(terms)) {
+                throw new CompoundCaseCreatorException("NonConnectedMultipleTermsException!");
+            } else if (!checkFunctionInputSize(terms)) {
+                throw new CompoundCaseCreatorException("FunctionInputsSizeException!");
+            }
         }
     }
 
-    /**
-     * @param term An expression that consists of a single term e.g. "2", "x", etc
-     */
-    public void singleTermCheck(String term) throws BaseCaseCreatorException {
-        if (!(checkNumber(term) | constants.getVariables().contains(term))) {
-           throw new BaseCaseCreatorException("InvalidSingleExpressionException!");
-        }
+    // Don't need the three recursive checker since we implicitly have them checked in "ExpressionCreator" already!
+
+    // Below method: First input is one (left or right) operand, and the second input is the operator type.
+    public void operandsTypeCheck(List<String> leftTerms, String operatorType, List<String> rightTerms) {
+        // TODO
     }
 
-    // TODO: Don't need below three recursive checker since we implicitly have them in "ExpressionCreator" already!
-//    public void arithmeticOperatorCheck(List<String> terms) {}
-//
-//    public void logicalOperatorCheck(List<String> terms) {}
-//
-//    public void comparatorCheck(List<String> terms) {}
-
-    private boolean checkNumber(String term) {
+    private boolean checkNumber(String term) { // TODO: Is this good practice by using RuntimeException?
         try {
             Double num = Double.parseDouble(term); // Just check for whether "term" represents a number.
             return true;
@@ -73,20 +70,19 @@ public class ExpressionValidityChecker {
         }
     }
 
+    // TODO: Use "findCorrespondingBracket" helper to make this method more recursive. Or NO? Since
+    //  "checkMatchingBrackets" might have to be static?! Because many recursive helpers rely on matching brackets as
+    //  they use the helper "findCorrespondingBraket"? Otherwise we'd have to handle many exceptions.
     private boolean checkAllTermsValid(List<String> terms) {
         for (int i = 0; i <= terms.size() - 1; i++) {
             String term = terms.get(i);
 
             if (!(checkNumber(term) |
                     constants.getVariables().contains(term) |
-                    constants.getOperators().contains(term) |
-                    constants.getComparators().contains(term) |
-                    constants.getLogicalOperators().contains(term) |
+                    constants.getAllOperators().contains(term) |
                     constants.getBuildInFunctions().contains(term) |
                     constants.getSpecialCharacters().contains(term))
-            ) {
-                return false;
-            }
+            ) { return false; }
         }
         return true;
     }
@@ -107,84 +103,96 @@ public class ExpressionValidityChecker {
         return counter == 0;
     }
 
-    private boolean checkFunctionBrackets(List<String> terms) {
-        Map<Integer, String> indexAndFunction = getOuterFunctions(terms);
-        for (int index : indexAndFunction.keySet()) {
-            // Below only checks for whether it's posible to have two brackets after the function, but doesn't care
-            // whether function inputs are correct.
-            if (index >= terms.size() - 2) {
-                return false;
+    // Below one helper's precondition: checkMatchingBrackets(terms) is true.
+    private boolean checkFunctionBrackets(List<String> terms) { // TODO: Check correctness!
+        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, constants.getBuildInFunctions().stream().toList());
+        for (List<Integer> indices: functionsAndIndexLists.values()) {
+            for (Integer index: indices) {
+                // Below only checks for whether it's possible to have two brackets after the function, but doesn't care
+                // whether function inputs are correct.
+                if (index >= terms.size() - 2) {
+                    return false;
+                } else if (!((terms.get(index + 1).equals("(")))) { // TODO: Recheck ".equals" and "==" in Java.
+                    return false;
+                } // This works thanks to the "precheck" (the precondition).
             }
-            else if (terms.get(index + 1).equals("(")) {
-                return findCorrespondingBracket(terms, index + 1) != -1;
-            }
-            else { return false; }
         }
         return true;
     }
 
     private boolean checkCommasWithinFunctions(List<String> terms) {
-        // TODO
+        // RISHIBH'S ANOTHER GENIUS IDEA: just check whether there's any comma outside by using "getOuterItems".
+        // TODO: WARNING: Be careful in future that a comma can be outside, or inside of function brackets, or inside of any other brackets...
+        return getOuterItems(terms, List.of(new String[]{","})).isEmpty();
     }
 
-    private boolean checkFunctionInputsSize(List<String> terms) {
-        // TODO
+    private boolean checkFunctionInputSize(List<String> terms) {
+        // TODO: NTNTNTNTNT Implementation structure similar to "checkFunctionBrackets" and need "varNum" attribute in all functions (Built-in) for now!
     }
 
-    private Map<Integer, String> getOuterFunctions(List<String> terms) {
-        // Original thought: throw exception "InvalidTermException" if it detects any unacceptable term!
-        // Current thought: NO. The rule may change in the future, so let it just do what it should do, and have "checkOuterInvalidTerm" do what it does.
-        // Idea similar to "getOuterOperators"!
-        Map<Integer, String> indexAndFunction = new HashMap<>();
-        int bracketCounter = 0;
-        for (int i = 0; i <= terms.size() - 1; i++){
-            String term = terms.get(i);
-
-            if (term.equals("(")){
-                bracketCounter += 1;
-            } else if (term.equals(")")){
-                bracketCounter -= 1;
-            }
-
-            if (bracketCounter == 0){
-                if (constants.getBuildInFunctions().contains(term)) {
-                    indexAndFunction.put(i, term);
-                }
-            }
+    private boolean checkMultipleTermsConnection(List<String> terms) { // TODO: Recheck correctness (logically)!
+        if (!(constants.getBuildInFunctions().contains(terms.get(0)) &&
+                containsOuterBrackets(terms.subList(1, terms.size())))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
+            return !(getOuterItems(terms, constants.getAllOperators()).isEmpty());
         }
-        return indexAndFunction;
+        return true;
     }
 
+    public Map<String, List<Integer>> getOuterItems(List<String> terms, List<String> items) {
+        // TODO
+    }
+
+    // Below precondition:
+    //     1. terms.get(index) must be either "(" or ")" to derive the right functionality it promises.
+    //     2. Use this helper before ensuring that checkMatchingBrackets(terms) is true.
     private int findCorrespondingBracket(List<String> terms, int index) {
         int Counter = 0;
         boolean initialState = true;
         boolean rightTraverse = true;
 
-        while (0 <= index && index <= terms.size()){
+        while (0 <= index && index <= terms.size() - 1){
             // Below section initializes the traversal direction.
             if (initialState) {
-                if (terms.get(index).equals(")")) {
-                    rightTraverse = false;
-                }
+                if (terms.get(index).equals(")")) { rightTraverse = false; }
                 initialState = false;
             }
 
-            // Below section tries finding the corresponding bracket.
-            if (terms.get(index).equals("(")){
-                Counter += 1;
-            }
-            else if (terms.get(index).equals(")")){
-                Counter -= 1;
-            }
-            if (Counter == 0){
-                return index;
-            }
+            // Below section tries to find the corresponding bracket.
+            if (terms.get(index).equals("(")){ Counter += 1; }
+            else if (terms.get(index).equals(")")){ Counter -= 1; }
+
+            if (Counter == 0){ return index; }
 
             // Below section decides the traversal direction.
             if (rightTraverse) { index++; }
             else { index--; }
         }
-        return -1;
+        throw new IllegalArgumentException("Precondition Violated When Finding The Corresponding Bracket!");
+    }
+
+    public boolean containsOuterBrackets(List<String> terms){ // TODO: Check the correctness of this helper!
+
+        if (terms.size() <= 1){
+            return false;
+        }
+
+        // We want the "counter" to reach to 0 IFF we get to the end of the expression (return true, and false
+        // otherwise). Reaching 0 before means that the corresponding ')' is in the middle of the expression
+        int counter = 0;
+
+        for (int i = 0; i <= terms.size() - 1; i++){
+            String c = terms.get(i);
+            if (c.equals("(")){
+                counter += 1;
+            } else if (c.equals(")")){
+                counter -= 1;
+            }
+
+            if (counter == 0 && i < terms.size() - 1){
+                return false;
+            }
+        }
+        return counter == 0;
     }
 
     // TODO: IMPORTANT! Now that we want all checkers to be recursive rather than static, so maybe using the

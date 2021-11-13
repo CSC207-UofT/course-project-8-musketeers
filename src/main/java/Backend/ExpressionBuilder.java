@@ -6,8 +6,6 @@ import Backend.Expressions.BuiltInFunctions.*;
 public class ExpressionBuilder {
     private final Constants constants = new Constants();
 
-    // public ExpressionBuilder(){}
-
     // Below base case: Construct Number or Variable.
     public RealValuedExpression constructExpression(String input){
         if (this.constants.getVariables().contains(input)){
@@ -17,29 +15,22 @@ public class ExpressionBuilder {
     }
 
     // Below construct with (binary) operators.
-    public Expression<?> constructExpression(Expression<?> lExpression, String op,
-                                                           Expression<?> rExpression){
-        if (this.constants.getOperators().contains(op)){
-            return new OperatorExpression(op, (RealValuedExpression) lExpression, (RealValuedExpression) rExpression);
-        }
-
-        else if (this.constants.getComparators().contains(op)){
-            return new ComparatorExpression(op, (RealValuedExpression) lExpression, (RealValuedExpression) rExpression);
-        }
-
-        else if (this.constants.getLogicalOperators().contains(op)){
-            return new LogicalOperatorExpression(op, (BooleanValuedExpression) lExpression,
+    public Expression<?> constructExpression(Expression<?> lExpression, String op, Expression<?> rExpression, String operatorType){
+        return switch (operatorType) {
+            case "Logical" -> new LogicalOperatorExpression(op, (BooleanValuedExpression) lExpression,
                     (BooleanValuedExpression) rExpression);
-        }
-
-        else {
+            case "Comparator" -> new ComparatorExpression(op, (RealValuedExpression) lExpression,
+                    (RealValuedExpression) rExpression);
+            case "Arithmetic" -> new ArithemeticOperatorExpression(op, (RealValuedExpression) lExpression,
+                    (RealValuedExpression) rExpression);
             // If our program is correct, below should never happen.
-            throw new IllegalArgumentException("Unrecognized operator!"); // TODO: Or user-defined exception? Considering that this is technically a runtime exception, as it only happens when program is incorrect.
-        }
+            default -> throw new IllegalStateException("Unrecognized Operator Type!");
+            // TODO: Above: IllegalStateException or IllegalArgumentException? Java automatically defaults "IllegalStateException" so...
+        };
     }
 
-    // Below shuold construct functions (including build-in and user-defined functions)
-    // TODO: Include User-Defined Functions once we made it clear how we want to treat them. E.g. Where to store them and how to handle them...
+    // Below should construct functions (including build-in and user-defined functions)
+    // TODO: Future: Include User-Defined Functions once we made it clear how we want to treat them. E.g. Where to store them and how to handle them...
     public RealValuedExpression constructExpression(String funcName, RealValuedExpression[] inputs){
         return switch (funcName) {
             case "cos" -> new Cosine(inputs);
@@ -48,8 +39,8 @@ public class ExpressionBuilder {
             case "sqrt" -> new SquareRoot(inputs);
             case "mandel" -> new Mandel(inputs);
             /* If our program is correct, below should never happen. */
-            default -> throw new IllegalArgumentException("Unrecognized function!"); // TODO: Or user-defined exception?
-            // TODO: Recheck this default!
+            default -> throw new IllegalStateException("Unrecognized function!");
+            // TODO: Recheck below default for future!
             // default: return new CustomFunctionExpression()
         };
     }

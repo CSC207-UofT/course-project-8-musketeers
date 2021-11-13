@@ -1,12 +1,10 @@
 package Backend.Expressions;
 
-import Backend.Expressions.RealValuedExpression;
-
 import java.util.Map;
 
-public class VariableExpression extends RealValuedExpression { // TODO: Do we want to have boolean-valued variables?
+public class VariableExpression extends RealValuedExpression { // TODO: Future: Do we want to have boolean-valued variables?
 
-    // Variables can only have names x, y, z
+    // Variables can only have names x, y, z!
     public VariableExpression(String varName){
         super(varName);
     }

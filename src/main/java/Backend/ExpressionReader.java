@@ -15,6 +15,7 @@ import static Graphics.ImageTest.writeImage;
 public class ExpressionReader {
     private final Constants constants = new Constants();
 
+// Below old "read" method:
 //    /** Converts a string representation of an expression into an instance of Backend.Expressions.Expression
 //     * @param expression The string representation of the expression to be converted
 //     * @return Backend.Expressions.Expression object for the string provided
@@ -36,28 +37,26 @@ public class ExpressionReader {
 //        }
 //    }
 
-    // Below precondition: Should be real-valued expressions, so if there's logicals or comparators, then some exception
-    // will be thrown, or program crashes, depends.. // TODO:!!!
-    // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
-    public RealValuedExpression realValuedRead(String expression) {
-        ExpressionCreator ec = new ExpressionCreator();
+    public Expression<?> read(String expression) {
         List<String> expressionList = expressionParser(expression);
-        return ec.realValuedCreate(expressionList);
+        // TODO: Use helpers "containsLogicalOperator" and "containsComparator".
+    }
+
+    // Below precondition: Should be real-valued expressions, so if there's logicals or comparators, then some exception
+    // will be thrown, or program crashes, depends.. //
+    // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
+    public RealValuedExpression realValuedRead(List<String> expressionList) throws BaseCaseCreatorException, CompoundCaseCreatorException {
+        ExpressionCreator ec = new ExpressionCreator();
+        return (RealValuedExpression) ec.create(expressionList);
     }
 
     // Below precondition: Should be boolean-valued expressions, so if there's no logicals or comparators at all, then
     // some exception will be thrown.
     // E.g. "x = 4" is acceptable; "x^2 + y" will evoke some exceptions.
-    public BooleanValuedExpression booleanValuedRead(String expression) {
+    public BooleanValuedExpression booleanValuedRead(List<String> expressionList) throws BaseCaseCreatorException, CompoundCaseCreatorException {
         ExpressionCreator ec = new ExpressionCreator();
-        List<String> expressionList = expressionParser(expression);
-        return ec.booleanValuedCreate(expressionList);
+        return (BooleanValuedExpression) ec.create(expressionList);
     }
-
-    // TODO: Perhaps, if everyone wants, we can use generic type and wildcard to merge these two (as we did in "ExpressionCreator" and "ExpressionBuilder"!).
-//    public Expression<?> read(String expression) {}
-
-
 
     /** expressionParser takes an input string and parses it to form a list. If given valid input, it will form
      * a list that gives us the corresponding valid expression tree.
@@ -216,6 +215,7 @@ public class ExpressionReader {
         System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
         String test = "y - sqrt(x)";
 
+        // TODO: Use Wildcard or Casting... As we know the type beforehand!
         Expression func = er.read(test);
         axes.addExpression(func);
         axes.setScale(4f);

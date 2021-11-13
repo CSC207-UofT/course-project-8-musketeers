@@ -1,5 +1,7 @@
 package Backend;
 
+// TODO: ADJUST/DECIDE WHAT TO DO WITH "Expression", "RealValuedExpression", "BooleanValuedExpression". USE WILDCARD AND CASTING!!!
+
 //import java.awt.*;
 //import java.awt.geom.Point2D;
 import Backend.Expressions.Expression;

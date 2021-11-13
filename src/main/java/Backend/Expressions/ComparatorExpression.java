@@ -21,8 +21,6 @@ public class ComparatorExpression extends BooleanValuedExpression {
     @Override
     public Boolean evaluate(Map<String, Float> arguments) {
         boolean comparisonHolds;
-        // float pixelValue;
-
         float lExpressionVal = this.lExpression.evaluate(arguments);
         float rExpressionVal = this.rExpression.evaluate(arguments);
 
@@ -32,16 +30,10 @@ public class ComparatorExpression extends BooleanValuedExpression {
             case ">" -> lExpressionVal > rExpressionVal;
             case "<" -> lExpressionVal < rExpressionVal;
             case "=" -> lExpressionVal == rExpressionVal;
-            default ->
-                    // TODO: Should this be the default?
-                    // Throw exception instead?
-                    false;
+            // TODO: Below default OK? A runtime (unchecked) exception as this should not happen if the program is correct.
+            default -> throw new IllegalStateException("Unrecognized Comparator!");
         };
 
-//        if (comparisonHolds) {pixelValue = 1;}
-//        else {pixelValue = -1;}
-//
-//        return pixelValue;
         return comparisonHolds;
     }
 }
