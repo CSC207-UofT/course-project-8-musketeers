@@ -127,7 +127,7 @@ public class ExpressionReader {
         }
     }
 
-    /** Replace 2
+    /** If character at next index is "-" or "+", remove both operators and return the correct sign.
      *
      * @param index the current index at which we have a "+" or "-"
      * @param parsed The parsed list that we are editing.
@@ -147,48 +147,72 @@ public class ExpressionReader {
         }
     }
 
+    /** Interpret "+" and "-" used in the unary context as "1*" and "-1*" respectively.
+     *
+     * @param parsed The parsed list we are editing.
+     */
     private void handlesign(List<String> parsed) {
         for (int i = 0; i < parsed.size(); i++) {
             String current = parsed.get(i);
+            //This function is called after handleoperators, so there are no consecutive unary operators, ensuring it
+            // makes sense.
+            //Special case i = 0. We immediately know its a unary use of "+" and "-".
             if (i ==0 && (current.equals("-") || current.equals("+"))) {
-                parsed.remove(0);
-                parsed.add(0, "*");
-                if (current.equals("-")) {
-                    parsed.add(0, "-1");
-                }
-                else {
-                    parsed.add(0, "-1");
-                }
+                interpetoperator(i, current,parsed);
             }
-            else if (i > 0) {
+            else if (i > 0 && (current.equals("-") || current.equals("+"))) {     //In this case, its more tricky to determine a unary usage of an operator.
                 replaceunaryoperatorswithone(i, parsed);
             }
         }
     }
 
+    /**
+     *
+     * @param i current index in the parsed list.
+     * @param parsed The parsed list we are editing to interpret "-" and "+" in a unary context.
+     */
     private void replaceunaryoperatorswithone(int i, List<String> parsed) {
+        // specialcharacters will contain all characters where, if "-" or "+" appear after, they are used in
+        // unary context.
         List<String> specialcharacters = constants.getOperators();
         specialcharacters.addAll(constants.getComparators());
         specialcharacters.addAll(constants.getLogicalOperators());
-        specialcharacters.remove("/");
-        specialcharacters.remove("^");
+        specialcharacters.remove("/"); // The case where we have ??/-??" in the code is bad habit. We are enforcing
+                                          // rule that we are not responsible for the interpretation of it. So
+                                            // we remove "/"/
+        specialcharacters.remove("^"); // Same for "??^-??"
         specialcharacters.add("(");
+        // If the previous element of the parsed list is special, we interpet the operator as unary.
         if (specialcharacters.contains(parsed.get(i-1))) {
-            if (parsed.get(i).equals("-")) {
-                parsed.remove(i);
-                parsed.add(i, "*");
-                parsed.add(i, "-1");
-            }
-
-
-             else if (parsed.get(i).equals("+")) {
-                parsed.remove(i);
-                parsed.add(i, "*");
-                parsed.add(i, "1");
-            }
+            interpetoperator(i, parsed.get(i), parsed);
         }
 
     }
+
+
+    /**
+     *
+     * @param i current index where we have "-" or "+"
+     * @param s Character at parsed[i]
+     * @param parsed The parsed list wher we are interpretting unary operators.
+     */
+    private void interpetoperator(int i, String s, List<String> parsed) {
+        parsed.remove(i);
+        parsed.add(i, "*");
+        if (s.equals("-")) {
+            parsed.add(i,"-1");
+
+        }
+        else if (s.equals("+")) {
+            parsed.add(i, "1");
+        }
+    }
+
+    /** There are some logical operators which consist of 2 other successive logical operators. The first pass through
+     * expressionparser interprets them seperately. This corrects this misinterpretation.
+     *
+     * @param parsed Parsed list we are editing to be interpreted as a correct expression.
+     */
     private void fixlogicaloperators (List<String> parsed) {
         int size = parsed.size();
         for (int i = 0; i < size - 1; i++) {
@@ -222,6 +246,8 @@ public class ExpressionReader {
                 " the input is spaced out:");
         System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
         String test = "y - sqrt(x)";
+        String par = "hi(-+x)";
+        System.out.println(er.expressionParser(par));
         Expression func = er.read(test);
         axes.addExpression(func);
         axes.setScale(4f);
