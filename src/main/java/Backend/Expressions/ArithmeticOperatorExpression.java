@@ -4,14 +4,14 @@ import java.util.Map;
 
 // Backend.Expressions.OperatorExpression stores the 'Backend.Expressions.Expression' with operators, e.g. E_1 + E_2
 // where E_1, E_2 themselves are Expressions
-public class ArithemeticOperatorExpression extends RealValuedExpression {
+public class ArithmeticOperatorExpression extends RealValuedExpression {
 
     private final RealValuedExpression lExpression;
     private final RealValuedExpression rExpression;
 
     // OperatorExpressions store both the operation they correspond to
     // and the expressions to their left and right
-    public ArithemeticOperatorExpression(String operation, RealValuedExpression lExpression, RealValuedExpression rExpression){
+    public ArithmeticOperatorExpression(String operation, RealValuedExpression lExpression, RealValuedExpression rExpression){
         super(operation); // TODO: Future have a complete string representation rather than just a function name!
         this.lExpression = lExpression;
         this.rExpression = rExpression;
