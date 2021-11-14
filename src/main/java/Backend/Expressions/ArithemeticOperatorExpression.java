@@ -20,16 +20,21 @@ public class ArithemeticOperatorExpression extends RealValuedExpression {
     // We evaluate this expression based on what the operator is
     @Override
     public Float evaluate(Map<String, Float> arguments) {
-        return switch (getItem()) {
-            case "+" -> lExpression.evaluate(arguments) + rExpression.evaluate(arguments);
-            case "-" -> lExpression.evaluate(arguments) - rExpression.evaluate(arguments);
-            case "*" -> lExpression.evaluate(arguments) * rExpression.evaluate(arguments);
-            case "/" -> lExpression.evaluate(arguments) / rExpression.evaluate(arguments);
-            case "^" -> (float) Math.pow(lExpression.evaluate(arguments), rExpression.evaluate(arguments));
-            default ->
-                    // TODO: Should this be the default? DISAGREE (from TED), as any unrecognized character will be checked by ExpressionValidityChecker!
+        switch (getItem()) {
+            case "+":
+                return lExpression.evaluate(arguments) + rExpression.evaluate(arguments);
+            case "-":
+                return lExpression.evaluate(arguments) - rExpression.evaluate(arguments);
+            case "*":
+                return lExpression.evaluate(arguments) * rExpression.evaluate(arguments);
+            case "/":
+                return lExpression.evaluate(arguments) / rExpression.evaluate(arguments);
+            case "^":
+                return (float) Math.pow(lExpression.evaluate(arguments), rExpression.evaluate(arguments));
+            default:
+                    // If our program works, then this should never be run
                     throw new IllegalArgumentException("Unexpected operator");
-        };
+        }
 
     }
 

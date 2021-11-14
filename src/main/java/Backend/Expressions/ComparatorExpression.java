@@ -24,14 +24,25 @@ public class ComparatorExpression extends BooleanValuedExpression {
         float lExpressionVal = this.lExpression.evaluate(arguments);
         float rExpressionVal = this.rExpression.evaluate(arguments);
 
-        comparisonHolds = switch (getItem()) {
-            case ">=" -> lExpressionVal >= rExpressionVal;
-            case "<=" -> lExpressionVal <= rExpressionVal;
-            case ">" -> lExpressionVal > rExpressionVal;
-            case "<" -> lExpressionVal < rExpressionVal;
-            case "=" -> lExpressionVal == rExpressionVal;
-            // TODO: Below default OK? A runtime (unchecked) exception as this should not happen if the program is correct.
-            default -> throw new IllegalStateException("Unrecognized Comparator!");
+        switch (getItem()) {
+            case ">=":
+                comparisonHolds = lExpressionVal >= rExpressionVal;
+                break;
+            case "<=":
+                comparisonHolds = lExpressionVal <= rExpressionVal;
+                break;
+            case ">":
+                comparisonHolds = lExpressionVal > rExpressionVal;
+                break;
+            case "<":
+                comparisonHolds = lExpressionVal < rExpressionVal;
+                break;
+            case "=":
+                comparisonHolds = lExpressionVal == rExpressionVal;
+                break;
+            // This should not happen if the program is correct.
+            default:
+                throw new IllegalStateException("Unrecognized Comparator!");
         };
 
         return comparisonHolds;

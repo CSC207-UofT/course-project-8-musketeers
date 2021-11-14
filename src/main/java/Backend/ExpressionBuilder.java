@@ -18,17 +18,22 @@ public class ExpressionBuilder {
 
     // Below construct with (binary) operators.
     public Expression<?> constructExpression(Expression<?> lExpression, String op, Expression<?> rExpression, String operatorType){
-        return switch (operatorType) {
-            case "Logical" -> new LogicalOperatorExpression(op, (BooleanValuedExpression) lExpression,
+
+        switch (operatorType) {
+            case "Logical":
+                return new LogicalOperatorExpression(op, (BooleanValuedExpression) lExpression,
                     (BooleanValuedExpression) rExpression);
-            case "Comparator" -> new ComparatorExpression(op, (RealValuedExpression) lExpression,
+            case "Comparator":
+                return new ComparatorExpression(op, (RealValuedExpression) lExpression,
                     (RealValuedExpression) rExpression);
-            case "Arithmetic" -> new ArithemeticOperatorExpression(op, (RealValuedExpression) lExpression,
+            case "Arithmetic":
+                return new ArithemeticOperatorExpression(op, (RealValuedExpression) lExpression,
                     (RealValuedExpression) rExpression);
             // If our program is correct, below should never happen.
-            default -> throw new IllegalStateException("Unrecognized Operator Type!");
+            default:
+                throw new IllegalStateException("Unrecognized Operator Type!");
             // TODO: Above: IllegalStateException or IllegalArgumentException? Java automatically defaults "IllegalStateException" so...
-        };
+        }
     }
 
     // Below should construct functions (including build-in and user-defined functions)

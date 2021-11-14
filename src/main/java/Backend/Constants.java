@@ -10,13 +10,11 @@ public class Constants {
     // List used for operators as the order of operators matter and is used to control the order of precedence in expressions.
     // Sets used for these as only need containment and order is irrelevant.
     private final Set<String> VARIABLES = Set.of("x", "y", "z");
-    private final Set<String> BUILTINFUNCTIONS = Set.of("cos", "sin", "tan", "sqrt", "mandel");
+//    private final Set<String> BUILTINFUNCTIONS = Set.of("cos", "sin", "tan", "sqrt", "mandel"); // TODO: We should be able to remove this from here as it's being stored in Axes
     private final Set<String> SPECIALCHARACTERS = Set.of("(", ")", ","); // Ted: TODO: Future maybe "\" for "\pi", "\floor", ...
     private final List<String> LOGICALOPERATORS = new ArrayList<>(List.of(new String[]{"|", "&"})); // TODO: Recheck The order or "AND" and "OR"!
     private final List<String> COMPARATORS = new ArrayList<>(List.of(new String[]{"=", "<", ">", "<=", ">="}));
     private final List<String> ARITHMETICOPERATORS = new ArrayList<>(List.of(new String[]{"+", "-", "*", "/", "^"}));
-    private final List<String> BOOLEANVALUEDOPERATORS = Stream.of(LOGICALOPERATORS, COMPARATORS).flatMap(Collection::stream).collect(Collectors.toList());
-    private final List<String> BINARYOPERATORS = Stream.of(LOGICALOPERATORS, COMPARATORS, ARITHMETICOPERATORS).flatMap(Collection::stream).collect(Collectors.toList());
     private final Map<String, Integer> BUILTINFUNCTIONSANDINPUTSIZES = Map.ofEntries(
             entry("cos", 1),
             entry("sin", 1),
@@ -36,13 +34,17 @@ public class Constants {
 
     public List<String> getArithmeticOperators() { return ARITHMETICOPERATORS; }
 
-    public List<String> getBooleanValuedOperators() { return BOOLEANVALUEDOPERATORS; }
-
-    public List<String> getAllOperators() { return BINARYOPERATORS; }
-
-    public Set<String> getBuiltInFunctions() {
-        return BUILTINFUNCTIONS; // TODO: Can just use "BUILTINFUNCTIONSANDINPUTSIZES". But we'll see.
+    public List<String> getBooleanValuedOperators() {
+        return Stream.of(LOGICALOPERATORS, COMPARATORS).flatMap(Collection::stream).collect(Collectors.toList());
     }
+
+    public List<String> getAllOperators() {
+        return Stream.of(LOGICALOPERATORS, COMPARATORS, ARITHMETICOPERATORS).flatMap(Collection::stream).collect(Collectors.toList());
+    }
+
+//    public Set<String> getBuiltInFunctions() {
+//        return BUILTINFUNCTIONS; // TODO: Can just use "BUILTINFUNCTIONSANDINPUTSIZES". But we'll see.
+//    }
 
     public Set<String> getVariables() {
         return VARIABLES;

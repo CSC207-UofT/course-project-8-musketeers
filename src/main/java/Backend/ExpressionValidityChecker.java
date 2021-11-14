@@ -4,17 +4,15 @@ import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
 import Backend.Exceptions.InvalidTermException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class ExpressionValidityChecker {
     Constants constants;
-    List<String> funcs;
-    public ExpressionValidityChecker() {
+    Set<String> validFuncs;
+    public ExpressionValidityChecker(Set<String> validFuncs) {
         this.constants = new Constants();
-        funcs.addAll(constants.getBuiltInFunctions());
+        this.validFuncs = validFuncs;
     }
 
     public void preCheck(List<String> terms) throws InvalidTermException {
@@ -61,11 +59,13 @@ public class ExpressionValidityChecker {
                 if (!(containsOperator(leftTerms, "Logical") || containsOperator(rightTerms, "Logical"))) {
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
+                break;
             }
             case "Comparator": {
                 if (!(containsOperator(leftTerms, "Comparator") || containsOperator(rightTerms, "Comparator"))) {
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
+                break;
             }
             case "Arithmetic": {
                 if (containsOperator(leftTerms, "Comparator") ||
@@ -74,9 +74,11 @@ public class ExpressionValidityChecker {
                         containsOperator(rightTerms, "Logical")) {
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
+                break;
             }
             // In theory, this should be thrown
-            default: throw new IllegalStateException("Unrecognized Operator Type!");
+            default:
+                throw new IllegalStateException("Unrecognized Operator Type!");
         }
     }
 
@@ -99,7 +101,7 @@ public class ExpressionValidityChecker {
             if (!(checkNumber(term) |
                     constants.getVariables().contains(term) |
                     constants.getAllOperators().contains(term) |
-                    constants.getBuiltInFunctions().contains(term) |
+                    validFuncs.contains(term) |
                     constants.getSpecialCharacters().contains(term))
             ) { return false; }
         }
@@ -124,7 +126,7 @@ public class ExpressionValidityChecker {
 
     // Below one helper's precondition: checkMatchingBrackets(terms) is true.
     private boolean checkFunctionBrackets(List<String> terms) { // TODO: Check correctness!
-        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, funcs);
+        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(validFuncs));
         for (List<Integer> indices: functionsAndIndexLists.values()) {
             for (Integer index: indices) {
                 // Below only checks for whether it's possible to have two brackets after the function, but doesn't care
@@ -147,7 +149,7 @@ public class ExpressionValidityChecker {
     // TODO: Support User-Defined Functions!
     private boolean checkFunctionInputSize(List<String> terms) {
 
-        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, funcs);
+        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(validFuncs));
         List<String> functionInputTerms;
         Map<String, List<Integer>> commaAndIndexLists;
         int size;
@@ -173,7 +175,7 @@ public class ExpressionValidityChecker {
     }
 
     private boolean checkMultipleTermsConnection(List<String> terms) { // TODO: Recheck correctness (logically)!
-        if (!(constants.getBuiltInFunctions().contains(terms.get(0)) &&
+        if (!(validFuncs.contains(terms.get(0)) &&
                 enclosedByOuterBrackets(terms.subList(1, terms.size())))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
             return !(getOuterItems(terms, constants.getAllOperators()).isEmpty());
         }

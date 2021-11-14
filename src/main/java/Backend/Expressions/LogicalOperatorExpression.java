@@ -18,22 +18,22 @@ public class LogicalOperatorExpression extends BooleanValuedExpression {
         boolean trueComparison;
 
         switch (getItem()) {
-            case "&" -> {
+            case "&":
                 trueComparison = this.lExpression.evaluate(arguments) &&
                         this.rExpression.evaluate(arguments);
                 return trueComparison;
-            }
-            case "|" -> {
+
+            case "|":
                 trueComparison = this.lExpression.evaluate(arguments) ||
                         this.rExpression.evaluate(arguments);
                 return trueComparison;
-            }
+
 //            case "NOT": // TODO: Decide whether to have this as UnaryOperator or PsuedoBinaryOperator? Actually, let's add this in future!
 //                trueComparison = this.rExpression.evaluate(arguments);
 //                return trueComparison;
-            default -> {
+            default:
                 throw new IllegalStateException("Unrecognized Logical Operator!");
-            }
+
         }
     }
 

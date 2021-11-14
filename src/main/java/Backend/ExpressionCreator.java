@@ -13,16 +13,17 @@ import java.util.Map;
 public class ExpressionCreator {
 
     private final Constants constants = new Constants();
-    private final ExpressionValidityChecker vc = new ExpressionValidityChecker();
     private final ExpressionBuilder eb = new ExpressionBuilder();
-    private Axes ax;
-
-    public ExpressionCreator(){
-        this.ax = new Axes();
-    }
+    private final Axes ax;
+    private final ExpressionValidityChecker vc;
+    // TODO: We can likely use Observer Design Pattern to remove dependency on Axes
 
     public ExpressionCreator(Axes ax){
         this.ax = ax;
+        this.vc = new ExpressionValidityChecker(ax.getNamedExpressions().keySet());
+    }
+    public ExpressionCreator(){
+        this(new Axes());
     }
 
     /* IMPORTANT FOR EVERYONE TO KNOW!!! ONLY "create" CAN CALL ITS TWO HELPERS BELOW!!! BECAUSE "create" IS THE
@@ -60,10 +61,9 @@ public class ExpressionCreator {
             String term = terms.get(0);
             resultingExpression = eb.constructExpression(term);
         }
-        // TODO: Below should also add User-Defined Function check (function names stored in Axes)
-        else if (constants.getBuiltInFunctions().contains(terms.get(0)) &&
+        else if (ax.getNamedExpressions().containsKey(terms.get(0)) &&
                 vc.enclosedByOuterBrackets(terms.subList(1, termsSize))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
-            RealValuedExpression[] inputs = findFunctionInputs(terms);
+            RealValuedExpression[] inputs = findFunctionInputs(terms.subList(2, termsSize - 1)); // sublist is to remove function name and brackets
             resultingExpression = eb.constructExpression(terms.get(0), inputs, ax.getNamedExpressions());
         }
         else {
@@ -94,21 +94,30 @@ public class ExpressionCreator {
     private Expression<?> createOnOperators(List<String> terms, String operatorType) throws InvalidTermException {
         Expression<?> lExpr, rExpr;
         List<String> operators;
-
         switch (operatorType) {
-            case "Logical" -> operators = constants.getLogicalOperators();
-            case "Comparator" -> operators = constants.getComparators();
-            case "Arithmetic" -> operators = constants.getArithmeticOperators();
-            default -> throw new IllegalStateException("Unrecognized Operator Type!");
+            case "Logical":
+                operators = constants.getLogicalOperators();
+                break;
+            case "Comparator":
+                operators = constants.getComparators();
+                break;
+            case "Arithmetic":
+                operators = constants.getArithmeticOperators();
+                break;
+            default:
+                throw new IllegalStateException("Unrecognized Operator Type!");
         }
 
         Map<String, List<Integer>> operatorsAndIndices = vc.getOuterItems(terms, operators);
+
+        System.out.println(operatorType);
 
         for (String op : operators) {
             if (operatorsAndIndices.containsKey(op)) {
                 int opIndex = operatorsAndIndices.get(op).get(operatorsAndIndices.size() - 1);
                 List<String> leftTerms = terms.subList(0, opIndex);
                 List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
+
                 vc.operandsTypeCheck(leftTerms, operatorType, rightTerms);
                 try {
                     lExpr = create(leftTerms);
@@ -167,19 +176,18 @@ public class ExpressionCreator {
     }
 
     /**
-     * @param terms List of terms as accepted by create, assumed to be of the form [func, (, ..., )]
+     * @param terms List of terms that are the inputs to some function with the function name and brackets removed
      * @return A list of Expressions where each expression is an input to some function
      */
     private RealValuedExpression[] findFunctionInputs (List<String> terms) throws InvalidTermException {
-//        Map<String, List<Integer>> commaIndexMap = vc.getOuterItems(terms, List.of(","));
-        List<Integer> commaIndices = findCommaIndices(terms);
+        List<Integer> commaIndices = vc.getOuterItems(terms, List.of(",")).get(",");
         // we add the final index (corresponding to ')' )
         // this ensures that between every pair of indices in commaIndices
         // we have an input expression
-        commaIndices.add(terms.size() - 1); // TODO: Recheck Correctness (logical sense).
+        commaIndices.add(terms.size()); // TODO: Recheck Correctness (logical sense).
         RealValuedExpression[] inputs = new RealValuedExpression[commaIndices.size()];
         // start at 2 because first item if function name and second item is '('
-        int startInd = 2;
+        int startInd = 0;
 
         for (int i = 0; i < inputs.length; i++){
             try {
