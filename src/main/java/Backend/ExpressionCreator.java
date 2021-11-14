@@ -67,12 +67,17 @@ public class ExpressionCreator {
             String term = terms.get(0); //Its only one term.
             resultingExpression = eb.constructExpression(term); //create expression based on that term.
         }
-      
-        else if (funcMap.containsKey(terms.get(0)) &&
-                vc.enclosedByOuterBrackets(terms.subList(1, termsSize))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
-            RealValuedExpression[] inputs = findFunctionInputs(terms.subList(2, termsSize - 1)); // sublist is to remove function name and brackets
-            resultingExpression = eb.constructExpression(terms.get(0), inputs, funcMap);
+        else if (funcMap.containsKey(terms.get(0)) && // check if first term is a function call.
+                vc.enclosedByOuterBrackets(terms.subList(1, termsSize))) { //check if whole expression is one function.
+            // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case,
+            // where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
 
+
+            // We use sublist to remove function name and brackets. Construct a list of expressions, each corresponding
+            // to a function input.
+            RealValuedExpression[] inputs = findFunctionInputs(terms.subList(2, termsSize - 1));
+            //construct expression.
+            resultingExpression = eb.constructExpression(terms.get(0), inputs, funcMap);
         }
         else { //otherwise, there must be some operators within the function. We construct a new expression
             // by calling createOnOperators.
@@ -104,14 +109,16 @@ public class ExpressionCreator {
 
     /**
      *
-     * @param terms The list of terms that
-     * @param operatorType
-     * @return
-     * @throws InvalidTermException
+     * @param terms The list of terms as accepted by the create method.
+     * @param operatorType The type of operator we will be splitting <terms> based on. Can be "Logical" or "Comparator"
+     *                     or "Arithmetic"
+     * @return A RealValuedExpression if operatorType is "Arithmetic", a BooleanValuedExpression if operator is
+     * "Logical" or "Comparator". Both expressions returned represent <terms> in a valid format which can be graphed.
+     * @throws InvalidTermException If
      */
     private Expression<?> createOnOperators(List<String> terms, String operatorType) throws InvalidTermException {
-        Expression<?> lExpr, rExpr;
-        List<String> operators;
+        Expression<?> lExpr, rExpr; // initialise the expressions on the left and right of the operands.
+        List<String> operators; // List which will store the operators of type <operatorType>.
         switch (operatorType) {
             case "Logical":
                 operators = constants.getLogicalOperators();
@@ -122,27 +129,30 @@ public class ExpressionCreator {
             case "Arithmetic":
                 operators = constants.getArithmeticOperators();
                 break;
-            default:
+            default: // throw exception if <operatorType> is invalid.
                 throw new IllegalStateException("Unrecognized Operator Type!");
         }
-
+        //create a map of all operators of type <operatorType> that are not within any brackets, with the corresponding
+        // values being lists of the indices they appear at.
         Map<String, List<Integer>> operatorsAndIndices = vc.getOuterItems(terms, operators);
 
-
-        for (String op : operators) {
+        for (String op : operators) { // iterate through all operators of the correct type.
             if (operatorsAndIndices.containsKey(op)) {
-                List<Integer> indexList = operatorsAndIndices.get(op);
-                int opIndex = indexList.get(0);
-                List<String> leftTerms = terms.subList(0, opIndex);
+                List<Integer> indexList = operatorsAndIndices.get(op); // get the list of indices <op> appears at.
+                int opIndex = indexList.get(0); // focus on the first appearance.
+                List<String> leftTerms = terms.subList(0, opIndex); // split according to that appearance.
                 List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
 
-                vc.operandsTypeCheck(leftTerms, operatorType, rightTerms);
-                try {
+                vc.operandsTypeCheck(leftTerms, operatorType, rightTerms); //check if the type of operators in the rest
+                // of the expression match what is expected.
+                try {  // check if any issues arise from creating an expression from <leftTerms> and <rightTerms>.
                     lExpr = create(leftTerms);
                     rExpr = create(rightTerms);
-                } catch (BaseCaseCreatorException e) {
+                } catch (BaseCaseCreatorException e) { //throw an exception if either is invalid.
                     throw new CompoundCaseCreatorException("Invalid Operand Exception!");
                 }
+                // if both are valid, construct an expression tree with the root being <op>, left child being <lExpr>
+                // and right child being <rExpr>.
                 return eb.constructExpression(lExpr, op, rExpr, operatorType);
             }
         }
@@ -204,38 +214,44 @@ public class ExpressionCreator {
         return terms_copy;
     }
 
-    /**
-     * @param terms List of terms that are the inputs to some function with the function name and brackets removed
-     * @return A list of Expressions where each expression is an input to some function
+    /** A method which returns the list of expressions corresponding to the inputs of a function.
+     *
+     * @param terms List of terms that are the inputs to some function with the function name and brackets removed.
+     * @return A list of Expressions where each expression is a seperate input to the function.
      */
     private RealValuedExpression[] findFunctionInputs (List<String> terms) throws InvalidTermException {
-        List<Integer> commaIndices = vc.getOuterItems(terms, List.of(",")).get(",");
-        // we add the final index (corresponding to ')' )
-        // this ensures that between every pair of indices in commaIndices
-        // we have an input expression
+        List<Integer> commaIndices = vc.getOuterItems(terms, List.of(",")).get(","); //get list of the indices where
+        // commas appear outside of any brackets. These correspond to seperating the inoput for the function wer are
+        // calling this method for.
         if (commaIndices == null){
             commaIndices = new ArrayList<>();
         }
-        commaIndices.add(terms.size()); // TODO: Recheck Correctness (logical sense).
+        //
+        commaIndices.add(terms.size()); // Add the index of ")" that marks the end of the function input to ensure
+        // the last input to the function is considered in the following loop.
+        // TODO: Recheck Correctness (logical sense).
+        // for below, the number of commas outside brackets + 1 represents the number of inputs to the function, if
+        // the terms are in a valid format.
         RealValuedExpression[] inputs = new RealValuedExpression[commaIndices.size()];
-        // start at 2 because first item if function name and second item is '('
         int startInd = 0;
 
         for (int i = 0; i < inputs.length; i++){
+            // this list represents all terms within a pair of commas, thus representing one input to the function.
             List<String> inputTerm = terms.subList(startInd, commaIndices.get(i));
-            vc.realValuedPreconditionCheck(inputTerm);
-            try {
+            vc.realValuedPreconditionCheck(inputTerm); //check each input is a real valued expression.
+            try { // Ensure that each input can be constructed as an expression (otherwise its an invalid input).
                 RealValuedExpression inputExp = (RealValuedExpression) create(inputTerm);
                 /* Above: If two commas adjacent to each other (i.e. has nothing in between, then there will be
                    something like NullExpressionException (a BaseCaseException) thrown, but we should catch it!) */
 
-                inputs[i] = inputExp;
-                startInd = commaIndices.get(i) + 1;
+                inputs[i] = inputExp; // Add the expression for this input.
+                startInd = commaIndices.get(i) + 1; // Start looking at the next input.
             } catch (BaseCaseCreatorException e) {
                 throw new CompoundCaseCreatorException("InvalidFunctionInputsException!");
             }
         }
-
+        // All inputs have been transformed into expressions. All were created, therefore they are in a valid format.
+        // Return the list of expressions representing the input.
         return inputs;
     }
 
