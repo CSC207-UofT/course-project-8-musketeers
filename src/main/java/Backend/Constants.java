@@ -20,7 +20,7 @@ public class Constants {
             entry("sin", 1),
             entry("tan", 1),
             entry("sqrt", 1),
-            entry("mandel", 1)
+            entry("mandel", 2)
     );
 
 

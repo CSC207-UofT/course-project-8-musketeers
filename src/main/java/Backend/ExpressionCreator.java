@@ -200,7 +200,7 @@ public class ExpressionCreator {
      * is input, and ["cos","(","x",")"] is returned.
      */
     private List<String> bracketsReduction(List<String> terms) {
-        List<String> terms_copy = terms;
+        List<String> terms_copy = terms; // TODO: Not really copying, fix in future!!!!!!
         while (vc.enclosedByOuterBrackets(terms_copy)) {
             terms_copy = terms_copy.subList(1, terms_copy.size() - 1);
         }
