@@ -23,9 +23,9 @@ public class ExpressionCreator {
         this.vc = new ExpressionValidityChecker(funcMap);
     }
     // TODO: Remove this constructor
-    public ExpressionCreator(){
-        this((new Axes()).getNamedExpressions());
-    }
+//    public ExpressionCreator(){
+//        this((new Axes()).getNamedExpressions());
+//    }
 
     /* IMPORTANT FOR EVERYONE TO KNOW!!! ONLY "create" CAN CALL ITS TWO HELPERS BELOW!!! BECAUSE "create" IS THE
        COMPLETE VERSION OF CREATION AS IT HAS ALL CHECKER!!! */

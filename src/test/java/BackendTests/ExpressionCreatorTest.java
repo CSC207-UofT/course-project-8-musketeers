@@ -309,10 +309,14 @@ public class ExpressionCreatorTest {
         assertEquals(myFunc.evaluate(varMap), 1, delta);
     }
 
+
+
     @Test(timeout = 50)
     public void testCompositionOfCustomFunctions() throws InvalidTermException {
+        // Test fails because composition of functions hasn't been implemented properly yet,
+        // although the infrastructure for that is there
         Axes axes = new Axes();
-        ExpressionCreator ec2 = new ExpressionCreator();
+        ExpressionCreator ec2 = new ExpressionCreator(axes.getNamedExpressions());
 
         String funcName = "f";
         String[] variables = {"x"};
@@ -331,7 +335,6 @@ public class ExpressionCreatorTest {
         varMap.put("x", 2f);
         varMap.put("y", 3f);
         assertEquals(func2.evaluate(varMap), 6, delta);
-
 
         assertEquals(composeFunc.evaluate(varMap), 36, delta);
     }
