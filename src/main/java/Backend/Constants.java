@@ -17,7 +17,7 @@ public class Constants {
     private final List<String> ARITHMETICOPERATORS = new ArrayList<>(List.of(new String[]{"+", "-", "*", "/", "^"}));
     private final List<String> BOOLEANVALUEDOPERATORS = Stream.of(LOGICALOPERATORS, COMPARATORS).flatMap(Collection::stream).collect(Collectors.toList());
     private final List<String> BINARYOPERATORS = Stream.of(LOGICALOPERATORS, COMPARATORS, ARITHMETICOPERATORS).flatMap(Collection::stream).collect(Collectors.toList());
-    private final Map<String, Integer> BUILTINFUNCTIONSANDINPUTSIZES  = Map.ofEntries(
+    private final Map<String, Integer> BUILTINFUNCTIONSANDINPUTSIZES = Map.ofEntries(
             entry("cos", 1),
             entry("sin", 1),
             entry("tan", 1),
