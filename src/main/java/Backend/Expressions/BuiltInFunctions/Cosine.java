@@ -8,8 +8,8 @@ import java.util.Map;
 public class Cosine extends FunctionExpression { // TODO: Merge "cos", "sin", "tan"... (the similarly evaluated ones) to "SingleVariableFunctionExpression" or don't do that but created that as an abstract class anyway.
     // Only one input for cos of course
     // But the input can be an expression of any kind
-    public Cosine(RealValuedExpression[] inputs){
-        super("cos", inputs);
+    public Cosine(String[] variables){
+        super("cos", variables);
 
     }
 

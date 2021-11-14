@@ -1,8 +1,9 @@
 package Backend.Expressions;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public abstract class Expression<T> {
+public abstract class Expression<T> implements Serializable {
 
     // Expressions store their string representation
     private final String item;

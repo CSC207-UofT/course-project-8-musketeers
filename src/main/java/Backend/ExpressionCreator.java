@@ -15,6 +15,15 @@ public class ExpressionCreator {
     private final Constants constants = new Constants();
     private final ExpressionValidityChecker vc = new ExpressionValidityChecker();
     private final ExpressionBuilder eb = new ExpressionBuilder();
+    private Axes ax;
+
+    public ExpressionCreator(){
+        this.ax = new Axes();
+    }
+
+    public ExpressionCreator(Axes ax){
+        this.ax = ax;
+    }
 
     /* IMPORTANT FOR EVERYONE TO KNOW!!! ONLY "create" CAN CALL ITS TWO HELPERS BELOW!!! BECAUSE "create" IS THE
        COMPLETE VERSION OF CREATION AS IT HAS ALL CHECKER!!! */
@@ -55,7 +64,7 @@ public class ExpressionCreator {
         else if (constants.getBuiltInFunctions().contains(terms.get(0)) &&
                 vc.enclosedByOuterBrackets(terms.subList(1, termsSize))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
             RealValuedExpression[] inputs = findFunctionInputs(terms);
-            resultingExpression = eb.constructExpression(terms.get(0), inputs);
+            resultingExpression = eb.constructExpression(terms.get(0), inputs, ax.getNamedExpressions());
         }
         else {
             resultingExpression = (RealValuedExpression) createOnOperators(terms, operatorType);
@@ -162,6 +171,7 @@ public class ExpressionCreator {
      * @return A list of Expressions where each expression is an input to some function
      */
     private RealValuedExpression[] findFunctionInputs (List<String> terms) throws InvalidTermException {
+//        Map<String, List<Integer>> commaIndexMap = vc.getOuterItems(terms, List.of(","));
         List<Integer> commaIndices = findCommaIndices(terms);
         // we add the final index (corresponding to ')' )
         // this ensures that between every pair of indices in commaIndices

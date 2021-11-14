@@ -11,9 +11,10 @@ import java.util.Map;
 
 public class ExpressionValidityChecker {
     Constants constants;
-
+    List<String> funcs;
     public ExpressionValidityChecker() {
         this.constants = new Constants();
+        funcs.addAll(constants.getBuiltInFunctions());
     }
 
     public void preCheck(List<String> terms) throws InvalidTermException {
@@ -56,17 +57,17 @@ public class ExpressionValidityChecker {
     // Below method: First input is one (left or right) operand, and the second input is the operator type.
     public void operandsTypeCheck(List<String> leftTerms, String operatorType, List<String> rightTerms) throws CompoundCaseCreatorException {
         switch (operatorType) {
-            case "Logical" -> {
+            case "Logical": {
                 if (!(containsOperator(leftTerms, "Logical") || containsOperator(rightTerms, "Logical"))) {
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
             }
-            case "Comparator" -> {
+            case "Comparator": {
                 if (!(containsOperator(leftTerms, "Comparator") || containsOperator(rightTerms, "Comparator"))) {
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
             }
-            case "Arithmetic" -> {
+            case "Arithmetic": {
                 if (containsOperator(leftTerms, "Comparator") ||
                         containsOperator(leftTerms, "Logical") ||
                         containsOperator(rightTerms, "Comparator") ||
@@ -74,7 +75,8 @@ public class ExpressionValidityChecker {
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
             }
-            default -> throw new IllegalStateException("Unrecognized Operator Type!");
+            // In theory, this should be thrown
+            default: throw new IllegalStateException("Unrecognized Operator Type!");
         }
     }
 
@@ -122,7 +124,7 @@ public class ExpressionValidityChecker {
 
     // Below one helper's precondition: checkMatchingBrackets(terms) is true.
     private boolean checkFunctionBrackets(List<String> terms) { // TODO: Check correctness!
-        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, constants.getBuiltInFunctions().stream().toList());
+        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, funcs);
         for (List<Integer> indices: functionsAndIndexLists.values()) {
             for (Integer index: indices) {
                 // Below only checks for whether it's possible to have two brackets after the function, but doesn't care
@@ -138,14 +140,14 @@ public class ExpressionValidityChecker {
     }
 
     private boolean checkCommasWithinFunctions(List<String> terms) {
-        // RISHIBH'S ANOTHER GENIUS IDEA: just check whether there's any comma outside by using "getOuterItems".
         // TODO: WARNING: Be careful in future that a comma can be outside, or inside of function brackets, or inside of any other brackets...
         return getOuterItems(terms, List.of(new String[]{","})).isEmpty();
     }
 
     // TODO: Support User-Defined Functions!
     private boolean checkFunctionInputSize(List<String> terms) {
-        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, constants.getBuiltInFunctions().stream().toList());
+
+        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, funcs);
         List<String> functionInputTerms;
         Map<String, List<Integer>> commaAndIndexLists;
         int size;
@@ -280,14 +282,19 @@ public class ExpressionValidityChecker {
     public boolean containsOperator(List<String> terms, String operatorType) {
         List<String> operators; // TODO: Confirm with Rishibh whether we should have all constants in list form? Be careful if it is a Set in Constants.
         switch (operatorType) {
-            case "Logical" -> {
+            case "Logical": {
                 operators = constants.getLogicalOperators();
+                break;
             }
-            case "Comparator" -> {
+            case "Comparator": {
                 operators = constants.getComparators();
+                break;
             }
-            default -> throw new IllegalStateException("Unrecognized Operator Type!");
+            default:
+                // In theory this should really never be run, hence why we have a RunTimeException
+                throw new IllegalStateException("Unrecognized Operator Type!");
         }
+
         for (String term: terms) { // This way saves expected runtime by a lot!
             for (String op: operators) {
                 if (term.equals(op)) { // TODO: Recheck Java "equals" and "==".

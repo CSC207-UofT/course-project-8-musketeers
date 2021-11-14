@@ -1,15 +1,14 @@
 package Backend.Expressions.BuiltInFunctions;
 
 import Backend.Expressions.FunctionExpression;
-import Backend.Expressions.RealValuedExpression;
 
 import java.util.Map;
 
 public class Tangent extends FunctionExpression {
     // Only one input for cos of course
     // But the input can be an expression of any kind
-    public Tangent(RealValuedExpression[] inputs){
-        super("tan", inputs);
+    public Tangent(String[] variables){
+        super("tan", variables);
     }
 
     @Override

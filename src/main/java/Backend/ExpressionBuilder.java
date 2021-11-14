@@ -3,6 +3,8 @@ package Backend;
 import Backend.Expressions.*;
 import Backend.Expressions.BuiltInFunctions.*;
 
+import java.util.Map;
+
 public class ExpressionBuilder {
     private final Constants constants = new Constants();
 
@@ -31,17 +33,10 @@ public class ExpressionBuilder {
 
     // Below should construct functions (including build-in and user-defined functions)
     // TODO: Future: Include User-Defined Functions once we made it clear how we want to treat them. E.g. Where to store them and how to handle them...
-    public RealValuedExpression constructExpression(String funcName, RealValuedExpression[] inputs){
-        return switch (funcName) {
-            case "cos" -> new Cosine(inputs);
-            case "sin" -> new Sine(inputs);
-            case "tan" -> new Tangent(inputs);
-            case "sqrt" -> new SquareRoot(inputs);
-            case "mandel" -> new Mandel(inputs);
-            /* If our program is correct, below should never happen. */
-            default -> throw new IllegalStateException("Unrecognized function!");
-            // TODO: Recheck below default for future!
-            // default: return new CustomFunctionExpression()
-        };
+    public RealValuedExpression constructExpression(String funcName, RealValuedExpression[] inputs,
+                                                    Map<String, FunctionExpression> funcMap){
+        FunctionExpression func = funcMap.get(funcName);
+        func.setInputs(inputs);
+        return func;
     }
 }
