@@ -44,15 +44,6 @@ public class AxesTest {
     }
 
     @Test(timeout = 50)
-    public void testAxesCreation2(){
-        ax = new Axes(5, 6, 7);
-
-        assertEquals(ax.getScale(),5,0);
-        assertArrayEquals(ax.getOrigin(), new float[]{6, 7}, 0.0F);
-        assertEquals(ax.getExpressions(), new ArrayList<Expression>() {});
-    }
-
-    @Test(timeout = 50)
     public void testAxesSetOrigin(){
         assertArrayEquals(ax.getOrigin(), new float[]{0, 0}, 0.0F);
 
@@ -77,53 +68,53 @@ public class AxesTest {
         assertArrayEquals(ax2.getOrigin(), new float[]{1,0,-1}, 0);
     }
 
-
-    /**
-     * Test adding and removing expressions from the Axes
-     */
-    @Test(timeout = 50)
-    public void testAxesAddExpression(){
-        ax.addExpression(expr5);
-        ArrayList<Expression> eList = new ArrayList<>();
-        eList.add(expr5);
-        assertEquals(ax.getExpressions(), eList);
-    }
-
-    @Test(timeout = 50)
-    public void testAxesRemoveExpression(){
-        ax.addExpression(expr5);
-        ax.removeExpression(expr5);
-
-        ArrayList<Expression> eList = new ArrayList<>();
-
-        assertEquals(ax.getExpressions(), eList);
-    }
-
-    //Test what happens when we try to remove an expression that is not stored in axes
-    @Test(timeout = 50)
-    public void testAxesRemoveNonExistentExpression(){
-        ax.addExpression(expr5);
-
-        ArrayList<Expression> eList = new ArrayList<>();
-        eList.add(expr5);
-
-        ax.removeExpression(expr0);
-
-        assertEquals(ax.getExpressions(), eList);
-    }
-
-    @Test(timeout = 50)
-    public void testAxesAddCustomFunction(){
-        assertEquals(ax.getNamedExpressions().size(), 5);
-
-        ExpressionCreator ec = new ExpressionCreator(ax);
-        String funcName = "f";
-        String[] variables = {"x"};
-        Expression func = ec.create(List.of("x", "^", "2"));
-        FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
-        ax.addExpression(myFunc);
-
-        assertEquals(ax.getNamedExpressions().size(), 6);
-    }
+//
+//    /**
+//     * Test adding and removing expressions from the Axes
+//     */
+//    @Test(timeout = 50)
+//    public void testAxesAddExpression(){
+//        ax.addExpression(expr5);
+//        ArrayList<Expression> eList = new ArrayList<>();
+//        eList.add(expr5);
+//        assertEquals(ax.getExpressions(), eList);
+//    }
+//
+//    @Test(timeout = 50)
+//    public void testAxesRemoveExpression(){
+//        ax.addExpression(expr5);
+//        ax.removeExpression(expr5);
+//
+//        ArrayList<Expression> eList = new ArrayList<>();
+//
+//        assertEquals(ax.getExpressions(), eList);
+//    }
+//
+//    //Test what happens when we try to remove an expression that is not stored in axes
+//    @Test(timeout = 50)
+//    public void testAxesRemoveNonExistentExpression(){
+//        ax.addExpression(expr5);
+//
+//        ArrayList<Expression> eList = new ArrayList<>();
+//        eList.add(expr5);
+//
+//        ax.removeExpression(expr0);
+//
+//        assertEquals(ax.getExpressions(), eList);
+//    }
+//
+//    @Test(timeout = 50)
+//    public void testAxesAddCustomFunction(){
+//        assertEquals(ax.getNamedExpressions().size(), 5);
+//
+//        ExpressionCreator ec = new ExpressionCreator(ax);
+//        String funcName = "f";
+//        String[] variables = {"x"};
+//        Expression func = ec.create(List.of("x", "^", "2"));
+//        FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
+//        ax.addExpression(myFunc);
+//
+//        assertEquals(ax.getNamedExpressions().size(), 6);
+//    }
 
 }

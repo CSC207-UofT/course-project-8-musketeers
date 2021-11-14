@@ -3,15 +3,14 @@ import Backend.Exceptions.InvalidCommandArguments;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A Use Case class for Axes
- * Should be able to save instances of Axes and load saved Axes
- * file name will be passed from command line
+ * Responsible for changing attributes of axes
  */
 
 public class AxesUseCase {
-
     /**
      * Saves Axes ax to fileName
      * @param fileName  String representing name of file
@@ -20,7 +19,6 @@ public class AxesUseCase {
     public void saveAxes(String fileName, Axes ax) throws IOException {
         DataReadWriter d = new DataReadWriter();
         d.fileSave(fileName, ax);
-
     }
 
     /**
@@ -31,6 +29,8 @@ public class AxesUseCase {
         DataReadWriter d = new DataReadWriter();
         return d.fileRead(fileName);
     }
+
+
 
     /**
      * methods to get and/or change Axes attributes
@@ -55,15 +55,27 @@ public class AxesUseCase {
     }
 
     public void addExpression(Expression expr, Axes ax){
-        ax.addExpression(expr);
+        List<Expression> list1 = ax.getExpressions();
+        list1.add(expr);
+        ax.setExpressions(list1);
+        if (expr instanceof FunctionExpression){
+            Map<String, FunctionExpression> namedExpressions = ax.getNamedExpressions();
+            namedExpressions.put(expr.getItem(), (FunctionExpression) expr);
+            ax.setNamedExpressions(namedExpressions);
+        }
     }
 
-    public void removeExpression(Expression expr, Axes ax){ax.removeExpression(expr);}
+    public void removeExpression(Expression expr, Axes ax){
+        List<Expression> list1 = ax.getExpressions();
+        list1.remove(expr);
+        ax.setExpressions(list1);
+        Map<String, FunctionExpression> namedExpressions = ax.getNamedExpressions();
 
+        if (namedExpressions.containsKey(expr.getItem())){
+            namedExpressions.remove(expr.getItem(), (FunctionExpression) expr);
+        }
+        ax.setNamedExpressions(namedExpressions);
 
-
-
-
-
+    }
 
 }

@@ -1,8 +1,8 @@
 package Graphics;
 
 import static Graphics.ImageTest.*;
-import static Graphics.RGBA.fmtHex255;
 
+import Backend.AxesUseCase;
 import Backend.Expression;
 import Backend.Axes;
 import Backend.ExpressionReader;
@@ -24,7 +24,8 @@ public class ExplicitGrapher {
 
         //Expression func = er.read("( cos ( x * y ) + sin ( x + y ) ) * 0.8 - 0.1");
         Expression func = er.read("sin ( x ) + 3.14");
-        axes.addExpression(func);
+        AxesUseCase aUseCase = new AxesUseCase();
+        aUseCase.addExpression(func, axes); // Changed this line so that axes use case does the changing - Andrew
         graphExplicit(mainPixels, dims1[0], dims1[1], axes, false);
         writeImage(mainPixels, dims1[0], dims1[1], "sampleOutHmm.png");
         System.out.println("...Done!");

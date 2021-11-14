@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.Map.entry;
-import Backend.Exceptions.InvalidCommandArguments;
+//import Backend.Exceptions.InvalidCommandArguments;
 
 
 /**
@@ -23,30 +23,17 @@ import Backend.Exceptions.InvalidCommandArguments;
 
 public class Axes implements Serializable {
     private float scale;
-    private float dimensionSize;
     private float[] origin;
-    private final List<Expression> exprCollection;
-    private final Map<String, FunctionExpression> namedExpressions = initialNamedExpressions();
+    private List<Expression> exprCollection;
+    private Map<String, FunctionExpression> namedExpressions = initialNamedExpressions();
 
     //Constructors
     public Axes(){
         this.scale = 1;
-        this.dimensionSize = 2;
         this.origin = new float[2];
         this.exprCollection = new ArrayList<>();
     }
 
-    /**
-     * Constructor that accepts 3 floats as input
-     * @param a The Scale of Axes
-     * @param b The x coordinate of the origin
-     * @param c The y coordinate of the origin
-     */
-    public Axes(float a, float b, float c){
-        this.scale = a;
-        this.origin = new float[]{b, c};
-        this.exprCollection = new ArrayList<>();
-    }
 
     /** This is just to find what our initial named functions are, i.e. the ones that are builtin
      * @return A map between the name of a function and the corresponding expression
@@ -70,7 +57,6 @@ public class Axes implements Serializable {
      */
     public Axes(float a, float[] origin){
         this.scale = a;
-        this.dimensionSize = origin.length;
         this.origin = origin;
         this.exprCollection = new ArrayList<>();
     }
@@ -94,9 +80,10 @@ public class Axes implements Serializable {
     public List<Expression> getExpressions(){
         return this.exprCollection;
     }
-//    public void setExpressions(List<Expression> newCollection){
-//
-//    }
+    public void setExpressions(List<Expression> newCollection){
+        this.exprCollection = newCollection;
+
+    }
 
     public void addExpression(Expression expr){
         this.exprCollection.add(expr);
@@ -116,6 +103,9 @@ public class Axes implements Serializable {
     }
 
     public Map<String, FunctionExpression> getNamedExpressions() {
-        return namedExpressions;
+        return this.namedExpressions;
+    }
+    public void setNamedExpressions(Map<String, FunctionExpression> newList) {
+        this.namedExpressions = newList;
     }
 }
