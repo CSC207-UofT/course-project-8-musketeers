@@ -1,5 +1,6 @@
 package BackendTests;
 
+import Backend.Axes;
 import Backend.Exceptions.InvalidTermException;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,13 +15,14 @@ import Backend.Expressions.*;
 
 public class ExpressionReaderTest {
 
+    Axes ax = new Axes();
     ExpressionReader er;
     Map<String, Float> varMap = new HashMap<>();
     double delta = Math.pow(10, -5);
 
     @Before
     public void setUp(){
-        er = new ExpressionReader();
+        er = new ExpressionReader(ax.getNamedExpressions());
     }
 
     @Test(timeout = 50)

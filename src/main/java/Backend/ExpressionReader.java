@@ -2,29 +2,22 @@ package Backend;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import Backend.Exceptions.InvalidTermException;
-import Backend.Expressions.BooleanValuedExpression;
-import Backend.Expressions.Expression;
-import Backend.Expressions.RealValuedExpression;
+import Backend.Expressions.*;
 import Graphics.ImplicitGrapher;
 
 import static Graphics.ImageTest.writeImage;
 
 public class ExpressionReader {
     private final Constants constants = new Constants();
-    private final Axes ax;
     private final ExpressionCreator ec;
     private final ExpressionValidityChecker vc;
 
-    public ExpressionReader(Axes ax){
-        this.ax = ax;
-        this.ec = new ExpressionCreator(ax);
-        this.vc = new ExpressionValidityChecker(ax.getNamedExpressions().keySet());
-    }
-
-    public ExpressionReader(){
-        this(new Axes());
+    public ExpressionReader(Map<String, FunctionExpression> funcMap) {
+        this.ec = new ExpressionCreator(funcMap);
+        this.vc = new ExpressionValidityChecker(funcMap);
     }
 
     // TODO: Update below method documentation!
@@ -57,7 +50,6 @@ public class ExpressionReader {
     // some exception will be thrown.
     // E.g. "x = 4" is acceptable; "x^2 + y" will evoke some exceptions.
     private BooleanValuedExpression booleanValuedRead(List<String> terms) throws InvalidTermException {
-        ExpressionCreator ec = new ExpressionCreator(ax);
         return (BooleanValuedExpression) ec.create(terms);
     }
 
@@ -255,12 +247,13 @@ public class ExpressionReader {
     // mandel ( (x^2 - y^2 ) / (x^2 + y^2)^2 , (0 - 2 * x * y) / (x^2 + y^2)^2 )
     public static void main(String[] args) throws Exception {
         Axes axes = new Axes();
+        AxesUseCase auc = new AxesUseCase();
         int size = 512;
         int[] mainPixels = new int[size*size];
         int[] dims1 = {size,size};
 
-        ExpressionReader er = new ExpressionReader();
-        String test = "mandel ((x^2 - y^2 ) / (x^2 + y^2)^2 , (0 - 2 * x * y) / (x^2 + y^2)^2 )";
+        ExpressionReader er = new ExpressionReader(auc.getNamedFunctions(axes));
+        String test = "mandel(x, y)";
 
         // TODO: Use Wildcard or Casting... As we know the type beforehand!
 

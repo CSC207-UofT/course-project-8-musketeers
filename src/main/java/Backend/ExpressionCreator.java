@@ -14,16 +14,17 @@ public class ExpressionCreator {
 
     private final Constants constants = new Constants();
     private final ExpressionBuilder eb = new ExpressionBuilder();
-    private final Axes ax;
     private final ExpressionValidityChecker vc;
-    // TODO: We can likely use Observer Design Pattern to remove dependency on Axes
+    private final Map<String, FunctionExpression> funcMap;
+    // TODO: We can likely use Observer Design Pattern to have funcMap be updated automatically when new functions are added to Axes
 
-    public ExpressionCreator(Axes ax){
-        this.ax = ax;
-        this.vc = new ExpressionValidityChecker(ax.getNamedExpressions().keySet());
+    public ExpressionCreator(Map<String, FunctionExpression> funcMap){
+        this.funcMap = funcMap;
+        this.vc = new ExpressionValidityChecker(funcMap);
     }
+    // TODO: Remove this constructor
     public ExpressionCreator(){
-        this(new Axes());
+        this((new Axes()).getNamedExpressions());
     }
 
     /* IMPORTANT FOR EVERYONE TO KNOW!!! ONLY "create" CAN CALL ITS TWO HELPERS BELOW!!! BECAUSE "create" IS THE
@@ -61,10 +62,10 @@ public class ExpressionCreator {
             String term = terms.get(0);
             resultingExpression = eb.constructExpression(term);
         }
-        else if (ax.getNamedExpressions().containsKey(terms.get(0)) &&
+        else if (funcMap.containsKey(terms.get(0)) &&
                 vc.enclosedByOuterBrackets(terms.subList(1, termsSize))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
             RealValuedExpression[] inputs = findFunctionInputs(terms.subList(2, termsSize - 1)); // sublist is to remove function name and brackets
-            resultingExpression = eb.constructExpression(terms.get(0), inputs, ax.getNamedExpressions());
+            resultingExpression = eb.constructExpression(terms.get(0), inputs, funcMap);
         }
         else {
             resultingExpression = (RealValuedExpression) createOnOperators(terms, operatorType);
