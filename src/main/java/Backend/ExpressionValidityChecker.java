@@ -217,7 +217,7 @@ public class ExpressionValidityChecker {
         for (List<Integer> indices: functionsAndIndexLists.values()) {
             for (Integer index: indices) {
                 //Get the list representing the scope of the function.
-                functionInputTerms = terms.subList(index + 1, findCorrespondingBracket(terms, index + 1) + 1);
+                functionInputTerms = terms.subList(index + 2, findCorrespondingBracket(terms, index + 1));
 
                 if (getOuterItems(functionInputTerms, List.of(new String[]{","})).size() == 0) { //if no "," appear
                     // within the input of the function that are outside all brackets within the function,

@@ -260,7 +260,7 @@ public class ExpressionReader {
         int[] dims1 = {size,size};
 
         ExpressionReader er = new ExpressionReader();
-        String test = "mandel ((x^2 - y^2 ) / (x^2 + y^2)^2 , (0 - 2 * x * y) / (x^2 + y^2)^2 )";
+        String test = "mandel(x, y)";
 
         // TODO: Use Wildcard or Casting... As we know the type beforehand!
 
