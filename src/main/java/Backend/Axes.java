@@ -85,22 +85,22 @@ public class Axes implements Serializable {
 
     }
 
-    public void addExpression(Expression expr){
-        this.exprCollection.add(expr);
-
-        // if a user adds a named function, we want to add it our collection
-        if (expr instanceof FunctionExpression){
-            namedExpressions.put(expr.getItem(), (FunctionExpression) expr);
-        }
-    }
-
-    public void removeExpression(Expression expr){
-        this.exprCollection.remove(expr);
-
-        if (namedExpressions.containsKey(expr.getItem())){
-            namedExpressions.remove(expr.getItem(), (FunctionExpression) expr);
-        }
-    }
+//    public void addExpression(Expression expr){
+//        this.exprCollection.add(expr);
+//
+//        // if a user adds a named function, we want to add it our collection
+//        if (expr instanceof FunctionExpression){
+//            namedExpressions.put(expr.getItem(), (FunctionExpression) expr);
+//        }
+//    }
+//
+//    public void removeExpression(Expression expr){
+//        this.exprCollection.remove(expr);
+//
+//        if (namedExpressions.containsKey(expr.getItem())){
+//            namedExpressions.remove(expr.getItem(), (FunctionExpression) expr);
+//        }
+//    }
 
     public Map<String, FunctionExpression> getNamedExpressions() {
         return this.namedExpressions;

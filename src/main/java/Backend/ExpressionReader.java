@@ -244,6 +244,7 @@ public class ExpressionReader {
     // mandel ( (x^2 - y^2 ) / (x^2 + y^2)^2 , (0 - 2 * x * y) / (x^2 + y^2)^2 )
     public static void main(String[] args) throws Exception {
         Axes axes = new Axes();
+        AxesUseCase auc = new AxesUseCase();
         int size = 512;
         int[] mainPixels = new int[size*size];
         int[] dims1 = {size,size};
@@ -257,10 +258,10 @@ public class ExpressionReader {
         String par = "hi(-+x)";
         System.out.println(er.expressionParser(par));
         Expression func = er.read(test);
-        axes.addExpression(func);
-        axes.setScale(4f);
+        auc.addExpression(func, axes);
+        auc.setScale(4f, axes);
         float[] pos = {0.f, 0.f};
-        axes.setOrigin(pos);
+        auc.setOrigin(pos, axes);
 
         ImplicitGrapher.graphImplicit(mainPixels, dims1[0], dims1[1], axes, true);
 

@@ -309,19 +309,20 @@ public class ExpressionCreatorTest {
     @Test(timeout = 50)
     public void testCompositionOfCustomFunctions(){
         Axes axes = new Axes();
+        AxesUseCase auc = new AxesUseCase();
         ExpressionCreator ec2 = new ExpressionCreator();
 
         String funcName = "f";
         String[] variables = {"x"};
         Expression func = ec2.create(List.of("x", "^", "2"));
         FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
-        axes.addExpression(myFunc);
+        auc.addExpression(myFunc, axes);
 
         String funcName2 = "g";
         String[] variables2 = {"x", "y"};
         Expression func2 = ec2.create(List.of("x", "*", "y"));
         FunctionExpression myFunc2 = new CustomFunctionExpression(funcName2, variables2, func2);
-        axes.addExpression(myFunc2);
+        auc.addExpression(myFunc2, axes);
 
         ExpressionReader er2 = new ExpressionReader(axes);
         Expression composeFunc = er2.read("f(g(x, y))");

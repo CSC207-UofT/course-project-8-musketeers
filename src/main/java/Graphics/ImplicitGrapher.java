@@ -3,6 +3,7 @@ package Graphics;
 import static Graphics.ImageTest.*;
 import static Graphics.RGBA.fmtHex255;
 
+import Backend.AxesUseCase;
 import Backend.Expression;
 import Backend.Axes;
 import Backend.ExpressionReader;
@@ -16,21 +17,22 @@ enum GraphType {
 
 public class ImplicitGrapher {
 
-   public static void main(String args[]) throws Exception {
+   public static void main(String[] args) throws Exception {
       int size = 256;
       int[] mainPixels = new int[size*size];
       int[] dims1 = {size,size};
 
 
       Axes axes = new Axes();
-      axes.setScale(2f);
+      AxesUseCase auc = new AxesUseCase();
+      auc.setScale(2f, axes);
       float[] pos = {-0.8f, 0.f};
-      axes.setOrigin(pos);
+      auc.setOrigin(pos, axes);
       ExpressionReader er = new ExpressionReader(axes);
 
       //Expression func = er.read("( cos ( x * y ) + sin ( x + y ) ) * 0.8 - 0.1");
       Expression func = er.read("mandel ( x , y ) - 1 / 4");
-      axes.addExpression(func);
+      auc.addExpression(func, axes);
       graphImplicit(mainPixels, dims1[0], dims1[1], axes, GraphType.BOUNDARY);
       writeImage(mainPixels, dims1[0], dims1[1], "sampleOutHmm.png");
       System.out.println("...Done!");

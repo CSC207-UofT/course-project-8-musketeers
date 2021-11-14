@@ -3,13 +3,14 @@ package Graphics;
 import static Graphics.ImageTest.*;
 import static Graphics.ImplicitGrapher.*;
 
+import Backend.AxesUseCase;
 import Backend.Expression;
 import Backend.Axes;
 import Backend.ExpressionReader;
 
 public class AxesDrawer {
 
-   public static void main(String args[]) throws Exception {
+   public static void main(String[] args) throws Exception {
      int size = 256;
      int[] mainPixels = new int[size*size];
      int[] dims1 = {size,size};
@@ -19,13 +20,14 @@ public class AxesDrawer {
      float ypos = 0.f;
 
      Axes axes = new Axes();
-     axes.setScale(scale);
+     AxesUseCase auc = new AxesUseCase();
+     auc.setScale(scale, axes);
      float[] pos = {xpos, ypos};
-     axes.setOrigin(pos);
+     auc.setOrigin(pos, axes);
      ExpressionReader er = new ExpressionReader();
 
      Expression func = er.read("mandel ( x , y )");
-     axes.addExpression(func);
+     auc.addExpression(func, axes);
 
      graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
      drawAxes(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
