@@ -101,6 +101,8 @@ public class ExpressionCreator {
         resultingExpression = (BooleanValuedExpression) createOnOperators(unchainedTerms, operatorType);
 
         return resultingExpression;
+
+
     }
 
     /**

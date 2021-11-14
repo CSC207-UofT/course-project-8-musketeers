@@ -73,7 +73,7 @@ public class ExpressionValidityChecker {
                 }
                 break;
             }
-            case "Arithmetic", "Comparator": {
+            case "Arithmetic": case "Comparator": {
                 if (toCheck) {
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
@@ -268,7 +268,7 @@ public class ExpressionValidityChecker {
             if (bracketCounter == 0){ // This means we are outside any brackets.
                 // check if <term> is in <items> and if it isnt already in <itemsAndIndices>
                 if (items.contains(term) && !itemsAndIndices.containsKey(term)) {
-                    itemsAndIndices.put(term, List.of(i)); // Add <term> to the map, along with the index it appears at.
+                    itemsAndIndices.put(term, new ArrayList<>(List.of(i))); // Add <term> to the map, along with the index it appears at.
                 }
                 // If <term> is in <items> and is a key in <itemsAndIndices>, append the list of indices (its value).
                 else if (items.contains(term) && itemsAndIndices.containsKey(term)) {
