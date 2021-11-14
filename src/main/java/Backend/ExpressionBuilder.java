@@ -1,56 +1,45 @@
 package Backend;
 
-import java.util.List;
-import java.util.Map;
+import Backend.Expressions.*;
+import Backend.Expressions.BuiltInFunctions.*;
 
-import Backend.BuiltinExpressions.*;
+import java.util.Map;
 
 public class ExpressionBuilder {
     private final Constants constants = new Constants();
 
-    public ExpressionBuilder(){}
-
-    public Expression constructExpression(String input){
+    // Below base case: Construct Number or Variable.
+    public RealValuedExpression constructExpression(String input){
         if (this.constants.getVariables().contains(input)){
             return new VariableExpression(input);
         }
         else return new NumberExpression(input);
     }
 
-    public Expression constructExpression(Expression lExpression, String op, Expression rExpression){
-        if (this.constants.getOperators().contains(op)){
-            return new OperatorExpression(op, lExpression, rExpression);
-        }
+    // Below construct with (binary) operators.
+    public Expression<?> constructExpression(Expression<?> lExpression, String op, Expression<?> rExpression, String operatorType){
 
-        if (this.constants.getLogicalOperators().contains(op)){
-            return new LogicalOperatorExpression(op, lExpression, rExpression);
+        switch (operatorType) {
+            case "Logical":
+                return new LogicalOperatorExpression(op, (BooleanValuedExpression) lExpression,
+                    (BooleanValuedExpression) rExpression);
+            case "Comparator":
+                return new ComparatorExpression(op, (RealValuedExpression) lExpression,
+                    (RealValuedExpression) rExpression);
+            case "Arithmetic":
+                return new ArithemeticOperatorExpression(op, (RealValuedExpression) lExpression,
+                    (RealValuedExpression) rExpression);
+            // If our program is correct, below should never happen.
+            default:
+                throw new IllegalStateException("Unrecognized Operator Type!");
+            // TODO: Above: IllegalStateException or IllegalArgumentException? Java automatically defaults "IllegalStateException" so...
         }
-
-        // This is the case where the user has not inputted a valid op String.
-        // TODO: use a better error return Expression
-        return new NumberExpression("5");
     }
 
-    /**
-     * This method currently only constructs comparator expressions.
-     *
-     * @param expressions The
-     * @param ops
-     * @return
-     */
-    public Expression constructExpression(List<Expression> expressions, List<String> ops){
-        return new ComparatorExpression(expressions, ops);
-    }
-
-    /** Used to build FunctionExpression like cos, sin or user-defined functions.
-     * Also allows us to incorporate composition of functions (e.g. f(2x)) using the inputs parameter
-     * @param funcName The name of a function
-     * @param inputs The inputs to the function, likely to be variables but could be more complex
-     * @param funcMap A map between the names of functions and their corresponding Expressions
-     * @return Returns an expression of the corresponding where the inputs are as given
-     */
-    public Expression constructExpression(String funcName, Expression[] inputs,
-                                          Map<String, FunctionExpression> funcMap){
+    // Below should construct functions (including build-in and user-defined functions)
+    // TODO: Future: Include User-Defined Functions once we made it clear how we want to treat them. E.g. Where to store them and how to handle them...
+    public RealValuedExpression constructExpression(String funcName, RealValuedExpression[] inputs,
+                                                    Map<String, FunctionExpression> funcMap){
         FunctionExpression func = funcMap.get(funcName);
         func.setInputs(inputs);
         return func;

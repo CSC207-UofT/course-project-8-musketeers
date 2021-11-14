@@ -1,18 +1,17 @@
-package Backend.BuiltinExpressions;
+package Backend.Expressions.BuiltInFunctions;
 
-import Backend.Expression;
-import Backend.FunctionExpression;
+import Backend.Expressions.FunctionExpression;
+import Backend.Expressions.RealValuedExpression;
 
 import java.util.Map;
 
-public class MandelExpression extends FunctionExpression {
-
-    public MandelExpression(String[] variables){
+public class Mandel extends FunctionExpression {
+    public Mandel(String[] variables){
         super("mandel", variables);
     }
 
     @Override
-    public float evaluate(Map<String, Float> arguments) {
+    public Float evaluate(Map<String, Float> arguments) {
         float cx = getInputs()[0].evaluate(arguments);
         float cy = getInputs()[1].evaluate(arguments);
 

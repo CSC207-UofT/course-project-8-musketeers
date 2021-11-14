@@ -1,51 +1,65 @@
 package Backend;
 
+import java.util.ArrayList;
+import java.util.List;
 
-import java.util.*;
-
-
+import Backend.Exceptions.InvalidTermException;
+import Backend.Expressions.BooleanValuedExpression;
+import Backend.Expressions.Expression;
+import Backend.Expressions.RealValuedExpression;
 import Graphics.ImplicitGrapher;
 
 import static Graphics.ImageTest.writeImage;
 
-// TODO: for now Backend.ExpressionReader.read assumes that there are spaces between the necessary
-// characters. Also Backend.ExpressionCreator assumes that all the brackets are appropriately
-// placed. Might want to add a check for that
-
 public class ExpressionReader {
     private final Constants constants = new Constants();
-    private final Axes axes;
+    private final Axes ax;
+    private final ExpressionCreator ec;
+    private final ExpressionValidityChecker vc;
+
+    public ExpressionReader(Axes ax){
+        this.ax = ax;
+        this.ec = new ExpressionCreator(ax);
+        this.vc = new ExpressionValidityChecker(ax.getNamedExpressions().keySet());
+    }
 
     public ExpressionReader(){
-        this.axes = new Axes();
-    }
-    public ExpressionReader(Axes axes){
-        this.axes = axes;
+        this(new Axes());
     }
 
-    /** Converts a string representation of an expression into an instance of Backend.Expression
+    // TODO: Update below method documentation!
+    /** Converts a string representation of an expression into an instance of Backend.Expressions.Expression
      * @param expression The string representation of the expression to be converted
-     * @return Backend.Expression object for the string provided
+     * @return Backend.Expressions.Expression object for the string provided
      */
     // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
     // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
     // e.g. cos(x) -> ["cos", "(", "x", ")"]
-    public Expression read(String expression){
-        ExpressionCreator ec = new ExpressionCreator(axes);
-
-        List<String> expressionList = expressionParser(expression);
-        int equalsIndex = expressionList.indexOf("=");
-
-        if (equalsIndex > 0) {
-            return ec.create(expressionList.subList(equalsIndex + 1, expressionList.size()));
+    public Expression<?> read(String expression) throws InvalidTermException {
+        List<String> terms = expressionParser(expression);
+        // TODO: Below is to use helpers "containsLogicalOperator" and "containsComparator" for now. In future we'll find another way to use this helper.
+        if (vc.containsOperator(terms, "Logical") || vc.containsOperator(terms, "Comparator")) {
+            return booleanValuedRead(terms);
         }
-        else{
-            return ec.create(expressionList);
+        else {
+            return realValuedRead(terms);
         }
     }
 
+    // Below precondition: Should be real-valued expressions, so if there's logicals or comparators, then some exception
+    // will be thrown, or program crashes, depends.. //
+    // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
+    private RealValuedExpression realValuedRead(List<String> terms) throws InvalidTermException {
+        return (RealValuedExpression) ec.create(terms);
+    }
 
-
+    // Below precondition: Should be boolean-valued expressions, so if there's no logicals or comparators at all, then
+    // some exception will be thrown.
+    // E.g. "x = 4" is acceptable; "x^2 + y" will evoke some exceptions.
+    private BooleanValuedExpression booleanValuedRead(List<String> terms) throws InvalidTermException {
+        ExpressionCreator ec = new ExpressionCreator(ax);
+        return (BooleanValuedExpression) ec.create(terms);
+    }
 
     /** expressionParser takes an input string and parses it to form a list. If given valid input, it will form
      * a list that gives us the corresponding valid expression tree.
@@ -182,12 +196,10 @@ public class ExpressionReader {
     private void replaceUnaryOperatorsWithOne(int i, List<String> parsed) {
         // specialcharacters will contain all characters where, if "-" or "+" appear after, they are used in
         // unary context.
-        List<String> specialcharacters = constants.getOperators();
-        specialcharacters.addAll(constants.getComparators());
-        specialcharacters.addAll(constants.getLogicalOperators());
+        List<String> specialcharacters = constants.getAllOperators();
         specialcharacters.remove("/"); // The case where we have ??/-??" in the code is bad habit. We are enforcing
-                                          // rule that we are not responsible for the interpretation of it. So
-                                            // we remove "/"/
+        // rule that we are not responsible for the interpretation of it. So
+        // we remove "/"/
         specialcharacters.remove("^"); // Same for "??^-??"
         specialcharacters.add("(");
         // If the previous element of the parsed list is special, we interpet the operator as unary.
@@ -228,7 +240,7 @@ public class ExpressionReader {
             if ((current.toString().equals("<") || current.toString().equals(">")) && parsed.get(i+1).equals("=")) {
                 concatenateOperators(parsed, current, i);
             }
-        size = parsed.size();
+            size = parsed.size();
         }
     }
 
@@ -239,7 +251,6 @@ public class ExpressionReader {
         parsed.add(i, current.toString());
     }
 
-
     // Try "( x ^ 2 + y ^ 2 - 1 ) ^ 3 - x ^ 2 * y ^ 3"!
     // mandel ( (x^2 - y^2 ) / (x^2 + y^2)^2 , (0 - 2 * x * y) / (x^2 + y^2)^2 )
     public static void main(String[] args) throws Exception {
@@ -248,15 +259,12 @@ public class ExpressionReader {
         int[] mainPixels = new int[size*size];
         int[] dims1 = {size,size};
 
-        ExpressionReader er = new ExpressionReader(axes);
+        ExpressionReader er = new ExpressionReader();
+        String test = "x + y";
 
-        System.out.println("Please ensure that each 'unit' of information in" +
-                " the input is spaced out:");
-        System.out.println("e.g. \"cos ( x + y ) - sin ( x * y )\" or \"( x + y ) ^ 2 - 3\"");
-        String test = "y - sqrt(x)";
-        String par = "hi(-+x)";
-        System.out.println(er.expressionParser(par));
-        Expression func = er.read(test);
+        // TODO: Use Wildcard or Casting... As we know the type beforehand!
+
+        RealValuedExpression func = (RealValuedExpression) er.read(test);
         axes.addExpression(func);
         axes.setScale(4f);
         float[] pos = {0.f, 0.f};
