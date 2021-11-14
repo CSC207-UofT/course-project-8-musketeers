@@ -1,5 +1,4 @@
 package Backend;
-import Backend.DataReadWriter;
 import Backend.Exceptions.InvalidCommandArguments;
 
 import java.io.IOException;
@@ -8,22 +7,34 @@ import java.util.List;
 /**
  * A Use Case class for Axes
  * Should be able to save instances of Axes and load saved Axes
- * file name will be provided from command line
+ * file name will be passed from command line
  */
 
 public class AxesUseCase {
 
-
+    /**
+     * Saves Axes ax to fileName
+     * @param fileName  String representing name of file
+     * @param ax  instance of axes to be saved
+     */
     public void saveAxes(String fileName, Axes ax) throws IOException {
         DataReadWriter d = new DataReadWriter();
         d.fileSave(fileName, ax);
 
     }
+
+    /**
+     * @param fileName  Name of file to deserialize
+     * @return  an instance of Axes
+     */
     public Axes loadAxes(String fileName) throws IOException, ClassNotFoundException {
         DataReadWriter d = new DataReadWriter();
         return d.fileRead(fileName);
     }
 
+    /**
+     * methods to get and/or change Axes attributes
+     */
     public float getScale(Axes ax){return ax.getScale();}
 
     public void setScale(float scale, Axes ax) throws InvalidCommandArguments {
