@@ -54,24 +54,20 @@ public class ExpressionValidityChecker {
 
     // Below method: First input is one (left or right) operand, and the second input is the operator type.
     public void operandsTypeCheck(List<String> leftTerms, String operatorType, List<String> rightTerms) throws CompoundCaseCreatorException {
+        boolean toCheck = (containsOperator(leftTerms, "Comparator") ||
+                containsOperator(leftTerms, "Logical") ||
+                containsOperator(rightTerms, "Comparator") ||
+                containsOperator(rightTerms, "Logical"));
+
         switch (operatorType) {
             case "Logical": {
-                if (!(containsOperator(leftTerms, "Logical") || containsOperator(rightTerms, "Logical"))) {
+                if (!toCheck){
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
                 break;
             }
-            case "Comparator": {
-                if (!(containsOperator(leftTerms, "Comparator") || containsOperator(rightTerms, "Comparator"))) {
-                    throw new CompoundCaseCreatorException("OperandTypeException!");
-                }
-                break;
-            }
-            case "Arithmetic": {
-                if (containsOperator(leftTerms, "Comparator") ||
-                        containsOperator(leftTerms, "Logical") ||
-                        containsOperator(rightTerms, "Comparator") ||
-                        containsOperator(rightTerms, "Logical")) {
+            case "Arithmetic", "Comparator": {
+                if (toCheck) {
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
                 break;
@@ -248,7 +244,7 @@ public class ExpressionValidityChecker {
         throw new IllegalArgumentException("Precondition Violated When Finding The Corresponding Bracket!");
     }
 
-    public boolean enclosedByOuterBrackets(List<String> terms){ // TODO: Could have used "fidnCorrespondingBracket" to improve readability but unsure if it's a good thing to exert precondition (that checkMatchingBrackets(terms) evaluates to true)).
+    public boolean enclosedByOuterBrackets(List<String> terms){ // TODO: Could have used "findCorrespondingBracket" to improve readability but unsure if it's a good thing to exert precondition (that checkMatchingBrackets(terms) evaluates to true)).
 
         if (terms.size() <= 1){
             return false;
