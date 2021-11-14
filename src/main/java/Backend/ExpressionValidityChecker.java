@@ -84,7 +84,7 @@ public class ExpressionValidityChecker {
 
     private boolean checkNumber(String term) { // TODO: Is this good practice by using RuntimeException?
         try {
-            Double num = Double.parseDouble(term); // Just check for whether "term" represents a number.
+            Float.parseFloat(term); // Just check for whether "term" represents a number.
             return true;
         } catch (NumberFormatException e) {
             return false;
@@ -208,7 +208,7 @@ public class ExpressionValidityChecker {
 
             if (bracketCounter == 0){
                 if (items.contains(term) && !operatorsAndIndices.containsKey(term)) {
-                    operatorsAndIndices.put(term, List.of(i));
+                    operatorsAndIndices.put(term, new ArrayList<>(List.of(i)));
                 }
                 else if (items.contains(term) && operatorsAndIndices.containsKey(term)) {
                     operatorsAndIndices.get(term).add(i);

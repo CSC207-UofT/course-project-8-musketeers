@@ -110,15 +110,15 @@ public class ExpressionCreator {
 
         Map<String, List<Integer>> operatorsAndIndices = vc.getOuterItems(terms, operators);
 
-        System.out.println(operatorType);
 
         for (String op : operators) {
             if (operatorsAndIndices.containsKey(op)) {
-                int opIndex = operatorsAndIndices.get(op).get(operatorsAndIndices.size() - 1);
+                List<Integer> indexList = operatorsAndIndices.get(op);
+                int opIndex = indexList.get(0);
                 List<String> leftTerms = terms.subList(0, opIndex);
                 List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
 
-                vc.operandsTypeCheck(leftTerms, operatorType, rightTerms);
+//                vc.operandsTypeCheck(leftTerms, operatorType, rightTerms);
                 try {
                     lExpr = create(leftTerms);
                     rExpr = create(rightTerms);
@@ -137,6 +137,7 @@ public class ExpressionCreator {
     private List<String> unchainComparators(List<String> terms) { // Only unchain the outer ones.
         // Convert chained comparators to ... AND ...
         // E.g. 1 < x < 2 -> 1 < x & x < 2
+
         List<String> unchainedTerms = new ArrayList<>();
 
         Map<String, List<Integer>> comparatorsAndIndices = vc.getOuterItems(terms, constants.getComparators()); // TODO: For the time being, let's use this helper, but in future, we can improve runtime by writing a more specific helper!
@@ -147,6 +148,10 @@ public class ExpressionCreator {
             indices.addAll(subIndices);
         }
         Collections.sort(indices);
+
+        if (indices.size() <= 1){
+            return terms;
+        }
 
         int firstComparatorIndex = indices.get(0);
         int secondComparatorIndex = indices.get(1);
@@ -184,6 +189,9 @@ public class ExpressionCreator {
         // we add the final index (corresponding to ')' )
         // this ensures that between every pair of indices in commaIndices
         // we have an input expression
+        if (commaIndices == null){
+            commaIndices = new ArrayList<>();
+        }
         commaIndices.add(terms.size()); // TODO: Recheck Correctness (logical sense).
         RealValuedExpression[] inputs = new RealValuedExpression[commaIndices.size()];
         // start at 2 because first item if function name and second item is '('
@@ -203,25 +211,6 @@ public class ExpressionCreator {
         }
 
         return inputs;
-    }
-
-    /**
-     * Assumed to be for inputs like [min, (, x, y, )] but could be used for anything
-     * @param terms List of terms as accepted by create
-     * @return List of indices corresponding to where the "," character appears
-     */
-    // TODO: Actually how about using "getOuterItems"?
-    private List<Integer> findCommaIndices(List<String> terms){ // TODO: Check correctness: WB f(x, g(x, y))?
-        List<Integer> commaIndices = new ArrayList<>();
-
-        int startInd = 0;
-
-        while (terms.subList(startInd, terms.size()).contains(",")){
-            commaIndices.add(terms.indexOf(","));
-            startInd = terms.indexOf(",") + 1;
-        }
-
-        return commaIndices;
     }
 
 }

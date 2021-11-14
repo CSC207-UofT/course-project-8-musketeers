@@ -26,6 +26,12 @@ public class CustomFunctionExpression extends FunctionExpression {
         this.function = function;
     }
 
+    public CustomFunctionExpression(String funcName, String[] variables, RealValuedExpression function,
+                                    ComparatorExpression domain){
+        this(funcName, variables, function);
+        setDomain(domain);
+    }
+
     public CustomFunctionExpression(String funcName, String[] variables,
                                     RealValuedExpression[] inputs, RealValuedExpression function){
         super(funcName, variables);
@@ -33,12 +39,6 @@ public class CustomFunctionExpression extends FunctionExpression {
         setInputs(inputs);
     }
 
-    public CustomFunctionExpression(String funcName, String[] variables,
-                                    RealValuedExpression[] inputs, RealValuedExpression function,
-                                    BooleanValuedExpression domain){
-        this(funcName, variables, inputs, function);
-        setDomain(domain);
-    }
 
 
     @Override
