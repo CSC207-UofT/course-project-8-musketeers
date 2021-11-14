@@ -1,6 +1,5 @@
 package Backend.BuiltinExpressions;
 
-import Backend.Expression;
 import Backend.FunctionExpression;
 
 import java.util.Map;
