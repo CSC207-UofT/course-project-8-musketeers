@@ -18,9 +18,14 @@ public class CustomFunctionExpression extends FunctionExpression {
     /**
      * @param funcName String representing the name of a function
      * @param variables Array of strings representing the variables the function is in terms of
-     * @param inputs Array of RealValuedExpressions representing the inputs to a function, in most cases these are variables
      * @param function A RealValued Expression representing the function itself
      */
+
+    public CustomFunctionExpression(String funcName, String[] variables, RealValuedExpression function){
+        super(funcName, variables);
+        this.function = function;
+    }
+
     public CustomFunctionExpression(String funcName, String[] variables,
                                     RealValuedExpression[] inputs, RealValuedExpression function){
         super(funcName, variables);
@@ -34,6 +39,7 @@ public class CustomFunctionExpression extends FunctionExpression {
         this(funcName, variables, inputs, function);
         setDomain(domain);
     }
+
 
     @Override
     public Float evaluate(Map<String, Float> arguments) {

@@ -1,17 +1,19 @@
 
 package Graphics;
 
-import Backend.Expression;
+import Backend.Exceptions.InvalidTermException;
+import Backend.*;
 import Backend.ExpressionReader;
+import Backend.Expressions.RealValuedExpression;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class EvalExprAdapter implements Evaluatable {
-    private final Expression ex;
+    private final RealValuedExpression ex;
     private final Map<String, Float> varMap;
 
-    public EvalExprAdapter(Expression expr) {
+    public EvalExprAdapter(RealValuedExpression expr) {
         this.ex = expr;
         this.varMap = new HashMap<>();
     }
@@ -28,9 +30,9 @@ public class EvalExprAdapter implements Evaluatable {
         return ex.evaluate(varMap);
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvalidTermException {
         ExpressionReader er = new ExpressionReader();
-        Expression func = er.read("cos ( x )");
+        RealValuedExpression func = (RealValuedExpression) er.read("cos ( x )");
         EvalExprAdapter a = new EvalExprAdapter(func);
         System.out.println(a.evaluate(0.5f,0.5f));
     }
