@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import static java.util.Map.entry;
-
+import Backend.Exceptions.InvalidCommandArguments;
 
 
 /**
@@ -75,7 +75,9 @@ public class Axes implements Serializable {
     //Getter and Setter methods for scale, origin:
     public float getScale(){return this.scale;}
 
-    public void setScale(Float scale){this.scale = scale;}
+    public void setScale(Float scale) {
+        this.scale = scale;
+    }
 
     public float[] getOrigin(){return this.origin;}
 
