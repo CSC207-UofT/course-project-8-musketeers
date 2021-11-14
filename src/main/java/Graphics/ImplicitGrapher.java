@@ -17,7 +17,7 @@ enum GraphType {
 
 public class ImplicitGrapher {
 
-   public static void main(String args[]) throws Exception {
+   public static void main(String[] args) throws Exception {
       int size = 256;
       int[] mainPixels = new int[size*size];
       int[] dims1 = {size,size};
@@ -37,12 +37,12 @@ public class ImplicitGrapher {
       System.out.println("...Done!");
    }
 
-    public static void graphImplicit(int[] pixels, int w, int h, Axes ax,
+   public static void graphImplicit(int[] pixels, int w, int h, Axes ax,
                                      boolean useThreshold) {
-        GraphType gtype = GraphType.GRAYSCALE;
-        if (useThreshold) gtype = GraphType.REGION;
+       GraphType gtype = GraphType.GRAYSCALE;
+       if (useThreshold) gtype = GraphType.REGION;
        graphImplicit(pixels, w, h, ax, gtype);
-    }
+   }
 
   public static void graphImplicit(int[] pixels, int w, int h, Axes ax,
                                    GraphType gtype) {
@@ -56,15 +56,18 @@ public class ImplicitGrapher {
 
       float pixelSize = scale / (float)w;
 
+      int WHITE = (int) Long.parseLong("FFFFFFFF", 16);
+      int BLACK = (int) Long.parseLong("FF000000", 16);
+
       for (int y = 0; y < h; y++) {
          for (int x = 0; x < w; x++) {
             float cx = (x / (float)w - 0.5f) * scale + xpos;
             float cy = -(y / (float)h - 0.5f) * scale + ypos;
             if (gtype == GraphType.REGION) {
                 if (func.evaluate(cx, cy) > 0) {
-                    pixels[y * w + x] = (int) Long.parseLong("FFFFFFFF", 16);
+                    pixels[y * w + x] = WHITE;
                 } else {
-                    pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
+                    pixels[y * w + x] = BLACK;
                 }
             }
             else if (gtype == GraphType.GRAYSCALE) {
@@ -73,12 +76,12 @@ public class ImplicitGrapher {
                 pixels[y * w + x] = (int) Long.parseLong("FF" + outR + outR + outR, 16);
             }
             else if (gtype == GraphType.BOUNDARY) {
-				pixels[y * w + x] = (int) Long.parseLong("FFFFFFFF", 16);
+				pixels[y * w + x] = WHITE;
 				if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx + pixelSize, cy) > 0)) {
-					pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
+					pixels[y * w + x] = BLACK;
 				}
 				if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx, cy + pixelSize) > 0)) {
-					pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
+					pixels[y * w + x] = BLACK;
 				}
 			}
          }
