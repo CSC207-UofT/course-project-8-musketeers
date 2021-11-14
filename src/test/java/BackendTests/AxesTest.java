@@ -1,10 +1,8 @@
 package BackendTests;
 
 
-import Backend.Axes;
-import Backend.Exceptions.InvalidCommandArguments;
-import Backend.Expression;
-import Backend.NumberExpression;
+import Backend.*;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -113,5 +111,18 @@ public class AxesTest {
         assertEquals(ax.getExpressions(), eList);
     }
 
+    @Test(timeout = 50)
+    public void testAxesAddCustomFunction(){
+        assertEquals(ax.getNamedExpressions().size(), 5);
+
+        ExpressionCreator ec = new ExpressionCreator(ax);
+        String funcName = "f";
+        String[] variables = {"x"};
+        Expression func = ec.create(List.of("x", "^", "2"));
+        FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
+        ax.addExpression(myFunc);
+
+        assertEquals(ax.getNamedExpressions().size(), 6);
+    }
 
 }

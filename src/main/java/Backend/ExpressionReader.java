@@ -14,6 +14,14 @@ import static Graphics.ImageTest.writeImage;
 
 public class ExpressionReader {
     private final Constants constants = new Constants();
+    private final Axes axes;
+
+    public ExpressionReader(){
+        this.axes = new Axes();
+    }
+    public ExpressionReader(Axes axes){
+        this.axes = axes;
+    }
 
     /** Converts a string representation of an expression into an instance of Backend.Expression
      * @param expression The string representation of the expression to be converted
@@ -23,7 +31,7 @@ public class ExpressionReader {
     // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
     // e.g. cos(x) -> ["cos", "(", "x", ")"]
     public Expression read(String expression){
-        ExpressionCreator ec = new ExpressionCreator();
+        ExpressionCreator ec = new ExpressionCreator(axes);
 
         List<String> expressionList = expressionParser(expression);
         int equalsIndex = expressionList.indexOf("=");
@@ -240,7 +248,7 @@ public class ExpressionReader {
         int[] mainPixels = new int[size*size];
         int[] dims1 = {size,size};
 
-        ExpressionReader er = new ExpressionReader();
+        ExpressionReader er = new ExpressionReader(axes);
 
         System.out.println("Please ensure that each 'unit' of information in" +
                 " the input is spaced out:");

@@ -1,28 +1,40 @@
 package Backend;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
+/**
+ * This class is used to create Expressions after it has been parsed by ExpressionReader into an
+ * appropriate List of strings, in particular each item in the List should correspond to one 'unit'
+ * of information.
+ */
 // TODO: create method is too long, break into helper methods
 // TODO: check validity of expressions
-// TODO: Handle functions like cos/sin/sqrt in input
 public class ExpressionCreator {
 
     private final Constants constants = new Constants();
     private final ExpressionBuilder eb = new ExpressionBuilder();
+    private final Axes axes;
+    // TODO: We can likely use the Observer design pattern to remove dependency on Axes
 
-    /** Converts a (valid) expression (represented as a list) into an Backend.Expression
+    public ExpressionCreator(){
+        this.axes = new Axes();
+    }
+
+    public ExpressionCreator(Axes axes){
+        this.axes = axes;
+    }
+
+    /** Converts a (valid) expression (represented as a list) into an Expression
      * @param terms A list of terms in the expression (see below for how they should be broken up
-     * @return An Backend.Expression (AST) representation of the expression
+     * @return An Expression (AST) representation of the expression
      */
     // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
     // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
     // e.g. cos(x) -> ["cos", "(", "x", ")"]
     public Expression create(List<String> terms) {
-        Expression returnExpression = null;
+        Expression returnExpression;
+
 
         // Base case for the recursion
         // One term means it's a variable, number or a function that takes in some input
@@ -32,10 +44,12 @@ public class ExpressionCreator {
         }
 
         // check that we have only one expression that we are composing with our built-in functions
-        else if (constants.getFunctions().contains(terms.get(0)) &&
+        else if (axes.getNamedExpressions().containsKey(terms.get(0)) &&
                 containsOuterBrackets(terms.subList(1, terms.size()))) {
-            Expression[] inputs = findFunctionInputs(terms);
-            returnExpression = this.eb.constructExpression(terms.get(0), inputs);
+//            System.out.println(terms.get(0));
+//            System.out.println(terms);
+            Expression[] inputs = findFunctionInputs(terms.subList(2, terms.size() - 1));
+            returnExpression = this.eb.constructExpression(terms.get(0), inputs, axes.getNamedExpressions());
         }
 
         // Recursive step
@@ -169,7 +183,7 @@ public class ExpressionCreator {
                                                        Map<String, List<Integer>> operatorAndIndices,
                                                        List<String> terms) {
         // TODO: javadoc
-        List<String> candidateOperators = new ArrayList<>();
+        List<String> candidateOperators;
         switch (expressionType) {
             case "Operator":
                 candidateOperators = constants.getOperators();
@@ -266,23 +280,24 @@ public class ExpressionCreator {
 
 
     /**
-     * @param terms List of terms as accepted by create, assumed to be of the form [func, (, ..., )]
+     * @param inputStrings List of inputs to a function.
+     *                     e.g. for "mandel(x, y)", it would be ["x", ",", "y"]
      * @return A list of Expressions where each expression is an input to some function
      */
-    private Expression[] findFunctionInputs (List<String> terms){
-        List<Integer> commaIndices = findCommaIndices(terms);
-        // we add the final index (corresponding to ')' )
+    private Expression[] findFunctionInputs (List<String> inputStrings){
+        List<Integer> commaIndices = findOuterCommaIndices(inputStrings);
+
+        // We add an index for the very end of the list
         // this ensures that between every pair of indices in commaIndices
         // we have an input expression
-        commaIndices.add(terms.size() - 1);
+        commaIndices.add(inputStrings.size());
 
         Expression[] inputs = new Expression[commaIndices.size()];
-        // start at 2 because first item if function name and second item is '('
-        int startInd = 2;
 
+        int startInd = 0;
         for (int i = 0; i < inputs.length; i++){
-            inputs[i] = create(terms.subList(startInd, commaIndices.get(i)));
-            startInd = commaIndices.get(i) + 1;
+            inputs[i] = create(inputStrings.subList(startInd, commaIndices.get(i)));
+            startInd = commaIndices.get(i) + 1; // + 1 to skip over the index of the comma itself
         }
 
         return inputs;
@@ -291,17 +306,28 @@ public class ExpressionCreator {
 
     /**
      * Assumed to be for inputs like [min, (, x, y, )] but could be used for anything
-     * @param terms List of terms as accepted by create
-     * @return List of indices corresponding to where the "," character appears
+     * @param terms List of inputs to some function, separated by commas
+     * @return List of indices corresponding to where the "," string appears
      */
-    private List<Integer> findCommaIndices(List<String> terms){
+    private List<Integer> findOuterCommaIndices(List<String> terms){
         List<Integer> commaIndices = new ArrayList<>();
+        // TODO: Repeated code from findOuterOperators, factor out common code
+        int counter = 0;
 
-        int startInd = 0;
+        for (int i = 0; i < terms.size(); i++){
+            String c = terms.get(i);
+            if (c.equals("(")){
+                counter += 1;
+            } else if (c.equals(")")){
+                counter -= 1;
+            }
 
-        while (terms.subList(startInd, terms.size()).contains(",")){
-            commaIndices.add(terms.indexOf(","));
-            startInd = terms.indexOf(",") + 1;
+            if (counter == 0){
+                if (terms.get(i).equals(",")){
+                    commaIndices.add(i);
+                }
+            }
+
         }
 
         return commaIndices;

@@ -10,15 +10,10 @@ import java.util.Map;
  */
 public class CustomFunctionExpression extends FunctionExpression{
 
-    // the variables used in the function
-    // e.g. f(x) = ... would have ["x"]
-    // while f(x, y) = ... would have ["x", "y"]
-
     // the function stored which tells us how to evaluate this function
     // e.g. f(x) = x^2 would store the Expression corresponding to x^2
     private final Expression function;
 
-    // It is necessary that length of inputs = length of variables
     public CustomFunctionExpression(String funcName, String[] variables,
                                     Expression function){
         super(funcName, variables);
@@ -35,7 +30,7 @@ public class CustomFunctionExpression extends FunctionExpression{
     public float evaluate(Map<String, Float> arguments) {
         Map<String, Float> varMap = new HashMap<>();
         String[] variables = getVariables();
-
+        System.out.println(getItem() + ": " + getInputs().length);
         for (int i = 0; i < variables.length; i++){
             // If we have f(2x) for example, we must evaluate 2x first.
             // This is what this for loop is for
