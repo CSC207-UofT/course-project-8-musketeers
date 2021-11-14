@@ -63,6 +63,11 @@ public class Axes implements Serializable {
         );
     }
 
+    /**
+     * Constructor for Axes
+     * @param a  the scale parameter
+     * @param origin  the origin parameter
+     */
     public Axes(float a, float[] origin){
         this.scale = a;
         this.dimensionSize = origin.length;
@@ -89,6 +94,9 @@ public class Axes implements Serializable {
     public List<Expression> getExpressions(){
         return this.exprCollection;
     }
+//    public void setExpressions(List<Expression> newCollection){
+//
+//    }
 
     public void addExpression(Expression expr){
         this.exprCollection.add(expr);
