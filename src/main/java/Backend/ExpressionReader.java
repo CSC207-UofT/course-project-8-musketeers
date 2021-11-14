@@ -260,7 +260,7 @@ public class ExpressionReader {
         int[] dims1 = {size,size};
 
         ExpressionReader er = new ExpressionReader();
-        String test = "x + y";
+        String test = "mandel ((x^2 - y^2 ) / (x^2 + y^2)^2 , (0 - 2 * x * y) / (x^2 + y^2)^2 )";
 
         // TODO: Use Wildcard or Casting... As we know the type beforehand!
 
@@ -270,7 +270,7 @@ public class ExpressionReader {
         float[] pos = {0.f, 0.f};
         axes.setOrigin(pos);
 
-        ImplicitGrapher.graphImplicit(mainPixels, dims1[0], dims1[1], axes, true);
+        ImplicitGrapher.graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
 
         writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
         System.out.println("...Done!");
