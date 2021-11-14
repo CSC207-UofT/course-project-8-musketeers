@@ -1,26 +1,25 @@
-package Backend;
+package Backend.Expressions;
 
-import java.util.HashMap;
 import java.util.Map;
 
-// Backend.OperatorExpression stores the 'Backend.Expression' with operators, e.g. E_1 + E_2
+// Backend.Expressions.OperatorExpression stores the 'Backend.Expressions.Expression' with operators, e.g. E_1 + E_2
 // where E_1, E_2 themselves are Expressions
-public class OperatorExpression extends Expression {
+public class ArithemeticOperatorExpression extends RealValuedExpression {
 
-    protected final Expression lExpression;
-    protected final Expression rExpression;
+    private final RealValuedExpression lExpression;
+    private final RealValuedExpression rExpression;
 
     // OperatorExpressions store both the operation they correspond to
     // and the expressions to their left and right
-    public OperatorExpression(String operation, Expression lExpression, Expression rExpression){
-        super(operation);
+    public ArithemeticOperatorExpression(String operation, RealValuedExpression lExpression, RealValuedExpression rExpression){
+        super(operation); // TODO: Future have a complete string representation rather than just a function name!
         this.lExpression = lExpression;
         this.rExpression = rExpression;
     }
 
     // We evaluate this expression based on what the operator is
     @Override
-    public float evaluate(Map<String, Float> arguments) {
+    public Float evaluate(Map<String, Float> arguments) {
         switch (getItem()) {
             case "+":
                 return lExpression.evaluate(arguments) + rExpression.evaluate(arguments);
@@ -33,7 +32,8 @@ public class OperatorExpression extends Expression {
             case "^":
                 return (float) Math.pow(lExpression.evaluate(arguments), rExpression.evaluate(arguments));
             default:
-                return Float.NaN;
+                    // If our program works, then this should never be run
+                    throw new IllegalArgumentException("Unexpected operator");
         }
 
     }

@@ -1,5 +1,7 @@
 package Backend;
 import Backend.Exceptions.InvalidCommandArguments;
+import Backend.Expressions.Expression;
+import Backend.Expressions.RealValuedExpression;
 
 import java.io.IOException;
 import java.util.List;
@@ -50,15 +52,15 @@ public class AxesUseCase {
 
     public void setOrigin(float[] o, Axes ax){ax.setOrigin(o);}
 
-    public List<Expression> getExpressions(Axes ax){
+    public List<RealValuedExpression> getExpressions(Axes ax){
         return ax.getExpressions();
     }
 
-    public void addExpression(Expression expr, Axes ax){
+    public void addExpression(RealValuedExpression expr, Axes ax){
         ax.addExpression(expr);
     }
 
-    public void removeExpression(Expression expr, Axes ax){ax.removeExpression(expr);}
+    public void removeExpression(RealValuedExpression expr, Axes ax){ax.removeExpression((RealValuedExpression) expr);}
 
 
 

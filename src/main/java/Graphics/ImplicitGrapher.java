@@ -3,9 +3,10 @@ package Graphics;
 import static Graphics.ImageTest.*;
 import static Graphics.RGBA.fmtHex255;
 
-import Backend.Expression;
+import Backend.*;
 import Backend.Axes;
 import Backend.ExpressionReader;
+import Backend.Expressions.RealValuedExpression;
 
 enum GraphType {
 	BOUNDARY,
@@ -28,8 +29,8 @@ public class ImplicitGrapher {
       axes.setOrigin(pos);
       ExpressionReader er = new ExpressionReader(axes);
 
-      //Expression func = er.read("( cos ( x * y ) + sin ( x + y ) ) * 0.8 - 0.1");
-      Expression func = er.read("mandel ( x , y ) - 1 / 4");
+      // Expression func = er.read("( cos ( x * y ) + sin ( x + y ) ) * 0.8 - 0.1");
+      RealValuedExpression func = (RealValuedExpression) er.read("mandel ( x , y ) - 1 / 4");
       axes.addExpression(func);
       graphImplicit(mainPixels, dims1[0], dims1[1], axes, GraphType.BOUNDARY);
       writeImage(mainPixels, dims1[0], dims1[1], "sampleOutHmm.png");
@@ -46,7 +47,7 @@ public class ImplicitGrapher {
   public static void graphImplicit(int[] pixels, int w, int h, Axes ax,
                                    GraphType gtype) {
 
-      Expression e1 = ax.getExpressions().get(0);
+      RealValuedExpression e1 = ax.getExpressions().get(0);
       Evaluatable func = new EvalExprAdapter(e1);
 
       float scale = ax.getScale();

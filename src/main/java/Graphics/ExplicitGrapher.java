@@ -3,9 +3,10 @@ package Graphics;
 import static Graphics.ImageTest.*;
 import static Graphics.RGBA.fmtHex255;
 
-import Backend.Expression;
+import Backend.*;
 import Backend.Axes;
 import Backend.ExpressionReader;
+import Backend.Expressions.RealValuedExpression;
 
 
 public class ExplicitGrapher {
@@ -23,16 +24,16 @@ public class ExplicitGrapher {
         ExpressionReader er = new ExpressionReader();
 
         //Expression func = er.read("( cos ( x * y ) + sin ( x + y ) ) * 0.8 - 0.1");
-        Expression func = er.read("sin ( x ) + 3.14");
-        axes.addExpression(func);
-        graphExplicit(mainPixels, dims1[0], dims1[1], axes, false);
-        writeImage(mainPixels, dims1[0], dims1[1], "sampleOutHmm.png");
-        System.out.println("...Done!");
+//        Expression func = er.read("sin ( x ) + 3.14");
+//        axes.addExpression(func);
+//        graphExplicit(mainPixels, dims1[0], dims1[1], axes, false);
+//        writeImage(mainPixels, dims1[0], dims1[1], "sampleOutHmm.png");
+//        System.out.println("...Done!");
     }
 
     public static void graphExplicit(int[] pixels, int w, int h, Axes ax,
                                      boolean useThreshold) {
-        Expression e1 = ax.getExpressions().get(0);
+        RealValuedExpression e1 = ax.getExpressions().get(0);
         Evaluatable func = new EvalExprAdapter(e1);
 
         float scale = ax.getScale();

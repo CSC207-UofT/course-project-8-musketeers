@@ -1,9 +1,9 @@
-package Backend;
+package Backend.Expressions;
 
+import java.io.Serializable;
 import java.util.Map;
 
-
-public abstract class Expression {
+public abstract class Expression<T> implements Serializable {
 
     // Expressions store their string representation
     private final String item;
@@ -18,5 +18,5 @@ public abstract class Expression {
 
     // All Expressions can be evaluated
     // The arguments Map tells us what values the variables should take
-    public abstract float evaluate(Map<String, Float> arguments);
+    public abstract T evaluate(Map<String, Float> arguments);
 }

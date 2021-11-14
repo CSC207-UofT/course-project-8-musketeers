@@ -1,16 +1,18 @@
 package Backend;
 
+// TODO: ADJUST/DECIDE WHAT TO DO WITH "Expression", "RealValuedExpression", "BooleanValuedExpression". USE WILDCARD AND CASTING!!!
 
-import Backend.BuiltinExpressions.*;
+
+import Backend.Expressions.BuiltInFunctions.*;
+import Backend.Expressions.Expression;
+import Backend.Expressions.FunctionExpression;
+import Backend.Expressions.RealValuedExpression;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import static java.util.Map.entry;
-import Backend.Exceptions.InvalidCommandArguments;
-
 
 /**
  * Axes represents the Euclidean Space in which our Expressions will be graphed.
@@ -25,7 +27,7 @@ public class Axes implements Serializable {
     private float scale;
     private float dimensionSize;
     private float[] origin;
-    private final List<Expression> exprCollection;
+    private final List<RealValuedExpression> exprCollection;
     private final Map<String, FunctionExpression> namedExpressions = initialNamedExpressions();
 
     //Constructors
@@ -54,12 +56,14 @@ public class Axes implements Serializable {
     private Map<String, FunctionExpression> initialNamedExpressions(){
         String[] oneVarInput = new String[] {"x"};
         String[] twoVarInput = new String[] {"x", "y"};
-        return new HashMap<>(Map.ofEntries(
-                entry("cos", new CosExpression(oneVarInput)),
-                entry("sin", new SinExpression(oneVarInput)),
-                entry("tan", new TanExpression(oneVarInput)),
-                entry("sqrt", new SqrtExpression(oneVarInput)),
-                entry("mandel", new MandelExpression(twoVarInput)))
+        return new HashMap<>(Map.of (
+                "cos", new Cosine(oneVarInput),
+                "sin", new Sine(oneVarInput),
+                "tan", new Tangent(oneVarInput),
+                "sqrt", new SquareRoot(oneVarInput),
+                "mandel", new Mandel(twoVarInput),
+                "exp", new Exp(oneVarInput)
+        )
         );
     }
 
@@ -91,14 +95,11 @@ public class Axes implements Serializable {
     //overload setter for origin. can take an array of floats
     public void setOrigin(float[] p){this.origin = p;}
 
-    public List<Expression> getExpressions(){
+    public List<RealValuedExpression> getExpressions(){
         return this.exprCollection;
     }
-//    public void setExpressions(List<Expression> newCollection){
-//
-//    }
 
-    public void addExpression(Expression expr){
+    public void addExpression(RealValuedExpression expr){
         this.exprCollection.add(expr);
 
         // if a user adds a named function, we want to add it our collection
@@ -107,7 +108,7 @@ public class Axes implements Serializable {
         }
     }
 
-    public void removeExpression(Expression expr){
+    public void removeExpression(RealValuedExpression expr){
         this.exprCollection.remove(expr);
 
         if (namedExpressions.containsKey(expr.getItem())){
