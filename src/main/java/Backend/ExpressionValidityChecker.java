@@ -22,13 +22,10 @@ public class ExpressionValidityChecker {
     }
 
     /** A preliminary check that throws an exception if the input expression from the user is invalid in specific ways.
+     * This function will be called recursively in ExpressionCreator on operands of operators,
+     * which ensures correctness.
      *
-     * @param terms The parsed expression input by the user.
-     * @throws InvalidTermException
-     */
-    /** A preliminary check that throws an exception if the input expression from the user is invalid in specific ways.
-     *
-     * @param terms The parsed expression input by the user.
+     * @param terms A parsed list as accepted by the create method.
      * @throws InvalidTermException
      */
     public void preCheck(List<String> terms) throws InvalidTermException {
@@ -99,6 +96,12 @@ public class ExpressionValidityChecker {
         }
     }
 
+    /** A method that checks whether any logical or comparator operators appear in the input terms, and
+     * throws an exception if they appear.
+     *
+     * @param terms The list of terms as accepted by the create method.
+     * @throws CompoundCaseCreatorException thrown if the expression contains logical or comparator operators.
+     */
     public void realValuedPreconditionCheck(List<String> terms) throws CompoundCaseCreatorException {
         if (containsOperator(terms, "Logical") || containsOperator(terms, "Comparator")) {
             throw new CompoundCaseCreatorException("NotRealValuedExpressionException!");
@@ -125,8 +128,8 @@ public class ExpressionValidityChecker {
 
     /**
      *
-     * @param terms The list representing parsed expression representing the user's input.
-     * @return True if all terms in the expression are valid terms, False otherwise. (e.g. Returns false if "cap"
+     * @param terms The list of terms as accepted by the create method.
+     * @return True if all terms in the expression are valid terms, False otherwise. (e.g. Returns false if "c5ap"
      * is a term in the list)
      */
     private boolean checkAllTermsValid(List<String> terms) {
@@ -226,6 +229,7 @@ public class ExpressionValidityChecker {
 
         for (List<Integer> indices: functionsAndIndexLists.values()) {
             for (Integer index: indices) {
+                //Get the list representing the scope of the function.
                 functionInputTerms = terms.subList(index + 2, findCorrespondingBracket(terms, index + 1));
                 numCommas = getOuterItems(functionInputTerms, List.of(",")).size();
                 if (funcNumInputs.get(terms.get(index)) - 1 != numCommas) {
