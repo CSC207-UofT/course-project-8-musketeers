@@ -47,8 +47,8 @@ public class ImplicitGrapher {
   public static void graphImplicit(int[] pixels, int w, int h, Axes ax,
                                    GraphType gtype) {
 
-      RealValuedExpression e1 = ax.getExpressions().get(0);
-      Evaluatable func = new EvalExprAdapter(e1);
+      Evaluatable func = ax.getExpressions().get(0);
+//      Evaluatable func = new EvalExprAdapter(e1);
 
       float scale = ax.getScale();
       float xpos = ax.getOrigin()[0];
