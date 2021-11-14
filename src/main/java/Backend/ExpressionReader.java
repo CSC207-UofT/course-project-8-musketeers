@@ -90,7 +90,7 @@ public class ExpressionReader {
         }
         //We may have valid input from the user, but it may not be interpreted correctly as is.
         //We call this function to modify our parsed list to give a form that can be transformed into a valid AST.
-        fixparsedlist(parsed);
+        fixParsedlist(parsed);
         return parsed;
 
     }
@@ -101,11 +101,11 @@ public class ExpressionReader {
      * @param parsed The list we have parsed in the first pass through expression parser.
      */
 
-    private void fixparsedlist (List<String> parsed) {
+    private void fixParsedlist (List<String> parsed) {
         //
-        fixlogicaloperators(parsed);
-        handleoperators(parsed);
-        handlesign(parsed);
+        fixLogicalOperators(parsed);
+        handleOperators(parsed);
+        handleSign(parsed);
 
     }
 
@@ -113,12 +113,12 @@ public class ExpressionReader {
      *
      * @param parsed The list we have parsed in the first pass through expression parser.
      */
-    private void handleoperators(List<String> parsed) {
+    private void handleOperators(List<String> parsed) {
 
         int size = parsed.size();
         for (int i = 0; i < size - 1; i++) {
             if (parsed.get(i).equals("-") || parsed.get(i).equals("+")) {
-                removedifferent(i, parsed);
+                removeDifferent(i, parsed);
             }
             if (size != parsed.size()) {
                 size = parsed.size();
@@ -132,7 +132,7 @@ public class ExpressionReader {
      * @param index the current index at which we have a "+" or "-"
      * @param parsed The parsed list that we are editing.
      */
-    private void removedifferent(int index, List<String> parsed) {
+    private void removeDifferent(int index, List<String> parsed) {
         if (parsed.get(index).equals(parsed.get(index + 1))) {
             parsed.remove(index);
             parsed.remove(index);
@@ -151,17 +151,17 @@ public class ExpressionReader {
      *
      * @param parsed The parsed list we are editing.
      */
-    private void handlesign(List<String> parsed) {
+    private void handleSign(List<String> parsed) {
         for (int i = 0; i < parsed.size(); i++) {
             String current = parsed.get(i);
-            //This function is called after handleoperators, so there are no consecutive unary operators, ensuring it
+            //This function is called after handleOperatorshandleOperators, so there are no consecutive unary operators, ensuring it
             // makes sense.
             //Special case i = 0. We immediately know its a unary use of "+" and "-".
             if (i ==0 && (current.equals("-") || current.equals("+"))) {
-                interpetoperator(i, current,parsed);
+                interpetOperator(i, current,parsed);
             }
             else if (i > 0 && (current.equals("-") || current.equals("+"))) {     //In this case, its more tricky to determine a unary usage of an operator.
-                replaceunaryoperatorswithone(i, parsed);
+                replaceUnaryOperatorsWithOne(i, parsed);
             }
         }
     }
@@ -171,7 +171,7 @@ public class ExpressionReader {
      * @param i current index in the parsed list.
      * @param parsed The parsed list we are editing to interpret "-" and "+" in a unary context.
      */
-    private void replaceunaryoperatorswithone(int i, List<String> parsed) {
+    private void replaceUnaryOperatorsWithOne(int i, List<String> parsed) {
         // specialcharacters will contain all characters where, if "-" or "+" appear after, they are used in
         // unary context.
         List<String> specialcharacters = constants.getOperators();
@@ -184,7 +184,7 @@ public class ExpressionReader {
         specialcharacters.add("(");
         // If the previous element of the parsed list is special, we interpet the operator as unary.
         if (specialcharacters.contains(parsed.get(i-1))) {
-            interpetoperator(i, parsed.get(i), parsed);
+            interpetOperator(i, parsed.get(i), parsed);
         }
 
     }
@@ -196,7 +196,7 @@ public class ExpressionReader {
      * @param s Character at parsed[i]
      * @param parsed The parsed list wher we are interpretting unary operators.
      */
-    private void interpetoperator(int i, String s, List<String> parsed) {
+    private void interpetOperator(int i, String s, List<String> parsed) {
         parsed.remove(i);
         parsed.add(i, "*");
         if (s.equals("-")) {
@@ -213,18 +213,18 @@ public class ExpressionReader {
      *
      * @param parsed Parsed list we are editing to be interpreted as a correct expression.
      */
-    private void fixlogicaloperators (List<String> parsed) {
+    private void fixLogicalOperators(List<String> parsed) {
         int size = parsed.size();
         for (int i = 0; i < size - 1; i++) {
             StringBuilder current = new StringBuilder(parsed.get(i));
             if ((current.toString().equals("<") || current.toString().equals(">")) && parsed.get(i+1).equals("=")) {
-                concatenateoperators(parsed, current, i);
+                concatenateOperators(parsed, current, i);
             }
         size = parsed.size();
         }
     }
 
-    private void concatenateoperators(List<String> parsed, StringBuilder current, int i) {
+    private void concatenateOperators(List<String> parsed, StringBuilder current, int i) {
         parsed.remove(i);
         parsed.remove(i);
         current.append("=");

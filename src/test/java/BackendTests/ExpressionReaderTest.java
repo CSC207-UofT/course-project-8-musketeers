@@ -77,23 +77,30 @@ public class ExpressionReaderTest {
 
     @Test(timeout = 50)
     public void testCosWithOtherOperators(){
-        Expression exp = er.read("2 * cos ( x ^ 2 ) + 5");
+        Expression exp = er.read("2 * cos ( x^2 ) + 5");
         varMap.put("x", 0.0f);
         assertEquals(exp.evaluate(varMap), 7, delta);
     }
 
     @Test(timeout = 50)
     public void testSin(){
-        Expression exp = er.read("sin ( x ^ 2 )");
+        Expression exp = er.read("sin ( x ^ 2)");
         varMap.put("x", 1.0f);
         assertEquals(exp.evaluate(varMap), Math.sin(1), delta);
     }
 
     @Test(timeout = 50)
     public void testSinWithOtherOperators(){
-        Expression exp = er.read("cos ( x ) ^ 2 + sin ( x ) ^ 2");
+        Expression exp = er.read("cos (x ) ^ 2+sin ( x )^ 2");
         varMap.put("x", 3.0f);
         assertEquals(exp.evaluate(varMap), 1, delta);
     }
 
+    @Test(timeout = 50)
+    public void testweirdcombinationsofOperators(){
+        List<String> par = er.expressionParser("+-++--+");
+        List<String> expected = List.of("-1", "*");
+        assertEquals(expected, par);
+
+    }
 }
