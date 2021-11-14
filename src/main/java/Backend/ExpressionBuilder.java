@@ -27,7 +27,7 @@ public class ExpressionBuilder {
                 return new ComparatorExpression(op, (RealValuedExpression) lExpression,
                     (RealValuedExpression) rExpression);
             case "Arithmetic":
-                return new ArithemeticOperatorExpression(op, (RealValuedExpression) lExpression,
+                return new ArithmeticOperatorExpression(op, (RealValuedExpression) lExpression,
                     (RealValuedExpression) rExpression);
             // If our program is correct, below should never happen.
             default:
