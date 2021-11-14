@@ -252,7 +252,9 @@ public class ExpressionReader {
         int[] mainPixels = new int[size*size];
         int[] dims1 = {size,size};
 
+
         ExpressionReader er = new ExpressionReader(auc.getNamedFunctions(axes));
+
         String test = "mandel(x, y)";
 
         // TODO: Use Wildcard or Casting... As we know the type beforehand!

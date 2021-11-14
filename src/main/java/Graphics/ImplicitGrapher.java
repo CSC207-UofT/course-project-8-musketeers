@@ -30,7 +30,7 @@ public class ImplicitGrapher {
       ExpressionReader er = new ExpressionReader(axes.getNamedExpressions());
 
       // Expression func = er.read("( cos ( x * y ) + sin ( x + y ) ) * 0.8 - 0.1");
-      RealValuedExpression func = (RealValuedExpression) er.read("mandel ( x , y ) - 1 / 4");
+      RealValuedExpression func = (RealValuedExpression) er.read("cos(10 * x) - y");
       axes.addExpression(func);
       graphImplicit(mainPixels, dims1[0], dims1[1], axes, GraphType.BOUNDARY);
       writeImage(mainPixels, dims1[0], dims1[1], "sampleOutHmm.png");
