@@ -20,6 +20,11 @@ public class ExpressionValidityChecker {
      * @param terms The parsed expression input by the user.
      * @throws InvalidTermException
      */
+    /** A preliminary check that throws an exception if the input expression from the user is invalid in specific ways.
+     *
+     * @param terms The parsed expression input by the user.
+     * @throws InvalidTermException
+     */
     public void preCheck(List<String> terms) throws InvalidTermException {
         if (terms.size() == 0) {
             throw new BaseCaseCreatorException("NullExpressionException!");
@@ -61,20 +66,22 @@ public class ExpressionValidityChecker {
     // Below method: First input is one (left or right) operand, and the second input is the operator type.
 
     public void operandsTypeCheck(List<String> leftTerms, String operatorType, List<String> rightTerms) throws CompoundCaseCreatorException {
-        boolean toCheck = (containsOperator(leftTerms, "Comparator") ||
-                containsOperator(leftTerms, "Logical") ||
-                containsOperator(rightTerms, "Comparator") ||
-                containsOperator(rightTerms, "Logical"));
 
         switch (operatorType) {
             case "Logical": {
-                if (!toCheck){
+                if (!((containsOperator(leftTerms, "Comparator") ||
+                        containsOperator(leftTerms, "Logical")) &&
+                        (containsOperator(rightTerms, "Comparator") ||
+                                containsOperator(rightTerms, "Logical")))){
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
                 break;
             }
             case "Arithmetic": case "Comparator": {
-                if (toCheck) {
+                if (containsOperator(leftTerms, "Comparator") ||
+                        containsOperator(leftTerms, "Logical") ||
+                        containsOperator(rightTerms, "Comparator") ||
+                        containsOperator(rightTerms, "Logical")) {
                     throw new CompoundCaseCreatorException("OperandTypeException!");
                 }
                 break;
@@ -82,6 +89,12 @@ public class ExpressionValidityChecker {
             // In theory, this should be thrown
             default:
                 throw new IllegalStateException("Unrecognized Operator Type!");
+        }
+    }
+
+    public void realValuedPreconditionCheck(List<String> terms) throws CompoundCaseCreatorException {
+        if (containsOperator(terms, "Logical") || containsOperator(terms, "Comparator")) {
+            throw new CompoundCaseCreatorException("NotRealValuedExpressionException!");
         }
     }
 
@@ -122,6 +135,7 @@ public class ExpressionValidityChecker {
         }
         return true;
     }
+
 
     /**
      *
@@ -388,6 +402,7 @@ public class ExpressionValidityChecker {
                 // In theory this should really never be run, hence why we have a RunTimeException
                 throw new IllegalStateException("Unrecognized Operator Type!");
         }
+
         for (String term: terms) { // This way saves expected runtime by a lot!
             if (operators.contains(term)) {
                 return true;

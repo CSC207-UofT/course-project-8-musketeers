@@ -139,7 +139,7 @@ public class ExpressionCreator {
                 List<String> leftTerms = terms.subList(0, opIndex);
                 List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
 
-//                vc.operandsTypeCheck(leftTerms, operatorType, rightTerms);
+                vc.operandsTypeCheck(leftTerms, operatorType, rightTerms);
                 try {
                     lExpr = create(leftTerms);
                     rExpr = create(rightTerms);
@@ -225,8 +225,10 @@ public class ExpressionCreator {
         int startInd = 0;
 
         for (int i = 0; i < inputs.length; i++){
+            List<String> inputTerm = terms.subList(startInd, commaIndices.get(i));
+            vc.realValuedPreconditionCheck(inputTerm);
             try {
-                RealValuedExpression inputExp = (RealValuedExpression) create(terms.subList(startInd, commaIndices.get(i)));
+                RealValuedExpression inputExp = (RealValuedExpression) create(inputTerm);
                 /* Above: If two commas adjacent to each other (i.e. has nothing in between, then there will be
                    something like NullExpressionException (a BaseCaseException) thrown, but we should catch it!) */
 
