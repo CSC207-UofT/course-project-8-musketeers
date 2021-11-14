@@ -4,9 +4,7 @@ package Backend;
 
 
 import Backend.Expressions.BuiltInFunctions.*;
-import Backend.Expressions.Expression;
-import Backend.Expressions.FunctionExpression;
-import Backend.Expressions.RealValuedExpression;
+import Backend.Expressions.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;

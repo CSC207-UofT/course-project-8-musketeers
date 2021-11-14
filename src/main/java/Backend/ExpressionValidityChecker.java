@@ -3,16 +3,22 @@ package Backend;
 import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
 import Backend.Exceptions.InvalidTermException;
+import Backend.Expressions.FunctionExpression;
 
 import java.util.*;
 
 
 public class ExpressionValidityChecker {
     Constants constants;
-    Set<String> validFuncs;
-    public ExpressionValidityChecker(Set<String> validFuncs) {
+    Map<String, FunctionExpression> definedFuncs;
+    Map<String, Integer> funcNumInputs = new HashMap<>();
+    public ExpressionValidityChecker(Map<String, FunctionExpression> definedFuncs) {
         this.constants = new Constants();
-        this.validFuncs = validFuncs;
+        this.definedFuncs = definedFuncs;
+
+        for (String funcName: definedFuncs.keySet()){
+            funcNumInputs.put(funcName, definedFuncs.get(funcName).getInputs().length);
+        }
     }
 
     /** A preliminary check that throws an exception if the input expression from the user is invalid in specific ways.
@@ -78,6 +84,7 @@ public class ExpressionValidityChecker {
                 break;
             }
             case "Arithmetic": case "Comparator": {
+
                 if (containsOperator(leftTerms, "Comparator") ||
                         containsOperator(leftTerms, "Logical") ||
                         containsOperator(rightTerms, "Comparator") ||
@@ -126,6 +133,7 @@ public class ExpressionValidityChecker {
         for (int i = 0; i <= terms.size() - 1; i++) {
             String term = terms.get(i);
 
+
             if (!(checkNumber(term) | // If a term is not a number,
                     constants.getVariables().contains(term) | // or a variable,
                     constants.getAllOperators().contains(term) | // or an operator,
@@ -173,7 +181,7 @@ public class ExpressionValidityChecker {
      * Example: ["cos","(",")"] returns True, ["cos","x"] returns False.
      */
     private boolean checkFunctionBrackets(List<String> terms) { // TODO: Check correctness!
-        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(validFuncs));
+        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(definedFuncs.keySet()));
         for (List<Integer> indices: functionsAndIndexLists.values()) {
             for (Integer index: indices) {
                 // Below only checks for whether it's possible to have two brackets after the function, but doesn't care
@@ -209,28 +217,18 @@ public class ExpressionValidityChecker {
      */
     private boolean checkFunctionInputSize(List<String> terms) {
 
-        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(validFuncs));
+        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(definedFuncs.keySet()));
+//        System.out.println(getOuterItems(terms, new ArrayList<>(definedFuncs.keySet())));
+        System.out.println(getOuterItems(List.of(" , ", "k"), List.of(",")));
         List<String> functionInputTerms;
         Map<String, List<Integer>> commaAndIndexLists;
-        int size;
+        int numCommas;
 
         for (List<Integer> indices: functionsAndIndexLists.values()) {
             for (Integer index: indices) {
-                //Get the list representing the scope of the function.
                 functionInputTerms = terms.subList(index + 2, findCorrespondingBracket(terms, index + 1));
-
-                if (getOuterItems(functionInputTerms, List.of(new String[]{","})).size() == 0) { //if no "," appear
-                    // within the input of the function that are outside all brackets within the function,
-                    // then there is only one input to the function.
-                    size = 0;
-                }
-                else { // Otherwise, count how many commas appear within the function input that are outside all
-                    // brackets within the function.
-                    commaAndIndexLists = getOuterItems(functionInputTerms, List.of(new String[]{","}));
-                    size = commaAndIndexLists.get(",").size();
-                }
-                    // Compare with the expected input size for this function. If different, then return false.
-                if (constants.getBuiltInFunctionsAndInputSizes().get(terms.get(index)) - 1 != size) {
+                numCommas = getOuterItems(functionInputTerms, List.of(",")).size();
+                if (funcNumInputs.get(terms.get(index)) - 1 != numCommas) {
 
                     return false;
                 }
@@ -247,7 +245,7 @@ public class ExpressionValidityChecker {
      */
 
     private boolean checkMultipleTermsConnection(List<String> terms) { // TODO: Recheck correctness (logically)!
-        if (!(validFuncs.contains(terms.get(0)) &&
+        if (!(definedFuncs.containsKey(terms.get(0)) &&
                 enclosedByOuterBrackets(terms.subList(1, terms.size())))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
             return !(getOuterItems(terms, constants.getAllOperators()).isEmpty());
         }

@@ -13,13 +13,14 @@ import static org.junit.Assert.*;
 
 public class ExpressionCreatorTest {
 
+    Axes ax = new Axes();
     ExpressionCreator ec;
     Map<String, Float> varMap = new HashMap<>();
     double delta = Math.pow(10, -5);
 
     @Before
     public void setUp(){
-        ec = new ExpressionCreator();
+        ec = new ExpressionCreator(ax.getNamedExpressions());
     }
 
     // TEST INPUT PATTERNS
@@ -308,31 +309,34 @@ public class ExpressionCreatorTest {
         assertEquals(myFunc.evaluate(varMap), 1, delta);
     }
 
-//    @Test(timeout = 50)
-//    public void testCompositionOfCustomFunctions() throws InvalidTermException {
-//        Axes axes = new Axes();
-//        ExpressionCreator ec2 = new ExpressionCreator();
-//
-//        String funcName = "f";
-//        String[] variables = {"x"};
-//        RealValuedExpression func = (RealValuedExpression) ec2.create(List.of("x", "^", "2"));
-//        FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
-//        axes.addExpression(myFunc);
-//
-//        String funcName2 = "g";
-//        String[] variables2 = {"x", "y"};
-//        RealValuedExpression func2 = (RealValuedExpression) ec2.create(List.of("x", "*", "y"));
-//        FunctionExpression myFunc2 = new CustomFunctionExpression(funcName2, variables2, func2);
-//        axes.addExpression(myFunc2);
-//
-//        ExpressionReader er2 = new ExpressionReader(axes);
-//        RealValuedExpression composeFunc = (RealValuedExpression) er2.read("f(g(x, y))");
-//        varMap.put("x", 2f);
-//        varMap.put("y", 3f);
-//        assertEquals(func2.evaluate(varMap), 6, delta);
-//
-//
-//        assertEquals(composeFunc.evaluate(varMap), 36, delta);
-//    }
+
+
+    @Test(timeout = 50)
+    public void testCompositionOfCustomFunctions() throws InvalidTermException {
+        // Test fails because composition of functions hasn't been implemented properly yet,
+        // although the infrastructure for that is there
+        Axes axes = new Axes();
+        ExpressionCreator ec2 = new ExpressionCreator(axes.getNamedExpressions());
+
+        String funcName = "f";
+        String[] variables = {"x"};
+        RealValuedExpression func = (RealValuedExpression) ec2.create(List.of("x", "^", "2"));
+        FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
+        axes.addExpression(myFunc);
+
+        String funcName2 = "g";
+        String[] variables2 = {"x", "y"};
+        RealValuedExpression func2 = (RealValuedExpression) ec2.create(List.of("x", "*", "y"));
+        FunctionExpression myFunc2 = new CustomFunctionExpression(funcName2, variables2, func2);
+        axes.addExpression(myFunc2);
+
+        ExpressionReader er2 = new ExpressionReader(axes.getNamedExpressions());
+        RealValuedExpression composeFunc = (RealValuedExpression) er2.read("f(g(x, y))");
+        varMap.put("x", 2f);
+        varMap.put("y", 3f);
+        assertEquals(func2.evaluate(varMap), 6, delta);
+
+        assertEquals(composeFunc.evaluate(varMap), 36, delta);
+    }
 
 }

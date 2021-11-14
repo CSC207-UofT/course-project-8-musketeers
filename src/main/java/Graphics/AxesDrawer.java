@@ -23,7 +23,7 @@ public class AxesDrawer {
      axes.setScale(scale);
      float[] pos = {xpos, ypos};
      axes.setOrigin(pos);
-     ExpressionReader er = new ExpressionReader();
+     ExpressionReader er = new ExpressionReader(axes.getNamedExpressions());
 
      RealValuedExpression func = (RealValuedExpression) er.read("cos(10 * x ) -y");
      axes.addExpression(func);

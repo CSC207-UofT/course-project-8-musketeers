@@ -1,10 +1,10 @@
 package Backend;
 import Backend.Exceptions.InvalidCommandArguments;
-import Backend.Expressions.Expression;
-import Backend.Expressions.RealValuedExpression;
+import Backend.Expressions.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A Use Case class for Axes
@@ -62,10 +62,9 @@ public class AxesUseCase {
 
     public void removeExpression(RealValuedExpression expr, Axes ax){ax.removeExpression((RealValuedExpression) expr);}
 
-
-
-
-
+    public Map<String, FunctionExpression> getNamedFunctions(Axes ax){
+        return ax.getNamedExpressions();
+    }
 
 
 }
