@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Axes represents the Euclidean Space in which our Expressions will be graphed.
  * - stores a 'scale' attribute (type float)
- * - stores attributes for the x and y coordinates of the origin
+ * - stores attributes for the coordinates of the origin
  * - collection of Expressions
  * - methods to add/remove functions to the above collection
  * - a getter for the collection of Expressions
@@ -38,13 +38,13 @@ public class Axes implements Serializable {
 
     /**
      * Constructor that accepts 3 floats as input
-     * @param a The Scale of Axes
-     * @param b The x coordinate of the origin
-     * @param c The y coordinate of the origin
+     * @param scale The Scale of Axes
+     * @param ox The x coordinate of the origin
+     * @param oy The y coordinate of the origin
      */
-    public Axes(float a, float b, float c){
-        this.scale = a;
-        this.origin = new float[]{b, c};
+    public Axes(float scale, float ox, float oy){
+        this.scale = scale;
+        this.origin = new float[]{ox, oy};
         this.exprCollection = new ArrayList<>();
     }
 
@@ -70,8 +70,8 @@ public class Axes implements Serializable {
      * @param a  the scale parameter
      * @param origin  the origin parameter
      */
-    public Axes(float a, float[] origin){
-        this.scale = a;
+    public Axes(float scale, float[] origin){
+        this.scale = scale;
         this.dimensionSize = origin.length;
         this.origin = origin;
         this.exprCollection = new ArrayList<>();
@@ -82,9 +82,7 @@ public class Axes implements Serializable {
     //Getter and Setter methods for scale, origin:
     public float getScale(){return this.scale;}
 
-    public void setScale(Float scale) {
-        this.scale = scale;
-    }
+    public void setScale(float scale){this.scale = scale;}
 
     public float[] getOrigin(){return this.origin;}
 
