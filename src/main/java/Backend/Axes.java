@@ -56,12 +56,13 @@ public class Axes implements Serializable {
     private Map<String, FunctionExpression> initialNamedExpressions(){
         String[] oneVarInput = new String[] {"x"};
         String[] twoVarInput = new String[] {"x", "y"};
-        return new HashMap<>(Map.of(
+        return new HashMap<>(Map.of (
                 "cos", new Cosine(oneVarInput),
                 "sin", new Sine(oneVarInput),
                 "tan", new Tangent(oneVarInput),
                 "sqrt", new SquareRoot(oneVarInput),
-                "mandel", new Mandel(twoVarInput)
+                "mandel", new Mandel(twoVarInput),
+                "exp", new Exp(oneVarInput)
         )
         );
     }
