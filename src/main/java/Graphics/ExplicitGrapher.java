@@ -1,35 +1,10 @@
 package Graphics;
 
-import static Graphics.ImageTest.*;
-import static Graphics.RGBA.fmtHex255;
-
-import Backend.*;
 import Backend.Axes;
-import Backend.ExpressionReader;
 import Backend.Expressions.RealValuedExpression;
 
 
 public class ExplicitGrapher {
-
-//    public static void main(String[] args) throws Exception {
-//        int size = 256;
-//        int[] mainPixels = new int[size*size];
-//        int[] dims1 = {size,size};
-//
-//
-//        Axes axes = new Axes();
-//        axes.setScale(10f);
-//        float[] pos = {0.f, 0.f};
-//        axes.setOrigin(pos);
-//        ExpressionReader er = new ExpressionReader(axes.getNamedExpressions());
-//
-//        Expression func = er.read("( cos ( x * y ) + sin ( x + y ) ) * 0.8 - 0.1");
-//        Expression func = er.read("sin ( x ) + 3.14");
-//        axes.addExpression(func);
-//        graphExplicit(mainPixels, dims1[0], dims1[1], axes, false);
-//        writeImage(mainPixels, dims1[0], dims1[1], "sampleOutHmm.png");
-//        System.out.println("...Done!");
-//    }
 
     public int[] graph(int[] pixels, int w, int h, Evaluatable func, float[] graphData){
         float scale = graphData[0];

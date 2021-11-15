@@ -1,40 +1,9 @@
 package Graphics;
 
-//import static Graphics.ImageTest.*;
-//import static Graphics.ImplicitGrapher.*;
-//
-//import Backend.Expressions.Expression;
-//import Backend.Axes;
-//import Backend.ExpressionReader;
-//import Backend.Expressions.RealValuedExpression;
 
 public class AxesDrawer {
 
-//   public static void main(String args[]) throws Exception {
-//     int size = 256;
-//     int[] mainPixels = new int[size*size];
-//     int[] dims1 = {size,size};
-//
-//     float scale = 4.5f;
-//     float xpos = -0.f;
-//     float ypos = 0.f;
-//
-//     Axes axes = new Axes();
-//     axes.setScale(scale);
-//     float[] pos = {xpos, ypos};
-//     axes.setOrigin(pos);
-//     ExpressionReader er = new ExpressionReader(axes.getNamedExpressions());
-//
-//     RealValuedExpression func = (RealValuedExpression) er.read("cos(10 * x ) -y");
-//     axes.addExpression(func);
-//
-//     graphImplicit(mainPixels, dims1[0], dims1[1], axes, GraphType.BOUNDARY);
-//     drawAxes(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
-//     drawGrid(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
-//     writeImage(mainPixels, dims1[0], dims1[1], "sampleOutMandelAxes.png");
-//   }
-
-  public int[] drawAxes(int[] pixels, int w, int h, float[] graphData) {
+    public int[] drawAxes(int[] pixels, int w, int h, float[] graphData) {
 
 	  float scale = graphData[0];
       float xpos = graphData[1];
