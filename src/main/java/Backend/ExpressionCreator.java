@@ -10,6 +10,19 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**  The ExpressionCreator class is responsible for creating an expression tree representing the user input if the
+ * expression the user input is valid.
+ *
+ * For example, the expression "2*x+3" is transformed to the following tree:
+ * 2
+ *     *
+ * x
+ *     +
+ * 3
+ * Following the standard for drawing trees set by csc148.
+ *
+ * If the expression is not valid, the expression tree will not be created and an exception is thrown.
+ */
 public class ExpressionCreator {
 
     private final Constants constants = new Constants();
@@ -18,24 +31,32 @@ public class ExpressionCreator {
     private final Map<String, FunctionExpression> funcMap;
     // TODO: We can likely use Observer Design Pattern to have funcMap be updated automatically when new functions are added to Axes
 
+    /** Constructor for ExpressionCreator.
+     *
+     * @param funcMap A map of function names to the functions themselves.
+     */
     public ExpressionCreator(Map<String, FunctionExpression> funcMap){
         this.funcMap = funcMap;
         this.vc = new ExpressionValidityChecker(funcMap);
     }
-    // TODO: Remove this constructor
-//    public ExpressionCreator(){
-//        this((new Axes()).getNamedExpressions());
-//    }
 
     /* IMPORTANT FOR EVERYONE TO KNOW!!! ONLY "create" CAN CALL ITS TWO HELPERS BELOW!!! BECAUSE "create" IS THE
        COMPLETE VERSION OF CREATION AS IT HAS ALL CHECKER!!! */
+
+    /** If the input list represents a valid expression, this method builds an expression tree from the input list.
+     * Otherwise, an exception is thrown.
+     *
+     * @param terms A list of terms representing a parsed expression input by the user.
+     * @return An expression tree representing the expression represented by <terms>
+     * @throws InvalidTermException If <terms> represents an invalid expression, then we throw this exception and the
+     * expression tree is not built.
+     */
     public Expression<?> create(List<String> terms) throws InvalidTermException {
         List<String> minimalTerms = bracketsReduction(terms); // remove unnecessary enclosing brackets.
-        int minimalTermsSize = minimalTerms.size();
 
         vc.preCheck(minimalTerms); // A basic current-level, NON-RECURSIVE check for the validity of the expression.
         /* Precheck will be shared in realVal and boolVal, especially the "InvalidTermException" shouldn't be
-           thrown due to logicals or comparators in realVal, this is because that we have the precondition. In other
+           thrown due to logical or comparators in realVal, this is because that we have the precondition. In other
            words, in "realValCreate", we don't check for the existence of comparator or logical operator, thanks to the
            precondition. */
 
@@ -50,11 +71,11 @@ public class ExpressionCreator {
     }
 
     /** Converts a (valid) expression (represented as a list) into a Backend.Expression
-     * Precondition: Should be real-valued expressions, so if there are logicals or comparators, then it's likely
+     * Precondition: Should be real-valued expressions, so if there are logical or comparators, then it's likely
      *        to get into infinite recursion, and example input would be "<=".
      *
      * @param terms A list of terms in the expression (see below for how they should be broken up
-     * @return An Backend.Expression (AST) representation of the expression
+     * @return A Backend.Expression (AST) representation of the expression
      */
 
     private RealValuedExpression realValuedCreate(List<String> terms) throws InvalidTermException {
@@ -87,6 +108,13 @@ public class ExpressionCreator {
         return resultingExpression;
     }
 
+    /**
+     * Precondition: There exists at least one comparator or logical operator in input <terms>.
+     *
+     * @param terms The list of terms as accepted by the create method.
+     * @return A BooleanValuedExpression tree that represents the input list.
+     * @throws InvalidTermException If the list of terms represents an invalid expression then this exception is thrown.
+     */
     // Below precondition: There exists at least one comparator or logical in input "terms".
     private BooleanValuedExpression booleanValuedCreate(List<String> terms) throws InvalidTermException {
         BooleanValuedExpression resultingExpression;
@@ -217,11 +245,12 @@ public class ExpressionCreator {
     /** A method which returns the list of expressions corresponding to the inputs of a function.
      *
      * @param terms List of terms that are the inputs to some function with the function name and brackets removed.
-     * @return A list of Expressions where each expression is a seperate input to the function.
+     * @return A list of Expressions where each expression is a separate input to the function.
      */
     private RealValuedExpression[] findFunctionInputs (List<String> terms) throws InvalidTermException {
         List<Integer> commaIndices = vc.getOuterItems(terms, List.of(",")).get(","); //get list of the indices where
-        // commas appear outside of any brackets. These correspond to seperating the inoput for the function wer are
+        // commas appear outside any brackets. These correspond to separating the input for the function wer are
+
         // calling this method for.
         if (commaIndices == null){
             commaIndices = new ArrayList<>();
@@ -238,8 +267,8 @@ public class ExpressionCreator {
         for (int i = 0; i < inputs.length; i++){
             // this list represents all terms within a pair of commas, thus representing one input to the function.
             List<String> inputTerm = terms.subList(startInd, commaIndices.get(i));
-            vc.realValuedPreconditionCheck(inputTerm); //check each input is a real valued expression.
-            try { // Ensure that each input can be constructed as an expression (otherwise its an invalid input).
+            vc.realValuedPreconditionCheck(inputTerm); //check each input is a RealValuedExpression.
+            try { // Ensure that each input can be constructed as an expression (otherwise it's an invalid input).
                 RealValuedExpression inputExp = (RealValuedExpression) create(inputTerm);
                 /* Above: If two commas adjacent to each other (i.e. has nothing in between, then there will be
                    something like NullExpressionException (a BaseCaseException) thrown, but we should catch it!) */
