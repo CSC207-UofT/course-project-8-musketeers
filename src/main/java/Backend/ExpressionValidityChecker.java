@@ -7,7 +7,14 @@ import Backend.Expressions.FunctionExpression;
 
 import java.util.*;
 
-
+/** The ExpressionValidityChecker checks whether a list representing an expression is actually representing a valid
+ * expression.
+ *
+ * The checker works recursively within ExpressionCreator. ExpressionCreator creates the tree recursively, and
+ * this class is responsible for checking the correctness of each step at a surface level. As this happens with
+ * each recursive call, this class fully determines whether an expression is valid or not.
+ *
+ */
 public class ExpressionValidityChecker {
     Constants constants;
     Map<String, FunctionExpression> definedFuncs;
@@ -26,7 +33,7 @@ public class ExpressionValidityChecker {
      * which ensures correctness.
      *
      * @param terms A parsed list as accepted by the create method.
-     * @throws InvalidTermException
+     * @throws InvalidTermException Exception is thrown when one of the checks do not pass.
      */
     public void preCheck(List<String> terms) throws InvalidTermException {
         if (terms.size() == 0) {
@@ -224,7 +231,6 @@ public class ExpressionValidityChecker {
 //        System.out.println(getOuterItems(terms, new ArrayList<>(definedFuncs.keySet())));
         System.out.println(getOuterItems(List.of(" , ", "k"), List.of(",")));
         List<String> functionInputTerms;
-        Map<String, List<Integer>> commaAndIndexLists;
         int numCommas;
 
         for (List<Integer> indices: functionsAndIndexLists.values()) {
@@ -348,7 +354,7 @@ public class ExpressionValidityChecker {
      * is the last term of the list. Example: The input ["(", "x" "+", "3", ")"] returns true.
      */
     public boolean enclosedByOuterBrackets(List<String> terms){
-        // TODO: Could have used "fidnCorrespondingBracket" to improve readability but unsure
+        // TODO: Could have used "finCorrespondingBracket" to improve readability but unsure
         //  if it's a good thing to exert precondition (that checkMatchingBrackets(terms) evaluates to true)).
 
         if (terms.size() <= 1){ // There can't exist two brackets, so <terms> can't be enclosed by outer brackets.
@@ -401,7 +407,7 @@ public class ExpressionValidityChecker {
                 break;
             }
             default:
-                // In theory this should really never be run, hence why we have a RunTimeException
+                // In theory this should really never run, hence why we have a RunTimeException
                 throw new IllegalStateException("Unrecognized Operator Type!");
         }
 

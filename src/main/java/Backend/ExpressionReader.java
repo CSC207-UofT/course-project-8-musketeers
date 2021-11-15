@@ -10,11 +10,19 @@ import Graphics.ImplicitGrapher;
 
 import static Graphics.ImageTest.writeImage;
 
+/** The ExpressionReader class is responsible for parsing the user input expression that will be graphed.
+ *
+ *
+ */
 public class ExpressionReader {
     private final Constants constants = new Constants();
     private final ExpressionCreator ec;
     private final ExpressionValidityChecker vc;
 
+    /** Constructor for ExpressionReader.
+     *
+     * @param funcMap A map of function names to the actual functions.
+     */
     public ExpressionReader(Map<String, FunctionExpression> funcMap) {
         this.ec = new ExpressionCreator(funcMap);
         this.vc = new ExpressionValidityChecker(funcMap);
@@ -117,9 +125,9 @@ public class ExpressionReader {
 
     private void fixParsedlist (List<String> parsed) {
         //
-        fixLogicalOperators(parsed);
-        handleOperators(parsed);
-        handleSign(parsed);
+        fixLogicalOperators(parsed); // account for logical operators which may not be read correctly.
+        handleOperators(parsed); // remove all accounts of sequences of "+" and "-".
+        handleSign(parsed); // intepret unary usage of "-" and "+" correctly.
 
     }
 
@@ -168,47 +176,49 @@ public class ExpressionReader {
     private void handleSign(List<String> parsed) {
         for (int i = 0; i < parsed.size(); i++) {
             String current = parsed.get(i);
-            //This function is called after handleOperatorshandleOperators, so there are no consecutive unary operators, ensuring it
+            //This function is called after handleOperators, so there are no consecutive unary operators, ensuring it
             // makes sense.
             //Special case i = 0. We immediately know its a unary use of "+" and "-".
             if (i ==0 && (current.equals("-") || current.equals("+"))) {
-                interpetOperator(i, current,parsed);
+                interpretOperator(i, current,parsed);
             }
-            else if (i > 0 && (current.equals("-") || current.equals("+"))) {     //In this case, its more tricky to determine a unary usage of an operator.
-                replaceUnaryOperatorsWithOne(i, parsed);
+            else if (i > 0 && (current.equals("-") || current.equals("+"))) {
+                //In this case, its more tricky to determine a unary usage of an operator.
+                determineAndReplaceUnaryOperators(i, parsed);
             }
         }
     }
 
-    /**
+    /** Determine if "-" and "+" are being used in a unary context and interpret them appropriately.
      *
      * @param i current index in the parsed list.
      * @param parsed The parsed list we are editing to interpret "-" and "+" in a unary context.
      */
-    private void replaceUnaryOperatorsWithOne(int i, List<String> parsed) {
-        // specialcharacters will contain all characters where, if "-" or "+" appear after, they are used in
+    private void determineAndReplaceUnaryOperators(int i, List<String> parsed) {
+        // specialCharacters will contain all characters where, if "-" or "+" appear after, they are used in
         // unary context.
-        List<String> specialcharacters = constants.getAllOperators();
-        specialcharacters.remove("/"); // The case where we have ??/-??" in the code is bad habit. We are enforcing
+        List<String> specialCharacters = constants.getAllOperators();
+        specialCharacters.remove("/"); // The case where we have ??/-??" in the code is bad habit. We are enforcing
         // rule that we are not responsible for the interpretation of it. So
         // we remove "/"/
-        specialcharacters.remove("^"); // Same for "??^-??"
-        specialcharacters.add("(");
+        specialCharacters.remove("^"); // Same for "??^-??"
+        specialCharacters.add("(");
         // If the previous element of the parsed list is special, we interpet the operator as unary.
-        if (specialcharacters.contains(parsed.get(i-1))) {
-            interpetOperator(i, parsed.get(i), parsed);
+        if (specialCharacters.contains(parsed.get(i-1))) {
+            interpretOperator(i, parsed.get(i), parsed);
         }
 
     }
 
 
-    /**
+    /** Replace a unary  account of "-" or "+" in the parsed list and replace with "-1" followed by "*", or "1"
+     * followed by "*" respectively.
      *
      * @param i current index where we have "-" or "+"
      * @param s Character at parsed[i]
-     * @param parsed The parsed list wher we are interpretting unary operators.
+     * @param parsed The parsed list where we are interpreting unary operators.
      */
-    private void interpetOperator(int i, String s, List<String> parsed) {
+    private void interpretOperator(int i, String s, List<String> parsed) {
         parsed.remove(i);
         parsed.add(i, "*");
         if (s.equals("-")) {
@@ -221,21 +231,29 @@ public class ExpressionReader {
     }
 
     /** There are some logical operators which consist of 2 other successive logical operators. The first pass through
-     * expressionparser interprets them seperately. This corrects this misinterpretation.
+     * expressionParser interprets them separately. This corrects this misinterpretation.
      *
      * @param parsed Parsed list we are editing to be interpreted as a correct expression.
      */
     private void fixLogicalOperators(List<String> parsed) {
         int size = parsed.size();
-        for (int i = 0; i < size - 1; i++) {
+        for (int i = 0; i < size - 1; i++) { //We go upto size - 1 to ensure parsed.get(i+1) exists. If
+            // parsed.get(size-1) equals "<" or ">" then it would be invalid input anyway and rejected later.
             StringBuilder current = new StringBuilder(parsed.get(i));
             if ((current.toString().equals("<") || current.toString().equals(">")) && parsed.get(i+1).equals("=")) {
-                concatenateOperators(parsed, current, i);
+                concatenateOperators(parsed, current, i); // replace "<" followed by "=" with "<=". And same for ">".
             }
-            size = parsed.size();
+            size = parsed.size(); //update the size so we dont have index out of bounds error.
         }
     }
 
+    /** A method which converts an instance of "<" or ">" followed by "=" in the parsed list into one "<="
+     * Precondition: parsed.get(i) equals "<" or ">" and parsed.get(i+1) exists and is equal to "=".
+     *
+     * @param parsed The parsed list we are editing.
+     * @param current A StringBuilder term which is equal to parsed.get(i).
+     * @param i index of the list.
+     */
     private void concatenateOperators(List<String> parsed, StringBuilder current, int i) {
         parsed.remove(i);
         parsed.remove(i);
@@ -255,7 +273,7 @@ public class ExpressionReader {
 
         ExpressionReader er = new ExpressionReader(auc.getNamedFunctions(axes));
 
-        String test = "mandel(x, y)";
+        String test = "-x";
 
         // TODO: Use Wildcard or Casting... As we know the type beforehand!
 
