@@ -19,7 +19,7 @@ public class CommandLineInterface {
      * "java src/main/java/Frontend/CommandLineInterface.java" into the Terminal and type the required
      * commands and responses.
      * Accepted (i.e., structurally correct) user input:
-     * - java src/main/java/Frontend/CommandLineInterface.java -eq "x^2 + 1 = 0"
+     * - java src/main/java/Frontend/CommandLineInterface.java -eq "x^2 + 1 = 0" -graph BOUNDARY
      * - java src/main/java/Frontend/CommandLineInterface.java -dim 5
      * - java src/main/java/Frontend/CommandLineInterface.java -eq "x=0" -eq "y=6"
      * @param args An array of Strings containing the user inputs, split by a space " "
