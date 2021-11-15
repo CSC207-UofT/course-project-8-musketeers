@@ -4,6 +4,7 @@ import Backend.Axes;
 import Backend.AxesUseCase;
 import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionReader;
+import Backend.Expressions.ComparatorExpression;
 import Backend.Expressions.Expression;
 import Backend.Expressions.RealValuedExpression;
 import Graphics.Grapher;
@@ -11,6 +12,7 @@ import Graphics.Grapher;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class CommandLineInterface {
@@ -26,33 +28,15 @@ public class CommandLineInterface {
      */
     public static void main(String[] args) {
         CommandLineInterface cli = new CommandLineInterface();
+
+        ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
+
+        if (!cli.checkValidInput(userInputs)){
+            return;
+        }
+
         Axes axes = new Axes();
         AxesUseCase auc = new AxesUseCase();
-
-        boolean userInputIsValid = true;
-        // An array of strings containing accepted Strings. This is open to extension as other parts
-        // of the code become available to be merged into this CLI.
-        String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load"};
-        ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
-        if (userInputs.size() % 2 != 0) {
-            // There is an issue -- the (command, response) pair doesn't match up
-            // Add null at the end for now, and find the issue
-            userInputs.add(null);
-        }
-        for (int i = 0; i < userInputs.size(); i += 2) {
-            String firstElementOfPair = userInputs.get(i).toLowerCase();
-            String secondElementOfPair = userInputs.get(i + 1);
-            userInputIsValid = cli.isUserInputValid(acceptedCommands, firstElementOfPair, secondElementOfPair);
-            if (!userInputIsValid) {
-                break;
-            }
-        }
-
-        // At the point, the user input is at least a (structurally) valid input, with the correct pair of
-        // (command, response).
-        if (userInputIsValid) {
-            System.out.println("Hooray!");
-        }
 
         if (userInputs.contains("-load")) {
             String filename = cli.getCommandArgument("-load", userInputs);
@@ -76,6 +60,7 @@ public class CommandLineInterface {
                 Expression<?> exp = er.read(expArray[0]);
 
                 if (exp instanceof RealValuedExpression) {
+                    // TODO: implement domain restrictions
                     auc.addExpression((RealValuedExpression) exp, axes);
                 }
 
@@ -103,6 +88,27 @@ public class CommandLineInterface {
                 e.printStackTrace();
             }
         }
+    }
+
+    private boolean checkValidInput(List<String> userInputs){
+        boolean userInputIsValid = true;
+        // An array of strings containing accepted Strings. This is open to extension as other parts
+        // of the code become available to be merged into this CLI.
+        String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load"};
+        if (userInputs.size() % 2 != 0) {
+            // There is an issue -- the (command, response) pair doesn't match up
+            // Add null at the end for now, and find the issue
+            userInputs.add(null);
+        }
+        for (int i = 0; i < userInputs.size(); i += 2) {
+            String firstElementOfPair = userInputs.get(i).toLowerCase();
+            String secondElementOfPair = userInputs.get(i + 1);
+            userInputIsValid = isUserInputValid(acceptedCommands, firstElementOfPair, secondElementOfPair);
+            if (!userInputIsValid) {
+                break;
+            }
+        }
+        return userInputIsValid;
     }
 
     private String getCommandArgument(String command, List<String> userInputs){

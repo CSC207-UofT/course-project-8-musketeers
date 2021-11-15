@@ -26,9 +26,6 @@ public class Grapher {
         int[] pixels = new int[size*size];
         float[] graphData = new float[]{auc.getScale(axes), auc.getOrigin(axes)[0], auc.getOrigin(axes)[1]};
 
-        // TODO: Not working
-        pixels = ad.drawGrid(pixels, size, size, graphData);
-        pixels = ad.drawAxes(pixels, size, size, graphData);
 
         for (RealValuedExpression exp: axes.getExpressions()){
             if (exp instanceof FunctionExpression){
@@ -38,7 +35,7 @@ public class Grapher {
                 impGrapher.graph(pixels, size, size, exp, graphData, stringToGType(gType));
             }
         }
-
+        pixels = ad.drawGrid(pixels, size, size, graphData);
         writeImage(pixels, size, size, imgName);
     }
 
