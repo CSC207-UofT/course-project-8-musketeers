@@ -265,7 +265,8 @@ public class ExpressionReader {
         float[] pos = {0.f, 0.f};
         axes.setOrigin(pos);
 
-        ImplicitGrapher.graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
+        ImplicitGrapher igr = new ImplicitGrapher();
+        igr.graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
 
         writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
         System.out.println("...Done!");
