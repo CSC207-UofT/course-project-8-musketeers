@@ -1,7 +1,17 @@
 package Frontend;
 
+import Backend.Axes;
+import Backend.AxesUseCase;
+import Backend.Exceptions.InvalidTermException;
+import Backend.ExpressionReader;
+import Backend.Expressions.Expression;
+import Backend.Expressions.RealValuedExpression;
+import Graphics.Grapher;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class CommandLineInterface {
     /**
@@ -16,11 +26,13 @@ public class CommandLineInterface {
      */
     public static void main(String[] args) {
         CommandLineInterface cli = new CommandLineInterface();
+        Axes axes = new Axes();
+        AxesUseCase auc = new AxesUseCase();
 
         boolean userInputIsValid = true;
         // An array of strings containing accepted Strings. This is open to extension as other parts
         // of the code become available to be merged into this CLI.
-        String[] acceptedCommands = {"-eq", "-dim"};
+        String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load"};
         ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
         if (userInputs.size() % 2 != 0) {
             // There is an issue -- the (command, response) pair doesn't match up
@@ -41,6 +53,60 @@ public class CommandLineInterface {
         if (userInputIsValid) {
             System.out.println("Hooray!");
         }
+
+        if (userInputs.contains("-load")) {
+            String filename = cli.getCommandArgument("-load", userInputs);
+            try {
+                axes = auc.loadAxes(filename);
+            } catch (IOException e) {
+                System.out.println("Sorry axes corresponding to " + filename + " was not found");
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        ExpressionReader er = new ExpressionReader(auc.getNamedFunctions(axes));
+        Grapher grapher = new Grapher(axes);
+
+        List<String[]> equationsAndDomains = cli.findAllEquations(args);
+
+        for (String[] expArray: equationsAndDomains) {
+            try {
+                Expression<?> exp = er.read(expArray[0]);
+
+                if (exp instanceof RealValuedExpression) {
+                    auc.addExpression((RealValuedExpression) exp, axes);
+                }
+
+            } catch (InvalidTermException e) {
+                System.out.println("Error with interpreting input <" + expArray[0] + ">:" + e.getMessage());
+            }
+        }
+
+        String gType = cli.getCommandArgument("-graph", userInputs);
+
+
+        try {
+            grapher.graph(512, gType, "test.png");
+        } catch (IOException e) {
+            System.out.println("Image could not be saved");
+            e.printStackTrace();
+        }
+
+        if (userInputs.contains("-save")){
+            String filename = cli.getCommandArgument("-save", userInputs);
+            try {
+                auc.saveAxes(filename, axes);
+            } catch (IOException e) {
+                System.out.println("File could not be save");
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private String getCommandArgument(String command, List<String> userInputs){
+        return userInputs.get(userInputs.indexOf(command) + 1);
     }
 
     /**
@@ -98,5 +164,22 @@ public class CommandLineInterface {
             }
         }
         return true;
+    }
+
+    private List<String[]> findAllEquations(String[] arguments){
+        List<String[]> equationsAndDomains = new ArrayList<>();
+
+        // TODO: Move commands to constants
+        for(int i = 0; i < arguments.length - 3; i+=2){
+            if (arguments[i].equals("-eq")){
+                if(arguments[i + 2].equals("-domain")){
+                    equationsAndDomains.add(new String[]{arguments[i + 1], arguments[i + 3]});
+                }
+                else{
+                    equationsAndDomains.add(new String[]{arguments[i + 1]});
+                }
+            }
+        }
+        return equationsAndDomains;
     }
 }

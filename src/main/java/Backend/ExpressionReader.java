@@ -28,15 +28,75 @@ public class ExpressionReader {
     // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
     // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
     // e.g. cos(x) -> ["cos", "(", "x", ")"]
+
     public Expression<?> read(String expression) throws InvalidTermException {
         List<String> terms = expressionParser(expression);
         // TODO: Below is to use helpers "containsLogicalOperator" and "containsComparator" for now. In future we'll find another way to use this helper.
         if (vc.containsOperator(terms, "Logical") || vc.containsOperator(terms, "Comparator")) {
             return booleanValuedRead(terms);
         }
-        else {
-            return realValuedRead(terms);
+        else
+        {   if (!terms.contains("=")){
+                throw new InvalidTermException("Input interpreted as an explicit function but no '=' found");
+            }
+            if (isExplicit(terms)){
+                return explicitRead(terms);
+            }
+            else {
+                return implicitRead(terms);
+            }
         }
+    }
+
+
+    private boolean isExplicit(List<String> terms){
+
+        List<String> funcHeader = terms.subList(0, terms.indexOf("="));
+
+        if (!vc.validFuncName(funcHeader.get(0))){
+            return false;
+        }
+        if (!vc.enclosedByOuterBrackets(funcHeader.subList(1, funcHeader.size()))){
+            return false;
+        }
+        for (int i = 2; i < funcHeader.size() - 1; i++){
+            String item = funcHeader.get(i);
+            if ((i % 2) == 0){
+                if(!constants.getVariables().contains(item)){
+                    return false;
+                }
+            }
+            else{
+                if(!item.equals(",")){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private RealValuedExpression implicitRead (List<String> terms) throws InvalidTermException {
+        int eqIndex = terms.indexOf("=");
+        RealValuedExpression lExp = realValuedRead(terms.subList(0, eqIndex));
+        RealValuedExpression rExp = realValuedRead(terms.subList(eqIndex + 1, terms.size()));
+        return new ArithmeticOperatorExpression("-", lExp, rExp);
+    }
+
+    private RealValuedExpression explicitRead(List<String> terms) throws InvalidTermException {
+        int eqIndex = terms.indexOf("=");
+        RealValuedExpression function = realValuedRead(terms.subList(eqIndex + 1, terms.size()));
+        String funcName = terms.get(0);
+        String[] variables = findFunctionVars(terms.subList(0, eqIndex));
+        return new CustomFunctionExpression(funcName, variables, function);
+    }
+
+    private String[] findFunctionVars(List<String> funcHeader){
+        List<String> varTerms = funcHeader.subList(2, funcHeader.size() - 1);
+        String[] variables = new String[(varTerms.size() + 1) / 2];
+        for(int i = 0; i < variables.length; i++){
+            variables[i] = varTerms.get(2 * i);
+        }
+        return variables;
     }
 
     // Below precondition: Should be real-valued expressions, so if there's logicals or comparators, then some exception
@@ -245,30 +305,32 @@ public class ExpressionReader {
 
     // Try "( x ^ 2 + y ^ 2 - 1 ) ^ 3 - x ^ 2 * y ^ 3"!
     // mandel ( (x^2 - y^2 ) / (x^2 + y^2)^2 , (0 - 2 * x * y) / (x^2 + y^2)^2 )
-    public static void main(String[] args) throws Exception {
-        Axes axes = new Axes();
-        AxesUseCase auc = new AxesUseCase();
-        int size = 512;
-        int[] mainPixels = new int[size*size];
-        int[] dims1 = {size,size};
-
-
-        ExpressionReader er = new ExpressionReader(auc.getNamedFunctions(axes));
-
-        String test = "mandel(x, y)";
-
-        // TODO: Use Wildcard or Casting... As we know the type beforehand!
-
-        RealValuedExpression func = (RealValuedExpression) er.read(test);
-        axes.addExpression(func);
-        axes.setScale(4f);
-        float[] pos = {0.f, 0.f};
-        axes.setOrigin(pos);
-
-        ImplicitGrapher.graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
-
-        writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
-        System.out.println("...Done!");
-    }
+//    public static void main(String[] args) throws Exception {
+////        Axes axes = new Axes();
+////        AxesUseCase auc = new AxesUseCase();
+////        int size = 512;
+////        int[] mainPixels = new int[size*size];
+////        int[] dims1 = {size,size};
+////
+////
+////        ExpressionReader er = new ExpressionReader(auc.getNamedFunctions(axes));
+////
+////        String test = "y = exp(x)";
+////
+////        System.out.println(er.expressionParser(test));
+////
+////        // TODO: Use Wildcard or Casting... As we know the type beforehand!
+////
+////        RealValuedExpression func = (RealValuedExpression) er.read(test);
+////        axes.addExpression(func);
+////        axes.setScale(4f);
+////        float[] pos = {0.f, 0.f};
+////        axes.setOrigin(pos);
+////
+////        ImplicitGrapher.graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
+////
+////        writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
+////        System.out.println("...Done!");
+//    }
 
 }

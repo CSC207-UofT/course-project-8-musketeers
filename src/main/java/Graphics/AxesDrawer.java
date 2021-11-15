@@ -1,43 +1,46 @@
 package Graphics;
 
-import static Graphics.ImageTest.*;
-import static Graphics.ImplicitGrapher.*;
-
-import Backend.Expressions.Expression;
-import Backend.Axes;
-import Backend.ExpressionReader;
-import Backend.Expressions.RealValuedExpression;
+//import static Graphics.ImageTest.*;
+//import static Graphics.ImplicitGrapher.*;
+//
+//import Backend.Expressions.Expression;
+//import Backend.Axes;
+//import Backend.ExpressionReader;
+//import Backend.Expressions.RealValuedExpression;
 
 public class AxesDrawer {
 
-   public static void main(String args[]) throws Exception {
-     int size = 256;
-     int[] mainPixels = new int[size*size];
-     int[] dims1 = {size,size};
+//   public static void main(String args[]) throws Exception {
+//     int size = 256;
+//     int[] mainPixels = new int[size*size];
+//     int[] dims1 = {size,size};
+//
+//     float scale = 4.5f;
+//     float xpos = -0.f;
+//     float ypos = 0.f;
+//
+//     Axes axes = new Axes();
+//     axes.setScale(scale);
+//     float[] pos = {xpos, ypos};
+//     axes.setOrigin(pos);
+//     ExpressionReader er = new ExpressionReader(axes.getNamedExpressions());
+//
+//     RealValuedExpression func = (RealValuedExpression) er.read("cos(10 * x ) -y");
+//     axes.addExpression(func);
+//
+//     graphImplicit(mainPixels, dims1[0], dims1[1], axes, GraphType.BOUNDARY);
+//     drawAxes(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
+//     drawGrid(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
+//     writeImage(mainPixels, dims1[0], dims1[1], "sampleOutMandelAxes.png");
+//   }
 
-     float scale = 4.5f;
-     float xpos = -0.f;
-     float ypos = 0.f;
+  public int[] drawAxes(int[] pixels, int w, int h, float[] graphData) {
 
-     Axes axes = new Axes();
-     axes.setScale(scale);
-     float[] pos = {xpos, ypos};
-     axes.setOrigin(pos);
-     ExpressionReader er = new ExpressionReader(axes.getNamedExpressions());
+	  float scale = graphData[0];
+      float xpos = graphData[1];
+      float ypos = graphData[2];
 
-     RealValuedExpression func = (RealValuedExpression) er.read("cos(10 * x ) -y");
-     axes.addExpression(func);
-
-     graphImplicit(mainPixels, dims1[0], dims1[1], axes, GraphType.BOUNDARY);
-     drawAxes(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
-     drawGrid(mainPixels, dims1[0], dims1[1], scale, xpos, ypos);
-     writeImage(mainPixels, dims1[0], dims1[1], "sampleOutMandelAxes.png");
-   }
-
-  public static void drawAxes(int[] pixels, int w, int h,
-                              float scale, float xpos, float ypos) {
-
-	  int xOrigin = (int)((xpos / scale + 0.5f) * w);
+      int xOrigin = (int)((xpos / scale + 0.5f) * w);
 	  int yOrigin = (int)((-ypos / scale + 0.5f) * h);
 
       RGBA xColor = new RGBA("FFFF0000");
@@ -51,11 +54,16 @@ public class AxesDrawer {
       for (int x = 0; x < w; x++) {
         pixels[yOrigin * w + x] = xColor.blend(new RGBA(pixels[yOrigin * w + x]), 0.6f).toInt();
       }
+      return pixels;
   }
-  public static void drawGrid(int[] pixels, int w, int h,
-                              float scale, float xpos, float ypos) {
+
+  public int[] drawGrid(int[] pixels, int w, int h, float[] graphData) {
       RGBA gridColor = new RGBA("FF888888");
       float spacing = 0.5f;
+
+      float scale = graphData[0];
+      float xpos = graphData[1];
+      float ypos = graphData[2];
 
       // vertical lines
       float xLeft = (xpos - scale/2);
@@ -80,5 +88,6 @@ public class AxesDrawer {
               pixels[yp * w + x] = gridColor.blend(new RGBA(pixels[yp * w + x]), 0.8f).toInt();
           }
       }
+      return pixels;
   }
 }
