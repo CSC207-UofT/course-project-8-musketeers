@@ -34,7 +34,7 @@ public class ExpressionReader {
         }
         else
         {   if (!terms.contains("=")){
-                throw new InvalidTermException("Input interpreted as an explicit function but no '=' found");
+                return realValuedRead(terms);
             }
             if (isExplicit(terms)){
                 return explicitRead(terms);
