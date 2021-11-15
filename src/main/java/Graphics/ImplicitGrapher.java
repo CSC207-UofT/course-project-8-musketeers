@@ -10,8 +10,8 @@ import Backend.Expressions.RealValuedExpression;
 
 
 public class ImplicitGrapher {
-    public static final int WHITE = (int) Long.parseLong("FFFFFFFF", 16);
-    public static final int BLACK = (int) Long.parseLong("FF000000", 16);
+    public final int WHITE = (int) Long.parseLong("FFFFFFFF", 16);
+    public final int BLACK = (int) Long.parseLong("FF000000", 16);
 
 //   public static void main(String args[]) throws Exception {
 //      int size = 256;
