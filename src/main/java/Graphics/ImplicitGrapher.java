@@ -10,6 +10,8 @@ import Backend.Expressions.RealValuedExpression;
 
 
 public class ImplicitGrapher {
+    public final int WHITE = (int) Long.parseLong("FFFFFFFF", 16);
+    public final int BLACK = (int) Long.parseLong("FF000000", 16);
 
 //   public static void main(String args[]) throws Exception {
 //      int size = 256;
@@ -39,81 +41,49 @@ public class ImplicitGrapher {
 //    }
 
     public int[] graph(int[] pixels, int w, int h, Evaluatable func, float[] graphData, GraphType gtype){
-
-        float scale = graphData[0];
-        float xpos = graphData[1];
-        float ypos = graphData[2];
-
-        float pixelSize = scale / (float)w;
-
         for (int y = 0; y < h; y++) {
             for (int x = 0; x < w; x++) {
-                float cx = (x / (float)w - 0.5f) * scale + xpos;
-                float cy = -(y / (float)h - 0.5f) * scale + ypos;
-                if (gtype == GraphType.REGION) {
-                    if (func.evaluate(cx, cy) > 0) {
-                        pixels[y * w + x] = (int) Long.parseLong("FFFFFFFF", 16);
-                    } else {
-                        pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
-                    }
-                }
-                else if (gtype == GraphType.GRAYSCALE) {
-                    float result = func.evaluate(cx, cy);
-                    String outR = fmtHex255((int) (255 * Math.sqrt(result)));
-                    pixels[y * w + x] = (int) Long.parseLong("FF" + outR + outR + outR, 16);
-                }
-                else if (gtype == GraphType.BOUNDARY) {
-                    pixels[y * w + x] = (int) Long.parseLong("FFFFFFFF", 16);
-                    if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx + pixelSize, cy) > 0)) {
-                        pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
-                    }
-                    if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx, cy + pixelSize) > 0)) {
-                        pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
-                    }
-                }
+                writePixel(pixels, w, h, func, graphData, gtype, x, y);
             }
         }
         return pixels;
     }
 
+private void writePixel(int[] pixels, int w, int h, Evaluatable func,
+                        float[] graphData, GraphType gtype,
+                        int x, int y) {
 
-//  public static void graphImplicit(int[] pixels, int w, int h, Axes ax,
-//                                   GraphType gtype) {
-//
-//      Evaluatable func = ax.getExpressions().get(0);
-//
-//      float scale = ax.getScale();
-//      float xpos = ax.getOrigin()[0];
-//      float ypos = ax.getOrigin()[1];
-//
-//      float pixelSize = scale / (float)w;
-//
-//      for (int y = 0; y < h; y++) {
-//         for (int x = 0; x < w; x++) {
-//            float cx = (x / (float)w - 0.5f) * scale + xpos;
-//            float cy = -(y / (float)h - 0.5f) * scale + ypos;
-//            if (gtype == GraphType.REGION) {
-//                if (func.evaluate(cx, cy) > 0) {
-//                    pixels[y * w + x] = (int) Long.parseLong("FFFFFFFF", 16);
-//                } else {
-//                    pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
-//                }
-//            }
-//            else if (gtype == GraphType.GRAYSCALE) {
-//                float result = func.evaluate(cx, cy);
-//                String outR = fmtHex255((int) (255 * Math.sqrt(result)));
-//                pixels[y * w + x] = (int) Long.parseLong("FF" + outR + outR + outR, 16);
-//            }
-//            else if (gtype == GraphType.BOUNDARY) {
-//				pixels[y * w + x] = (int) Long.parseLong("FFFFFFFF", 16);
-//				if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx + pixelSize, cy) > 0)) {
-//					pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
-//				}
-//				if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx, cy + pixelSize) > 0)) {
-//					pixels[y * w + x] = (int) Long.parseLong("FF000000", 16);
-//				}
-//			}
-//         }
-//      }
-//  }
+      // This can be moved outside the double-for loop
+      // but "premature optimization is the root of all evil"
+      // currently this avoids long parameter list and data clump
+      float scale = graphData[0];
+      float xpos = graphData[1];
+      float ypos = graphData[2];
+      float pixelSize = scale / (float)w;
+
+      float cx = (x / (float)w - 0.5f) * scale + xpos;
+      float cy = -(y / (float)h - 0.5f) * scale + ypos;
+      if (gtype == GraphType.REGION) {
+          if (func.evaluate(cx, cy) > 0) {
+              pixels[y * w + x] = WHITE;
+          } else {
+              pixels[y * w + x] = BLACK;
+          }
+      }
+      else if (gtype == GraphType.GRAYSCALE) {
+          float result = func.evaluate(cx, cy);
+          String outR = fmtHex255((int) (255 * Math.sqrt(result)));
+          pixels[y * w + x] = (int) Long.parseLong("FF" + outR + outR + outR, 16);
+      }
+      else if (gtype == GraphType.BOUNDARY) {
+          pixels[y * w + x] = WHITE;
+
+          if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx + pixelSize, cy) > 0)) {
+              pixels[y * w + x] = BLACK;
+          }
+          if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx, cy + pixelSize) > 0)) {
+              pixels[y * w + x] = BLACK;
+          }
+      }
+  }
 }
