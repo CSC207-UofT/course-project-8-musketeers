@@ -6,9 +6,6 @@ import java.util.Map;
 
 import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
-import Graphics.ImplicitGrapher;
-
-import static Graphics.ImageTest.writeImage;
 
 /** The ExpressionReader class is responsible for parsing the user input expression that will be graphed.
  *

@@ -1,8 +1,6 @@
 package Backend;
 
-import Backend.Exceptions.BaseCaseCreatorException;
-import Backend.Exceptions.CompoundCaseCreatorException;
-import Backend.Exceptions.InvalidTermException;
+import Backend.Exceptions.*;
 import Backend.Expressions.*;
 
 import java.util.ArrayList;

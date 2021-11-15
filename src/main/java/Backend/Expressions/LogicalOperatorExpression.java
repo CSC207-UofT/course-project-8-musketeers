@@ -27,19 +27,11 @@ public class LogicalOperatorExpression extends BooleanValuedExpression {
                 trueComparison = this.lExpression.evaluate(arguments) ||
                         this.rExpression.evaluate(arguments);
                 return trueComparison;
-
-//            case "NOT": // TODO: Decide whether to have this as UnaryOperator or PsuedoBinaryOperator? Actually, let's add this in future!
-//                trueComparison = this.rExpression.evaluate(arguments);
-//                return trueComparison;
+                // TODO: Add NOT?
             default:
                 throw new IllegalStateException("Unrecognized Logical Operator!");
 
         }
     }
 
-// TODO: Below a helper Louis may need!
-//    private float booleanToFloat(boolean trueComparison){
-//        if (trueComparison) {return 1.f;}
-//        else {return -1.f;}
-//    }
 }

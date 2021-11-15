@@ -43,7 +43,7 @@ public class ComparatorExpression extends BooleanValuedExpression {
             // This should not happen if the program is correct.
             default:
                 throw new IllegalStateException("Unrecognized Comparator!");
-        };
+        }
 
         return comparisonHolds;
     }

@@ -26,6 +26,7 @@ public class CustomFunctionExpression extends FunctionExpression {
         this.function = function;
     }
 
+    // These constructors will be useful when we fully implement custom functions
     public CustomFunctionExpression(String funcName, String[] variables, RealValuedExpression function,
                                     ComparatorExpression domain){
         this(funcName, variables, function);

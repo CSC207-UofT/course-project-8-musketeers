@@ -4,7 +4,6 @@ import Backend.*;
 import Backend.AxesUseCase;
 import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionReader;
-import Backend.Expressions.*;
 import Backend.Expressions.Expression;
 import Backend.Expressions.RealValuedExpression;
 import Graphics.Grapher;
@@ -12,7 +11,6 @@ import Graphics.Grapher;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
 public class CommandLineInterface {
@@ -62,7 +60,6 @@ public class CommandLineInterface {
                     // TODO: implement domain restrictions
                     auc.addExpression((RealValuedExpression) exp, axes);
                 }
-
             } catch (InvalidTermException e) {
                 System.out.println("Error with interpreting input <" + expArray[0] + ">:" + e.getMessage());
             }
