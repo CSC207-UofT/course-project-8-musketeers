@@ -33,15 +33,15 @@ public class RaymarcherTest {
     }
 
 
-   public static void main(String args[]) throws Exception {
-      int size = 256;
-      int[] mainPixels = new int[size*size];
-      int[] dims1 = {size,size};
-
-      Evaluatable3D f1 = new Func1();
-      raymarch(mainPixels, dims1[0], dims1[1], f1);
-      writeImage(mainPixels, dims1[0], dims1[1], "sampleOut3D.png");
-   }
+//   public static void main(String args[]) throws Exception {
+//      int size = 256;
+//      int[] mainPixels = new int[size*size];
+//      int[] dims1 = {size,size};
+//
+//      Evaluatable3D f1 = new Func1();
+//      raymarch(mainPixels, dims1[0], dims1[1], f1);
+//      writeImage(mainPixels, dims1[0], dims1[1], "sampleOut3D.png");
+//   }
 
 
   public static void raymarch(int[] pixels, int w, int h, Evaluatable3D func) {
