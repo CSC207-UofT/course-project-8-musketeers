@@ -217,7 +217,6 @@ public class ExpressionReader {
             parsed.remove(index);
             parsed.add(index,"-");
 
-
         }
     }
 
@@ -302,35 +301,5 @@ public class ExpressionReader {
         current.append("=");
         parsed.add(i, current.toString());
     }
-
-    // Try "( x ^ 2 + y ^ 2 - 1 ) ^ 3 - x ^ 2 * y ^ 3"!
-    // mandel ( (x^2 - y^2 ) / (x^2 + y^2)^2 , (0 - 2 * x * y) / (x^2 + y^2)^2 )
-//    public static void main(String[] args) throws Exception {
-////        Axes axes = new Axes();
-////        AxesUseCase auc = new AxesUseCase();
-////        int size = 512;
-////        int[] mainPixels = new int[size*size];
-////        int[] dims1 = {size,size};
-////
-////
-////        ExpressionReader er = new ExpressionReader(auc.getNamedFunctions(axes));
-////
-////        String test = "y = exp(x)";
-////
-////        System.out.println(er.expressionParser(test));
-////
-////        // TODO: Use Wildcard or Casting... As we know the type beforehand!
-////
-////        RealValuedExpression func = (RealValuedExpression) er.read(test);
-////        axes.addExpression(func);
-////        axes.setScale(4f);
-////        float[] pos = {0.f, 0.f};
-////        axes.setOrigin(pos);
-////
-////        ImplicitGrapher.graphImplicit(mainPixels, dims1[0], dims1[1], axes, false);
-////
-////        writeImage(mainPixels, dims1[0], dims1[1], "sampleOutCool.png");
-////        System.out.println("...Done!");
-//    }
 
 }

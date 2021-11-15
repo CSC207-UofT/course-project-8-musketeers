@@ -1,10 +1,10 @@
 package Frontend;
 
-import Backend.Axes;
+import Backend.*;
 import Backend.AxesUseCase;
 import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionReader;
-import Backend.Expressions.ComparatorExpression;
+import Backend.Expressions.*;
 import Backend.Expressions.Expression;
 import Backend.Expressions.RealValuedExpression;
 import Graphics.Grapher;
@@ -58,7 +58,6 @@ public class CommandLineInterface {
         for (String[] expArray: equationsAndDomains) {
             try {
                 Expression<?> exp = er.read(expArray[0]);
-
                 if (exp instanceof RealValuedExpression) {
                     // TODO: implement domain restrictions
                     auc.addExpression((RealValuedExpression) exp, axes);
@@ -69,10 +68,8 @@ public class CommandLineInterface {
             }
         }
 
-        String gType = cli.getCommandArgument("-graph", userInputs);
-
-
         try {
+            String gType = cli.getCommandArgument("-graph", userInputs);
             grapher.graph(512, gType, "test.png");
         } catch (IOException e) {
             System.out.println("Image could not be saved");
