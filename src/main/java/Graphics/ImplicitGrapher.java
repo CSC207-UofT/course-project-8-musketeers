@@ -1,12 +1,7 @@
 package Graphics;
 
-import static Graphics.ImageTest.*;
 import static Graphics.RGBA.fmtHex255;
 
-import Backend.*;
-import Backend.Axes;
-import Backend.ExpressionReader;
-import Backend.Expressions.RealValuedExpression;
 
 
 public class ImplicitGrapher {

@@ -25,7 +25,6 @@ public class ExpressionReader {
     // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
     // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
     // e.g. cos(x) -> ["cos", "(", "x", ")"]
-
     public Expression<?> read(String expression) throws InvalidTermException {
         List<String> terms = expressionParser(expression);
         // TODO: Below is to use helpers "containsLogicalOperator" and "containsComparator" for now. In future we'll find another way to use this helper.
@@ -34,6 +33,7 @@ public class ExpressionReader {
         }
         else
         {   if (!terms.contains("=")){
+            // TODO: Add error for the future?
                 return realValuedRead(terms);
             }
             if (isExplicit(terms)){
@@ -46,39 +46,69 @@ public class ExpressionReader {
     }
 
 
+    /** We say a list of terms appears to be an explicit expression if and only if:
+     * 0. There is an equals sign in the expression
+     * 1. the first term is all alphabets (lower or upper case), assumed to be the name of the function
+     * 2. The second term is '(' and the term before the equals sign in ')'
+     * 3. Everything in between alternates between alphabets and commas
+     * 4. The alphabets are variables, as defined in Constants.VARIABLES
+     * @param terms A list of strings representing userInput after parsing by expressionParser()
+     * @return true if and only if the expression appears to be an explicit function
+     */
     private boolean isExplicit(List<String> terms){
 
+        // "=" assumed to be present
+        // funcHeader is going to be something like ["f", "(", "x", "y", ")]
         List<String> funcHeader = terms.subList(0, terms.indexOf("="));
 
+        // check the first term is a valid function name (all alphabets and is not already taken)
         if (!vc.validFuncName(funcHeader.get(0))){
             return false;
         }
+
+        // Check condition 2
         if (!vc.enclosedByOuterBrackets(funcHeader.subList(1, funcHeader.size()))){
             return false;
         }
-        for (int i = 2; i < funcHeader.size() - 1; i++){
-            String item = funcHeader.get(i);
-            if ((i % 2) == 0){
-                if(!constants.getVariables().contains(item)){
-                    return false;
-                }
+
+        // checks until the last comma
+        for (int i = 2; i < funcHeader.size() - 2; i++){
+
+            // Check condition 4
+            if (!constants.getVariables().contains(funcHeader.get(i))){
+                return false;
             }
-            else{
-                if(!item.equals(",")){
-                    return false;
-                }
+
+            // Check condition 3
+            if (!funcHeader.get(i + 1).equals(",")){
+                return false;
             }
+
         }
-        return true;
+        // the term preceding the final bracket is a variable
+        return constants.getVariables().contains(funcHeader.get(funcHeader.size() - 2));
     }
 
+    /**
+     * @param terms A list of strings representing userInput after parsing by expressionParser()
+     * @return A RealValuedExpression representing left - right for the implicit function
+     * @throws InvalidTermException If the expression is invalid
+     */
     private RealValuedExpression implicitRead (List<String> terms) throws InvalidTermException {
         int eqIndex = terms.indexOf("=");
-        RealValuedExpression lExp = realValuedRead(terms.subList(0, eqIndex));
-        RealValuedExpression rExp = realValuedRead(terms.subList(eqIndex + 1, terms.size()));
-        return new ArithmeticOperatorExpression("-", lExp, rExp);
+        List<String> lTerms = new ArrayList<>(terms.subList(0, eqIndex));
+        List<String> rTerms = terms.subList(eqIndex + 1, terms.size());
+        lTerms.addAll(List.of("-", "("));
+        lTerms.addAll(rTerms);
+        lTerms.add(")");
+        return realValuedRead(lTerms);
     }
 
+    /**
+     * @param terms A list of strings representing userInput after parsing by expressionParser()
+     * @return A CustomFunctionExpression containing the necessary for the given function, upcasted to a RealValuedExpression
+     * @throws InvalidTermException If the expression is invalid
+     */
     private RealValuedExpression explicitRead(List<String> terms) throws InvalidTermException {
         int eqIndex = terms.indexOf("=");
         RealValuedExpression function = realValuedRead(terms.subList(eqIndex + 1, terms.size()));
@@ -87,6 +117,11 @@ public class ExpressionReader {
         return new CustomFunctionExpression(funcName, variables, function);
     }
 
+    /**
+     * @param funcHeader The header of a function is everything to the left of '=' when defining a function
+     * @return An array of Strings containing the variables that the function is in terms of
+     * For ["f", "(", "x", ")"] -> ["x"]
+     */
     private String[] findFunctionVars(List<String> funcHeader){
         List<String> varTerms = funcHeader.subList(2, funcHeader.size() - 1);
         String[] variables = new String[(varTerms.size() + 1) / 2];
@@ -120,8 +155,8 @@ public class ExpressionReader {
      * @param expression This is the expression the user has input.
      * @return A list which we can create an expression tree from.
      */
-    public List<String> expressionParser(String expression) {
-        List<String> parsed = new ArrayList<>(List.of());
+    private List<String> expressionParser(String expression) {
+        List<String> parsed = new ArrayList<>();
         StringBuilder section = new StringBuilder(); // section will be storing any series of characters which are not
         // operators.
         // We will loop over expression to interpret it and add to parsed.
