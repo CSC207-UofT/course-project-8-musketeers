@@ -21,6 +21,10 @@ public class ExpressionValidityChecker {
         }
     }
 
+    public boolean validFuncName(String name){
+        return !definedFuncs.containsKey(name) && name.matches("[a-zA-Z]+");
+    }
+
     /** A preliminary check that throws an exception if the input expression from the user is invalid in specific ways.
      *
      * @param terms The parsed expression input by the user.
@@ -137,7 +141,7 @@ public class ExpressionValidityChecker {
             if (!(checkNumber(term) | // If a term is not a number,
                     constants.getVariables().contains(term) | // or a variable,
                     constants.getAllOperators().contains(term) | // or an operator,
-                    constants.getBuiltInFunctions().contains(term) | // or a built in function
+                    definedFuncs.containsKey(term) | // or a built in function
                     constants.getSpecialCharacters().contains(term)) // or a special character which is accepted,
             ) { return false; } //then return false as its not something we can interpret.
         }
@@ -218,8 +222,6 @@ public class ExpressionValidityChecker {
     private boolean checkFunctionInputSize(List<String> terms) {
 
         Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(definedFuncs.keySet()));
-//        System.out.println(getOuterItems(terms, new ArrayList<>(definedFuncs.keySet())));
-        System.out.println(getOuterItems(List.of(" , ", "k"), List.of(",")));
         List<String> functionInputTerms;
         Map<String, List<Integer>> commaAndIndexLists;
         int numCommas;
@@ -229,7 +231,6 @@ public class ExpressionValidityChecker {
                 functionInputTerms = terms.subList(index + 2, findCorrespondingBracket(terms, index + 1));
                 numCommas = getOuterItems(functionInputTerms, List.of(",")).size();
                 if (funcNumInputs.get(terms.get(index)) - 1 != numCommas) {
-
                     return false;
                 }
             } // This works thanks to checkers in "precheck" that is done before this checker.
