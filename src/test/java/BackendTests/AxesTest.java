@@ -37,9 +37,9 @@ public class AxesTest {
 
     @Test(timeout = 50)
     public void testAxesCreation(){
-        assertEquals(ax.getScale(),1,0);
+        assertEquals(ax.getScale(),5,0.0001f);
         float[] p = {0,0};
-        assertArrayEquals(ax.getOrigin(), p, 0.0F);
+        assertArrayEquals(ax.getOrigin(), p, 0.00001f);
         assertEquals(ax.getExpressions(), new ArrayList<RealValuedExpression>() {
         });
     }
@@ -66,7 +66,7 @@ public class AxesTest {
 
     @Test(timeout = 50)
     public void testAxesSetScale(){
-        assertEquals(ax.getScale(), 1f, 0.0001);
+        assertEquals(ax.getScale(), 5f, 0.0001);
         ax.setScale(3f);
         assertEquals(ax.getScale(), 3f, 0.0001);
 
