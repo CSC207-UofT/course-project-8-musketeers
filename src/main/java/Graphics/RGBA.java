@@ -9,17 +9,17 @@ public class RGBA {
     public int b;
     public int a;
 
-    public static void main(String[] args) {
-        RGBA color = new RGBA(100, 255, 40);
-        //System.out.println(color);
-        //System.out.println(color.toInt());
-
-        RGBA gray = new RGBA("FF888888");
-        RGBA blend = gray.blend(color, 0.5f);
-        System.out.println(blend);
-        System.out.println("test " + blend.r + " " + blend.g + " " + blend.b);
-        System.out.println(blend.toInt());
-    }
+//    public static void main(String[] args) {
+//        RGBA color = new RGBA(100, 255, 40);
+//        //System.out.println(color);
+//        //System.out.println(color.toInt());
+//
+//        RGBA gray = new RGBA("FF888888");
+//        RGBA blend = gray.blend(color, 0.5f);
+//        System.out.println(blend);
+//        System.out.println("test " + blend.r + " " + blend.g + " " + blend.b);
+//        System.out.println(blend.toInt());
+//    }
 
     public static String fmtHex255(int i) {
         // String.valueOf is necessary otherwise it treats char as numeric.
