@@ -23,14 +23,14 @@ import java.util.Map;
 
 public class Axes implements Serializable {
     private float scale;
-    private float dimensionSize;
+    private float dimensionSize; // to be used later
     private float[] origin;
     private final List<RealValuedExpression> exprCollection;
     private final Map<String, FunctionExpression> namedExpressions = initialNamedExpressions();
 
     //Constructors
     public Axes(){
-        this.scale = 1;
+        this.scale = 5;
         this.dimensionSize = 2;
         this.origin = new float[2];
         this.exprCollection = new ArrayList<>();
@@ -67,7 +67,7 @@ public class Axes implements Serializable {
 
     /**
      * Constructor for Axes
-     * @param a  the scale parameter
+     * @param scale the scale parameter
      * @param origin  the origin parameter
      */
     public Axes(float scale, float[] origin){

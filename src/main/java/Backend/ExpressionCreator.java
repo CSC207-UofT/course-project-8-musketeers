@@ -1,8 +1,6 @@
 package Backend;
 
-import Backend.Exceptions.BaseCaseCreatorException;
-import Backend.Exceptions.CompoundCaseCreatorException;
-import Backend.Exceptions.InvalidTermException;
+import Backend.Exceptions.*;
 import Backend.Expressions.*;
 
 import java.util.ArrayList;
@@ -31,7 +29,6 @@ public class ExpressionCreator {
        COMPLETE VERSION OF CREATION AS IT HAS ALL CHECKER!!! */
     public Expression<?> create(List<String> terms) throws InvalidTermException {
         List<String> minimalTerms = bracketsReduction(terms); // remove unnecessary enclosing brackets.
-        int minimalTermsSize = minimalTerms.size();
 
         vc.preCheck(minimalTerms); // A basic current-level, NON-RECURSIVE check for the validity of the expression.
         /* Precheck will be shared in realVal and boolVal, especially the "InvalidTermException" shouldn't be

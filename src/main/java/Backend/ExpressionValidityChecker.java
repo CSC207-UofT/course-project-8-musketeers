@@ -12,6 +12,7 @@ public class ExpressionValidityChecker {
     Constants constants;
     Map<String, FunctionExpression> definedFuncs;
     Map<String, Integer> funcNumInputs = new HashMap<>();
+
     public ExpressionValidityChecker(Map<String, FunctionExpression> definedFuncs) {
         this.constants = new Constants();
         this.definedFuncs = definedFuncs;
@@ -30,7 +31,7 @@ public class ExpressionValidityChecker {
      * which ensures correctness.
      *
      * @param terms A parsed list as accepted by the create method.
-     * @throws InvalidTermException
+     * @throws InvalidTermException If terms immediately found to be invalid
      */
     public void preCheck(List<String> terms) throws InvalidTermException {
         if (terms.size() == 0) {
@@ -226,7 +227,6 @@ public class ExpressionValidityChecker {
 
         Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(definedFuncs.keySet()));
         List<String> functionInputTerms;
-        Map<String, List<Integer>> commaAndIndexLists;
         int numCommas;
 
         for (List<Integer> indices: functionsAndIndexLists.values()) {

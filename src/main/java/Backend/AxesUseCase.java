@@ -39,6 +39,7 @@ public class AxesUseCase {
      */
     public float getScale(Axes ax){return ax.getScale();}
 
+    // Will be used later to allow for zooming in and out
     public void setScale(float scale, Axes ax) throws InvalidCommandArguments {
         if (scale <= 0) {
             throw new InvalidCommandArguments("Invalid Command Argument: " + scale +
@@ -50,6 +51,7 @@ public class AxesUseCase {
 
     public float[] getOrigin(Axes ax){return ax.getOrigin();}
 
+    // Will be used later when we allow for movement of the graph
     public void setOrigin(float[] o, Axes ax){ax.setOrigin(o);}
 
     public List<RealValuedExpression> getExpressions(Axes ax){
@@ -60,6 +62,7 @@ public class AxesUseCase {
         ax.addExpression(expr);
     }
 
+    // Might be used later to allow for removal of user-defined functions
     public void removeExpression(RealValuedExpression expr, Axes ax){ax.removeExpression((RealValuedExpression) expr);}
 
     public Map<String, FunctionExpression> getNamedFunctions(Axes ax){

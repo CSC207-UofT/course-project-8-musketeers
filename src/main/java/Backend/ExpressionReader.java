@@ -6,9 +6,6 @@ import java.util.Map;
 
 import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
-import Graphics.ImplicitGrapher;
-
-import static Graphics.ImageTest.writeImage;
 
 public class ExpressionReader {
     private final Constants constants = new Constants();
