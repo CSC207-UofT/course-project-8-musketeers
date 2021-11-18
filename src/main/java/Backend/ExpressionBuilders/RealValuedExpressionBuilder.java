@@ -6,10 +6,7 @@ import Backend.Expressions.*;
 
 import java.util.Map;
 
-public class RealValuedExpressionBuilder extends ExpressionBuilder {
-    private final Constants constants = new Constants();
-    private RealValuedExpression expr = null;
-
+public class RealValuedExpressionBuilder extends ExpressionBuilder<RealValuedExpression> {
     // Below base case: Construct Number or Variable.
     public RealValuedExpressionBuilder constructExpression(String input){
         if (this.constants.getVariables().contains(input)){
@@ -22,9 +19,9 @@ public class RealValuedExpressionBuilder extends ExpressionBuilder {
 
     @Override
     // Below construct with (binary) operators.
-    public RealValuedExpressionBuilder constructExpression(ExpressionBuilder lExprBuilder, String op,
-                                                           ExpressionBuilder rExprBuilder, String operatorType)
-            throws EmptyBuilderException{
+    public ExpressionBuilder<RealValuedExpression> constructExpression(ExpressionBuilder<?> lExprBuilder, String op,
+                                                                       ExpressionBuilder<?> rExprBuilder,
+                                                                       String operatorType) throws EmptyBuilderException{
         switch (operatorType) {
             case "Arithmetic":
                 this.expr = new ArithmeticOperatorExpression(op, (RealValuedExpression) lExprBuilder.build(),
@@ -54,12 +51,5 @@ public class RealValuedExpressionBuilder extends ExpressionBuilder {
         func.setInputs(inputExpressions);
         this.expr = func;
         return this;
-    }
-
-    public RealValuedExpression build() throws EmptyBuilderException {
-        if (this.expr == null){
-            throw new EmptyBuilderException("Builder's Expression hasn't been initialized");
-        }
-        return this.expr;
     }
 }
