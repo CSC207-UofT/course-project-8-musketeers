@@ -2,6 +2,7 @@ package Frontend;
 
 import Backend.*;
 import Backend.AxesUseCase;
+import Backend.Exceptions.EmptyBuilderException;
 import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionReader;
 import Backend.Expressions.Expression;
@@ -24,7 +25,7 @@ public class CommandLineInterface {
      * - java src/main/java/Frontend/CommandLineInterface.java -eq "x=0" -eq "y=6"
      * @param args An array of Strings containing the user inputs, split by a space " "
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws EmptyBuilderException {
         CommandLineInterface cli = new CommandLineInterface();
         ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
 
