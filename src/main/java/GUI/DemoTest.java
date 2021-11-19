@@ -24,13 +24,19 @@ public class DemoTest {
     static float mousex;
     static float mousey;
 
+    String equation;
+
+    public DemoTest(String eq) {
+        this.equation = eq;
+    }
+
     public static void makeShader(String eq) throws IOException {
         String vertShader;
         String fragShader;
 
         vertShader = new String(Files.readAllBytes(Paths.get("src/main/java/GUI/basicVertex.c")));
         fragShader = new String(Files.readAllBytes(Paths.get("src/main/java/GUI/demoFrag.c")));
-        
+
         fragShader = fragShader.replace("[INSERT EQUATION HERE]", eq);
 
         System.out.println(fragShader);
@@ -65,15 +71,7 @@ public class DemoTest {
         glUniform1f(1, mousey + zy);
     }
 
-    /**
-     * In this example, we will use OpenGL to draw a single triangle on a window.
-     * <p>
-     * As mentioned above, we have to use off-heap memory for this in order to communicate the virtual memory address to
-     * OpenGL, which in turn will read the data we provided at that address.
-     * <p>
-     * The example here will upload the position vectors of a simple triangle to an OpenGL Vertex Buffer Object.
-     */
-    public static void main(String[] args) throws IOException {
+    public void initGL() throws IOException {
         glfwInit();
         long window = createWindow();
         glfwSetMouseButtonCallback(window, DemoTest::mouseCallback);
@@ -83,7 +81,7 @@ public class DemoTest {
         float[] vtest = {
                 -0.9f,-0.9f,0.9f,-0.9f,-0.9f,0.9f,
                 0.9f,-0.9f,-0.9f,0.9f,0.9f,0.9f
-            };
+        };
         buffer.put(vtest);
 
         buffer.flip();
@@ -99,10 +97,10 @@ public class DemoTest {
         int vaoID = glGenVertexArrays();
         glBindVertexArray(vaoID);
 
-        makeShader(args[0]);
+
+
+        makeShader(this.equation);
         glUseProgram(progID);
-
-
         memFree(buffer);
 
         glEnableClientState(GL_VERTEX_ARRAY);
@@ -119,6 +117,19 @@ public class DemoTest {
             glfwSwapBuffers(window);
         }
         glfwTerminate();
+    }
+
+    /**
+     * In this example, we will use OpenGL to draw a single triangle on a window.
+     * <p>
+     * As mentioned above, we have to use off-heap memory for this in order to communicate the virtual memory address to
+     * OpenGL, which in turn will read the data we provided at that address.
+     * <p>
+     * The example here will upload the position vectors of a simple triangle to an OpenGL Vertex Buffer Object.
+     */
+    public static void main(String[] args) throws IOException {
+        DemoTest guiDemo = new DemoTest(args[0]);
+        guiDemo.initGL();
         System.out.println("Fin.");
     }
 
