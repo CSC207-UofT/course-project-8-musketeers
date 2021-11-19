@@ -2,6 +2,7 @@ package Backend.ExpressionBuilders;
 
 import Backend.Constants;
 import Backend.Exceptions.EmptyBuilderException;
+import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
 
 import java.util.Map;
@@ -15,7 +16,7 @@ public abstract class ExpressionBuilder<T extends Expression<?>> {
     // operatorType might not be necessary
     public abstract ExpressionBuilder<T> constructExpression(ExpressionBuilder<?> lExprBuilder, String op,
                                                              ExpressionBuilder<?> rExprBuilder,
-                                                             String operatorType) throws EmptyBuilderException;
+                                                             String operatorType) throws InvalidTermException;
 
     public T build() throws EmptyBuilderException {
         if (this.expr == null){

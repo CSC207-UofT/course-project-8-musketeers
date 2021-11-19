@@ -50,13 +50,6 @@ public class ValidityCheckerTest {
     }
 
     @Test(timeout = 50)
-    public void testUnmatchingBrackets() throws InvalidTermException {
-        thrown.expect(CompoundCaseCreatorException.class);
-        thrown.expectMessage(this.ERRORMESSAGE_UNMATCHED_BRACKETS);
-        Expression<?> exp = er.read("(((()()))()");
-    }
-
-    @Test(timeout = 50)
     public void testInvalidSingleCharacter() throws InvalidTermException {
         thrown.expect(BaseCaseCreatorException.class);
         thrown.expectMessage(this.ERRORMESSAGE_INVALID_SINGLE_CHARACTER);
@@ -68,6 +61,27 @@ public class ValidityCheckerTest {
         thrown.expect(CompoundCaseCreatorException.class);
         thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
         Expression<?> exp = er.read("1+$2");
+    }
+
+    @Test(timeout = 50)
+    public void testInvalidNumber() throws InvalidTermException {
+        thrown.expect(CompoundCaseCreatorException.class);
+        thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
+        Expression<?> exp = er.read("1.2.1");
+    }
+
+    @Test(timeout = 50)
+    public void testInvalidNumber2() throws InvalidTermException {
+        thrown.expect(CompoundCaseCreatorException.class);
+        thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
+        Expression<?> exp = er.read("sin(1.2.1)");
+    }
+
+    @Test(timeout = 50)
+    public void testUnmatchingBrackets() throws InvalidTermException {
+        thrown.expect(CompoundCaseCreatorException.class);
+        thrown.expectMessage(this.ERRORMESSAGE_UNMATCHED_BRACKETS);
+        Expression<?> exp = er.read("(((()()))()");
     }
 
     @Test(timeout = 50)

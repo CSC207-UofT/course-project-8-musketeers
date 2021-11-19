@@ -176,7 +176,6 @@ public class ExpressionCreator {
                 List<String> leftTerms = terms.subList(0, opIndex); // split according to that appearance.
                 List<String> rightTerms = terms.subList(opIndex + 1, terms.size());
 
-                vc.operandsTypeCheck(leftTerms, operatorType, rightTerms); //check if the type of operators in the rest
                 // of the expression match what is expected.
                 try {  // check if any issues arise from creating an expression from <leftTerms> and <rightTerms>.
                     lExpr = createExpressionBuilder(leftTerms);
