@@ -28,34 +28,34 @@ public class ExpressionCreatorTest {
     @Test(timeout = 50)
     public void testSingleNumber() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("2"));
-        assertEquals(exp.evaluate(varMap), 2.0, delta);
+        assertEquals(2.0, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testSingleVariable() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("x"));
         varMap.put("x", 5.0f);
-        assertEquals(exp.evaluate(varMap), 5.0, delta);
+        assertEquals(5.0, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testBinaryOperatorTwoTerms() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("2", "+", "3"));
-        assertEquals(exp.evaluate(varMap), 5.0, delta);
+        assertEquals(5.0, exp.evaluate(varMap), delta);
     }
 
     // Bracket parsing to be implemented
     @Test(timeout = 50)
     public void testBinaryOperatorTwoTermsWithBrackets() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("2", "*", "(", "3", ")"));
-        assertEquals(exp.evaluate(varMap), 6.0, delta);
+        assertEquals(6.0, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testBinaryOperatorWithOneVariable() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("x", "/", "3"));
         varMap.put("x", 3.0f);
-        assertEquals(exp.evaluate(varMap), 1.0, delta);
+        assertEquals(1.0, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
@@ -63,38 +63,38 @@ public class ExpressionCreatorTest {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("x", "/", "y"));
         varMap.put("x", 3.0f);
         varMap.put("y", 6.0f);
-        assertEquals(exp.evaluate(varMap), 0.5, delta);
+        assertEquals(0.5, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testOrderOfOperations1() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("1.5", "+", "3", "*", "5"));
-        assertEquals(exp.evaluate(varMap), 16.5, delta);
+        assertEquals(16.5, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testOrderOfOperations2() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("4", "*", "3", "-", "2"));
-        assertEquals(exp.evaluate(varMap), 10.0, delta);
+        assertEquals(10.0, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testOrderOfOperations3() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("x", "*", "3", "-", "2"));
         varMap.put("x", 4.0f);
-        assertEquals(exp.evaluate(varMap), 10.0, delta);
+        assertEquals(10.0, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testRepeatedOperations() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("2", "-", "1", "-", "3"));
-        assertEquals(exp.evaluate(varMap), -2, delta);
+        assertEquals(-2, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testRepeatedOperations2() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("2", "/", "4", "/", "10"));
-        assertEquals(exp.evaluate(varMap), 0.05, delta);
+        assertEquals(0.05, exp.evaluate(varMap), delta);
     }
 
     // TEST SPECIFIC FEATURES, NOT JUST GENERAL PATTERNS
@@ -103,71 +103,71 @@ public class ExpressionCreatorTest {
     public void testPower() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("x", "^", "2"));
         varMap.put("x", 4.f);
-        assertEquals(exp.evaluate(varMap), 16.0, delta);
+        assertEquals(16.0, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testCos() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("cos", "(", "x", "^", "2", ")"));
         varMap.put("x", 1.f);
-        assertEquals(exp.evaluate(varMap), Math.cos(1), delta);
+        assertEquals(Math.cos(1), exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testCosWithOtherOperators() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("2", "*", "cos", "(", "x", "^", "2", ")", "+", "5"));
         varMap.put("x", 0.f);
-        assertEquals(exp.evaluate(varMap), 7, delta);
+        assertEquals(7, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testSin() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("sin", "(", "x", "^", "2", ")"));
         varMap.put("x", 1.f);
-        assertEquals(exp.evaluate(varMap), Math.sin(1), delta);
+        assertEquals(Math.sin(1), exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testSinWithOtherOperators() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("cos", "(", "x", ")", "^", "2", "+", "sin", "(", "x", ")", "^", "2"));
         varMap.put("x", 3.f);
-        assertEquals(exp.evaluate(varMap), 1, delta);
+        assertEquals(1, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testTan() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("tan", "(", "x", "^", "2", ")"));
         varMap.put("x", 1.f);
-        assertEquals(exp.evaluate(varMap), Math.tan(1), delta);
+        assertEquals(Math.tan(1), exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testTanWithOtherOperators() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("tan", "(", "x", ")", "^", "2", "+", "3"));
         varMap.put("x", 1.f);
-        assertEquals(exp.evaluate(varMap), Math.pow(Math.tan(1), 2.0) + 3, delta);
+        assertEquals(Math.pow(Math.tan(1), 2.0) + 3, exp.evaluate(varMap), delta);
     }
 
     @Test(timeout = 50)
     public void testLessThanOrEqualTo() throws InvalidTermException {
         BooleanValuedExpression exp = (BooleanValuedExpression) ec.create(List.of("x", "<=", "5"));
         varMap.put("x", 4.9f);
-        assertEquals(exp.evaluate(varMap), true);
+        assertEquals(true, exp.evaluate(varMap));
         varMap.put("x", 5.0f);
-        assertEquals(exp.evaluate(varMap), true);
+        assertEquals(true, exp.evaluate(varMap));
         varMap.put("x", 5.1f);
-        assertEquals(exp.evaluate(varMap), false);
+        assertEquals(false, exp.evaluate(varMap));
     }
 
     @Test(timeout = 50)
     public void testLessThan() throws InvalidTermException {
         BooleanValuedExpression exp = (BooleanValuedExpression) ec.create(List.of("x", "<", "5"));
         varMap.put("x", 4.9f);
-        assertEquals(exp.evaluate(varMap), true);
+        assertEquals(true, exp.evaluate(varMap));
         varMap.put("x", 5.0f);
-        assertEquals(exp.evaluate(varMap), false);
+        assertEquals(false, exp.evaluate(varMap));
         varMap.put("x", 5.1f);
-        assertEquals(exp.evaluate(varMap), false);
+        assertEquals(false, exp.evaluate(varMap));
     }
 
     @Test(timeout = 50)
@@ -176,15 +176,15 @@ public class ExpressionCreatorTest {
         varMap.put("x", 5.0f);
         varMap.put("y", 0.1f);
         varMap.put("z", 0.0f);
-        assertEquals(exp.evaluate(varMap), false);
+        assertEquals(false, exp.evaluate(varMap));
         varMap.put("x", 5.0f);
         varMap.put("y", 0.0f);
         varMap.put("z", 0.0f);
-        assertEquals(exp.evaluate(varMap), true);
+        assertEquals(true, exp.evaluate(varMap));
         varMap.put("x", 5.0f);
         varMap.put("y", -0.1f);
         varMap.put("z", 0.0f);
-        assertEquals(exp.evaluate(varMap), true);
+        assertEquals(true, exp.evaluate(varMap));
     }
 
     @Test(timeout = 50)
@@ -193,15 +193,15 @@ public class ExpressionCreatorTest {
         varMap.put("x", 5.0f);
         varMap.put("y", 0.1f);
         varMap.put("z", 0.0f);
-        assertEquals(exp.evaluate(varMap), false);
+        assertEquals(false, exp.evaluate(varMap));
         varMap.put("x", 5.0f);
         varMap.put("y", 0.0f);
         varMap.put("z", 0.0f);
-        assertEquals(exp.evaluate(varMap), false);
+        assertEquals(false, exp.evaluate(varMap));
         varMap.put("x", 5.0f);
         varMap.put("y", -0.1f);
         varMap.put("z", 0.0f);
-        assertEquals(exp.evaluate(varMap), true);
+        assertEquals(true, exp.evaluate(varMap));
     }
 
     @Test(timeout = 50)
@@ -211,16 +211,16 @@ public class ExpressionCreatorTest {
         BooleanValuedExpression exp = (BooleanValuedExpression) ec.create(List.of("0", "<", "x", "<=", "y", "<=", "1"));
         varMap.put("x", 0.0f);
         varMap.put("y", 0.9f);
-        assertEquals(exp.evaluate(varMap), false);
+        assertEquals(false, exp.evaluate(varMap));
         varMap.put("x", 0.1f);
         varMap.put("y", 0.9f);
-        assertEquals(exp.evaluate(varMap), true);
+        assertEquals(true, exp.evaluate(varMap));
         varMap.put("x", 0.1f);
         varMap.put("y", 1.0f);
-        assertEquals(exp.evaluate(varMap), true);
+        assertEquals(true, exp.evaluate(varMap));
         varMap.put("x", 0.1f);
         varMap.put("y", 1.1f);
-        assertEquals(exp.evaluate(varMap), false);
+        assertEquals(false, exp.evaluate(varMap));
     }
 
     @Test(timeout = 50)
@@ -228,13 +228,13 @@ public class ExpressionCreatorTest {
         // currently fails
         BooleanValuedExpression exp = (BooleanValuedExpression) ec.create(List.of("1", "<", "x", "&", "x", "<=", "4", "+", "1"));
         varMap.put("x", 1.0f);
-        assertEquals(exp.evaluate(varMap), false);
+        assertEquals(false, exp.evaluate(varMap));
         varMap.put("x", 2.0f);
-        assertEquals(exp.evaluate(varMap), true);
+        assertEquals(true, exp.evaluate(varMap));
         varMap.put("x", 5.0f);
-        assertEquals(exp.evaluate(varMap), true);
+        assertEquals(true, exp.evaluate(varMap));
         varMap.put("x", 6.0f);
-        assertEquals(exp.evaluate(varMap), false);
+        assertEquals(false, exp.evaluate(varMap));
     }
 
     @Test(timeout = 50)
@@ -252,7 +252,7 @@ public class ExpressionCreatorTest {
         RealValuedExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
 
         varMap.put("x", 1.f);
-        assertEquals(myFunc.evaluate(varMap), 1.f, delta);
+        assertEquals(1.f, myFunc.evaluate(varMap), delta);
     }
 
 // custom functions not implemeneted propertly yet
@@ -278,7 +278,7 @@ public class ExpressionCreatorTest {
 
         varMap.put("x", 2f);
         varMap.put("y", 1f);
-        assertEquals(myFunc.evaluate(varMap), 2, delta);
+        assertEquals(2f, myFunc.evaluate(varMap), delta);
 
         varMap.put("x", 1f);
         varMap.put("y", 0f);
@@ -296,7 +296,7 @@ public class ExpressionCreatorTest {
         myFunc.setInputs(new RealValuedExpression[] {f2});
 
         varMap.put("x", 0f);
-        assertEquals(myFunc.evaluate(varMap), 1, delta);
+        assertEquals(1, myFunc.evaluate(varMap), delta);
     }
 
 
