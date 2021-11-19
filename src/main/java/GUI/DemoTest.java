@@ -24,13 +24,16 @@ public class DemoTest {
     static float mousex;
     static float mousey;
 
-    public static void makeShader() throws IOException {
+    public static void makeShader(String eq) throws IOException {
         String vertShader;
         String fragShader;
 
         vertShader = new String(Files.readAllBytes(Paths.get("src/main/java/GUI/basicVertex.c")));
         fragShader = new String(Files.readAllBytes(Paths.get("src/main/java/GUI/demoFrag.c")));
+        
+        fragShader = fragShader.replace("[INSERT EQUATION HERE]", eq);
 
+        System.out.println(fragShader);
 
         progID = glCreateProgram();
         int vsID = glCreateShader(GL_VERTEX_SHADER);
@@ -96,7 +99,7 @@ public class DemoTest {
         int vaoID = glGenVertexArrays();
         glBindVertexArray(vaoID);
 
-        makeShader();
+        makeShader(args[0]);
         glUseProgram(progID);
 
 

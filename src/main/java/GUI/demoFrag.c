@@ -24,7 +24,11 @@ void main() {
   vec2 wh = 1 / vec2(800, 800);
   float cx = (((tc*wh).x - 0.5f) * 1.f + xpos);
   float cy = (((tc*wh).y - 0.5f) * 1.f + ypos);
-  float m = mandel(cx * vscale, cy * vscale);
+
+  float x = cx * 10;
+  float y = cy * 10;
+  //float m = mandel(cx * vscale, cy * vscale);
+  float m = max(0.f, min(1.f, [INSERT EQUATION HERE]));
   fragColor = vec4(m, m, m, 1.0);
   //fragColor = vec4((tc*wh).x, (tc*wh).y, 0.6, 1.0);
 }
