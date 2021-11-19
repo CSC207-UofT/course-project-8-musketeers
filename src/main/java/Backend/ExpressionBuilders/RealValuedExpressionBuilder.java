@@ -1,14 +1,10 @@
 package Backend.ExpressionBuilders;
 
-import Backend.Constants;
 import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
-import Backend.Exceptions.EmptyBuilderException;
 import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class RealValuedExpressionBuilder extends ExpressionBuilder<RealValuedExpression> {
@@ -68,6 +64,11 @@ public class RealValuedExpressionBuilder extends ExpressionBuilder<RealValuedExp
     public RealValuedExpressionBuilder constructExpression(String funcName, ExpressionBuilder<?>[] inputs,
                                                            Map<String, FunctionExpression> funcMap)
             throws InvalidTermException {
+        // This is all we need to check if the function was given enough inputs.
+        if (funcMap.get(funcName).getInputs().length != inputs.length){
+            throw new CompoundCaseCreatorException("FunctionInputsSizeException!");
+        }
+
         RealValuedExpression[] inputExpressions = new RealValuedExpression[inputs.length];
         for (int i=0; i < inputs.length; ++i){
             Expression<?> uncastedExpression = inputs[i].build();

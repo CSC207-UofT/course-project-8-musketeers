@@ -18,15 +18,10 @@ import java.util.*;
 public class ExpressionValidityChecker {
     Constants constants;
     Map<String, FunctionExpression> definedFuncs;
-    Map<String, Integer> funcNumInputs = new HashMap<>();
 
     public ExpressionValidityChecker(Map<String, FunctionExpression> definedFuncs) {
         this.constants = new Constants();
         this.definedFuncs = definedFuncs;
-
-        for (String funcName: definedFuncs.keySet()){
-            funcNumInputs.put(funcName, definedFuncs.get(funcName).getInputs().length);
-        }
     }
 
     public boolean validFuncName(String name){
@@ -67,39 +62,8 @@ public class ExpressionValidityChecker {
         //  promises certain preconditions. But this is way safer.
         else if (!checkMultipleTermsConnection(terms)) {
             throw new CompoundCaseCreatorException("NonConnectedMultipleTermsException!");
-        } else if (!checkFunctionInputSize(terms)) {
-            throw new CompoundCaseCreatorException("FunctionInputsSizeException!");
         }
     }
-
-//    public void checkShortListValidity(List<String> terms) throws InvalidTermException {
-//        if (terms.size() == 0) {
-//            throw new BaseCaseCreatorException(BaseCaseCreatorException.ERRORMESSAGE_EMPTY_EXPRESSION);
-//        }
-//        // this second case is already checked in RealValuedExpressionBuilder.constructExpression(String input) i.e.
-//        // the single term case.
-//        else if (terms.size() == 1) { // Important (e.g. for <findFunctionInputs> and <createOnOperators> to catch the
-//            // correct exception (BaseCaseException rather than potentially InvalidTermException)).
-//            String term = terms.get(0);
-//            if (!(checkNumber(term) | constants.getVariables().contains(term))) {
-//                throw new BaseCaseCreatorException("InvalidSingleExpressionException!");
-//            }
-//        }
-//    }
-
-    // Don't need the three recursive checker since we implicitly have them checked in <ExpressionCreator> already!
-
-//    /** A method that checks whether any logical or comparator operators appear in the input terms, and
-//     * throws an exception if they appear.
-//     *
-//     * @param terms The list of terms as accepted by the create method.
-//     * @throws CompoundCaseCreatorException thrown if the expression contains logical or comparator operators.
-//     */
-//    public void realValuedPreconditionCheck(List<String> terms) throws CompoundCaseCreatorException {
-//        if (containsOperator(terms, "Logical") || containsOperator(terms, "Comparator")) {
-//            throw new CompoundCaseCreatorException("NotRealValuedExpressionException!");
-//        }
-//    }
 
     /**
      *
@@ -200,34 +164,6 @@ public class ExpressionValidityChecker {
     private boolean checkCommasWithinFunctions(List<String> terms) {
         // TODO: WARNING: Be careful in future that a comma can be outside, or inside of function brackets, or inside of any other brackets...
         return getOuterItems(terms, List.of(new String[]{","})).isEmpty();
-    }
-
-    // TODO: Support User-Defined Functions!
-
-    /** Checks if each function called in the expression has correct input size.
-     *
-     * @param terms The list of terms as accepted by the create method.
-     * @return True if and only if all functions have correct input size. Example: ["cos","(","x",")] returns true,
-     * ["sin","(","x","y",")"] returns false.
-     */
-    private boolean checkFunctionInputSize(List<String> terms) {
-
-        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(definedFuncs.keySet()));
-        List<String> functionInputTerms;
-        int numCommas;
-
-        for (List<Integer> indices: functionsAndIndexLists.values()) {
-            for (Integer index: indices) {
-                //Get the list representing the scope of the function.
-                functionInputTerms = terms.subList(index + 2, findCorrespondingBracket(terms, index + 1));
-                numCommas = getOuterItems(functionInputTerms, List.of(",")).size();
-                if (funcNumInputs.get(terms.get(index)) - 1 != numCommas) {
-                    return false;
-                }
-            } // This works thanks to checkers in "precheck" that is done before this checker.
-        }
-        // All functions have correct input sizes, so return true.
-        return true;
     }
 
     /**
