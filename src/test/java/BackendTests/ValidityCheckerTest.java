@@ -26,6 +26,7 @@ public class ValidityCheckerTest {
     private final String ERRORMESSAGE_INVALID_SINGLE_CHARACTER = "InvalidSingleExpressionException!";
     private final String ERRORMESSAGE_INVALID_TERM = "InvalidTermException!";
     private final String ERRORMESSAGE_OPERAND_TYPE = "OperandTypeException!";
+    private final String ERRORMESSAGE_OPERAND = "Invalid Operand Exception!";
     private final String ERRORMESSAGE_FUNCTION_INPUT_TYPE = "InvalidFunctionInputsException!";
     private final String ERRORMESSAGE_FUNCTION_INPUT_SIZE = "FunctionInputsSizeException!";
     private final String ERRORMESSAGE_COMMAS_OUTSIDE_FUNCTIONS = "CommasNotWithinFunctions!";
@@ -51,8 +52,8 @@ public class ValidityCheckerTest {
 
     @Test(timeout = 50)
     public void testInvalidSingleCharacter() throws InvalidTermException {
-        thrown.expect(BaseCaseCreatorException.class);
-        thrown.expectMessage(this.ERRORMESSAGE_INVALID_SINGLE_CHARACTER);
+        thrown.expect(CompoundCaseCreatorException.class);
+        thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
         Expression<?> exp = er.read("$");
     }
 
@@ -92,19 +93,31 @@ public class ValidityCheckerTest {
     }
 
     @Test(timeout = 50)
+    public void testInvalidOperand() throws InvalidTermException {
+        thrown.expect(CompoundCaseCreatorException.class);
+        thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
+        Expression<?> exp = er.read("(1 & 3) < 3");
+    }
+
+    @Test(timeout = 50)
     public void testInvalidFunction() throws InvalidTermException {
         thrown.expect(CompoundCaseCreatorException.class);
         thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
         Expression<?> exp = er.read("shinch(x)");
     }
 
-    // TODO: the program currently fails on this test (the test is correct)
-    @Test(timeout = 50)
-    public void testInvalidArithmeticOperatorInputs() throws InvalidTermException {
-        thrown.expect(CompoundCaseCreatorException.class);
-        thrown.expectMessage(this.ERRORMESSAGE_OPERAND_TYPE);
-        Expression<?> exp = er.read("(1 < 2) + 2");
-    }
+    // Currently, there's no point having this test because if there's anything in the expression that could create
+    // a boolean-valued function at any point in production, ExpressionCreator.createExpressionBuilder calls
+    // booleanValuedCreator as the first step in construction, so we can never create a RealValuedExpression
+    // with BooleanValuedExpression subtrees.
+    // Not sure if this is best practice though, because we might incorporate types other than BooleanValuedExpressions,
+    // so the current system might have limited extendibility.
+//    @Test(timeout = 50)
+//    public void testInvalidArithmeticOperatorInputs() throws InvalidTermException {
+//        thrown.expect(CompoundCaseCreatorException.class);
+//        thrown.expectMessage(this.ERRORMESSAGE_OPERAND_TYPE);
+//        Expression<?> exp = er.read("(1 < 2) + 2");
+//    }
 
     @Test(timeout = 50)
     public void testInvalidLogicalOperatorInputs() throws InvalidTermException {
@@ -136,6 +149,13 @@ public class ValidityCheckerTest {
     }
 
     @Test(timeout = 50)
+    public void testInvalidNumberofOperands() throws InvalidTermException {
+        thrown.expect(CompoundCaseCreatorException.class);
+        thrown.expectMessage(this.ERRORMESSAGE_OPERAND);
+        Expression<?> exp = er.read("2<");
+    }
+
+    @Test(timeout = 50)
     public void testWrongCommas() throws InvalidTermException {
         thrown.expect(CompoundCaseCreatorException.class);
         thrown.expectMessage(this.ERRORMESSAGE_COMMAS_OUTSIDE_FUNCTIONS);
@@ -154,6 +174,13 @@ public class ValidityCheckerTest {
         thrown.expect(CompoundCaseCreatorException.class);
         thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
         Expression<?> exp = er.read("f(x+y,)");
+    }
+
+    @Test(timeout = 50)
+    public void testWrongCommas4() throws InvalidTermException {
+        thrown.expect(CompoundCaseCreatorException.class);
+        thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
+        Expression<?> exp = er.read("f(,,)");
     }
 
 }

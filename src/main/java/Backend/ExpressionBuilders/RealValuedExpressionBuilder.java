@@ -1,20 +1,31 @@
 package Backend.ExpressionBuilders;
 
 import Backend.Constants;
+import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
 import Backend.Exceptions.EmptyBuilderException;
 import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class RealValuedExpressionBuilder extends ExpressionBuilder<RealValuedExpression> {
     // Below base case: Construct Number or Variable.
-    public RealValuedExpressionBuilder constructExpression(String input){
+    public RealValuedExpressionBuilder constructExpression(String input) throws InvalidTermException {
         if (this.constants.getVariables().contains(input)){
             this.expr = new VariableExpression(input);
         }
-        else this.expr = new NumberExpression(input);
+        else { // only other valid possibility is for it to be a number and not a variable.
+            try {
+                Float.parseFloat(input); // check whether "term" represents a valid float.
+            } catch (NumberFormatException e) {
+                throw new BaseCaseCreatorException(BaseCaseCreatorException.ERRORMESSAGE_INVALID_SINGLE_TERM);
+            }
+
+            this.expr = new NumberExpression(input);
+        }
 
         return this;
     }
@@ -54,16 +65,18 @@ public class RealValuedExpressionBuilder extends ExpressionBuilder<RealValuedExp
 
     // Below should construct functions (including build-in and user-defined functions)
     // TODO: Future: Include User-Defined Functions once we made it clear how we want to treat them. E.g. Where to store them and how to handle them...
-    public RealValuedExpressionBuilder constructExpression(String funcName, RealValuedExpressionBuilder[] inputs,
+    public RealValuedExpressionBuilder constructExpression(String funcName, ExpressionBuilder<?>[] inputs,
                                                            Map<String, FunctionExpression> funcMap)
-            throws EmptyBuilderException {
+            throws InvalidTermException {
         RealValuedExpression[] inputExpressions = new RealValuedExpression[inputs.length];
         for (int i=0; i < inputs.length; ++i){
-//            try{
-//                // TODO: CHECK FOR EXPRESSIONBUILDER.BUILD TYPE
-//            }
-            // TODO: add a way to deal with the case where inputs[i].build() isn't a RealValuedExpression
-            inputExpressions[i] = inputs[i].build();
+            Expression<?> uncastedExpression = inputs[i].build();
+            try{
+                inputExpressions[i] = (RealValuedExpression) uncastedExpression;
+            }
+            catch (ClassCastException E) {
+                throw new CompoundCaseCreatorException("Invalid function input type: RealValuedExpression required");
+            }
         }
 
         FunctionExpression func = funcMap.get(funcName);

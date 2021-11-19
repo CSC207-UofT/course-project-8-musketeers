@@ -39,7 +39,18 @@ public class ExpressionCreator {
     }
 
     public Expression<?> create(List<String> terms) throws InvalidTermException {
-        ExpressionBuilder<?> eb = createExpressionBuilder(terms);
+        /*
+        TODO: Precheck was moved here because it's supposed to be a non-recursive check, but previously it was
+         previously called during every recursive call.
+         */
+        List<String> minimalTerms = bracketsReduction(terms); // remove unnecessary enclosing brackets.
+        vc.preCheck(minimalTerms); // A basic current-level, NON-RECURSIVE check for the validity of the expression.
+        /* Precheck will be shared in realVal and boolVal, especially the "InvalidTermException" shouldn't be
+           thrown due to logical or comparators in realVal, this is because that we have the precondition. In other
+           words, in "realValCreate", we don't check for the existence of comparator or logical operator, thanks to the
+           precondition. */
+
+        ExpressionBuilder<?> eb = createExpressionBuilder(minimalTerms);
         return eb.build();
     }
 
@@ -55,13 +66,11 @@ public class ExpressionCreator {
      * expression tree is not built.
      */
     public ExpressionBuilder<?> createExpressionBuilder(List<String> terms) throws InvalidTermException {
-        List<String> minimalTerms = bracketsReduction(terms); // remove unnecessary enclosing brackets.
+        List<String> minimalTerms = bracketsReduction(terms);
 
-        vc.preCheck(minimalTerms); // A basic current-level, NON-RECURSIVE check for the validity of the expression.
-        /* Precheck will be shared in realVal and boolVal, especially the "InvalidTermException" shouldn't be
-           thrown due to logical or comparators in realVal, this is because that we have the precondition. In other
-           words, in "realValCreate", we don't check for the existence of comparator or logical operator, thanks to the
-           precondition. */
+        if (terms.size() == 0) { // if terms is empty, throw an exception
+            throw new BaseCaseCreatorException(BaseCaseCreatorException.ERRORMESSAGE_EMPTY_EXPRESSION);
+        }
 
         if (vc.containsOperator(minimalTerms, "Logical") ||
                 vc.containsOperator(minimalTerms, "Comparator")) { //check if logical and comparator operators
@@ -80,9 +89,7 @@ public class ExpressionCreator {
      * @param terms A list of terms in the expression (see below for how they should be broken up
      * @return A Backend.Expression (AST) representation of the expression
      */
-
     private RealValuedExpressionBuilder realValuedCreate(List<String> terms) throws InvalidTermException {
-
         int termsSize = terms.size();
         String operatorType = "Arithmetic";
 
@@ -98,10 +105,9 @@ public class ExpressionCreator {
             // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case,
             // where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
 
-
             // We use sublist to remove function name and brackets. Construct a list of expressions, each corresponding
             // to a function input.
-            RealValuedExpressionBuilder[] inputs = findFunctionInputs(terms.subList(2, termsSize - 1));
+            ExpressionBuilder<?>[] inputs = findFunctionInputs(terms.subList(2, termsSize - 1));
             //construct expression.
             eb.constructExpression(terms.get(0), inputs, funcMap);
         }
@@ -120,7 +126,6 @@ public class ExpressionCreator {
      * @return A BooleanValuedExpression tree that represents the input list.
      * @throws InvalidTermException If the list of terms represents an invalid expression then this exception is thrown.
      */
-    // Below precondition: There exists at least one comparator or logical in input "terms".
     private BooleanValuedExpressionBuilder booleanValuedCreate(List<String> terms) throws InvalidTermException {
         String operatorType;
         // No base case with terms.size() == 0 because "no term => no logical and comparator => realVal".
@@ -146,7 +151,7 @@ public class ExpressionCreator {
      * @throws InvalidTermException If
      */
     private ExpressionBuilder<?> createOnOperators(List<String> terms, String operatorType) throws InvalidTermException {
-        ExpressionBuilder<?> lExpr, rExpr, eb; // initialise the expressions on the left and right of the operands.
+        ExpressionBuilder<?> lExprBuilder, rExprBuilder, eb; // initialise the expressions on the left and right of the operands.
         List<String> operators; // List which will store the operators of type <operatorType>.
 
         switch (operatorType) {
@@ -178,22 +183,22 @@ public class ExpressionCreator {
 
                 // of the expression match what is expected.
                 try {  // check if any issues arise from creating an expression from <leftTerms> and <rightTerms>.
-                    lExpr = createExpressionBuilder(leftTerms);
-                    rExpr = createExpressionBuilder(rightTerms);
-                } catch (BaseCaseCreatorException e) { //throw an exception if either is invalid.
-                    throw new CompoundCaseCreatorException("Invalid Operand Exception!");
+                    lExprBuilder = createExpressionBuilder(leftTerms);
+                    rExprBuilder = createExpressionBuilder(rightTerms);
+                } catch (InvalidTermException e) { //throw an exception if either is invalid.
+                    throw new CompoundCaseCreatorException(CompoundCaseCreatorException.ERRORMESSAGE_INVALID_OPERAND);
                 }
                 // if both are valid, construct an expression tree with the root being <op>, left child being <lExpr>
                 // and right child being <rExpr>.
 
                 // TODO: double check that there is never an issue with lExpr and rExpr's types
-                return eb.constructExpression(lExpr, op, rExpr, operatorType);
+                return eb.constructExpression(lExprBuilder, op, rExprBuilder, operatorType);
             }
         }
         /* Below should never happen if we additionally add the "checkCommasWithinFunctions" checker, which we have
            decided to add it now. Now, abandoned "checkCommasWithinFunctions" with "checkMultipleTermsConnection", as
            the latter is more general and safer, but the former works too, thanks to "ExpressionReader". */
-        throw new CompoundCaseCreatorException("SomethingExceptionUncaughtException");
+        throw new CompoundCaseCreatorException(CompoundCaseCreatorException.ERRORMESSAGE_MISSING_OPERATOR);
     }
 
     private List<String> unchainComparators(List<String> terms) { // Only unchain the outer ones.
@@ -202,7 +207,8 @@ public class ExpressionCreator {
 
         List<String> unchainedTerms = new ArrayList<>();
 
-        Map<String, List<Integer>> comparatorsAndIndices = vc.getOuterItems(terms, constants.getComparators()); // TODO: For the time being, let's use this helper, but in future, we can improve runtime by writing a more specific helper!
+        // TODO: For the time being, let's use this helper, but in future, we can improve runtime by writing a more specific helper!
+        Map<String, List<Integer>> comparatorsAndIndices = vc.getOuterItems(terms, constants.getComparators());
 
         // TODO: Future have another more efficient helper.
         List<Integer> indices = new ArrayList<>();
@@ -253,7 +259,7 @@ public class ExpressionCreator {
      * @param terms List of terms that are the inputs to some function with the function name and brackets removed.
      * @return A list of Expressions where each expression is a separate input to the function.
      */
-    private RealValuedExpressionBuilder[] findFunctionInputs (List<String> terms) throws InvalidTermException {
+    private ExpressionBuilder<?>[] findFunctionInputs (List<String> terms) throws InvalidTermException {
         List<Integer> commaIndices = vc.getOuterItems(terms, List.of(",")).get(","); //get list of the indices where
         // commas appear outside any brackets. These correspond to separating the input for the function wer are
 
@@ -267,23 +273,22 @@ public class ExpressionCreator {
         // TODO: Recheck Correctness (logical sense).
         // for below, the number of commas outside brackets + 1 represents the number of inputs to the function, if
         // the terms are in a valid format.
-        RealValuedExpressionBuilder[] inputs = new RealValuedExpressionBuilder[commaIndices.size()];
+        ExpressionBuilder<?>[] inputs = new RealValuedExpressionBuilder[commaIndices.size()];
         int startInd = 0;
 
         for (int i = 0; i < inputs.length; i++){
             // this list represents all terms within a pair of commas, thus representing one input to the function.
             List<String> inputTerm = terms.subList(startInd, commaIndices.get(i));
-            vc.realValuedPreconditionCheck(inputTerm); //check each input is a RealValuedExpression.
             try { // Ensure that each input can be constructed as an expression (otherwise it's an invalid input).
                 // TODO: Check that a inputTerm always produces a RealValuedExpression
-                RealValuedExpressionBuilder inputExp = (RealValuedExpressionBuilder) createExpressionBuilder(inputTerm);
+                ExpressionBuilder<?> inputExp = createExpressionBuilder(inputTerm);
                 /* Above: If two commas adjacent to each other (i.e. has nothing in between, then there will be
                    something like NullExpressionException (a BaseCaseException) thrown, but we should catch it!) */
 
                 inputs[i] = inputExp; // Add the expression for this input.
                 startInd = commaIndices.get(i) + 1; // Start looking at the next input.
-            } catch (BaseCaseCreatorException e) {
-                throw new CompoundCaseCreatorException("InvalidFunctionInputsException!");
+            } catch (InvalidTermException E) { // One of the function inputs was invalid
+                throw new CompoundCaseCreatorException(CompoundCaseCreatorException.ERRORMESSAGE_INVALID_FUNCTION_INPUT);
             }
         }
         // All inputs have been transformed into expressions. All were created, therefore they are in a valid format.

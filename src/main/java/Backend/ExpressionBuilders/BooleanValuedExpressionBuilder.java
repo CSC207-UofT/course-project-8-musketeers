@@ -25,7 +25,6 @@ public class BooleanValuedExpressionBuilder extends ExpressionBuilder<BooleanVal
                                                               String op,
                                                               ExpressionBuilder<?> rExprBuilder,
                                                               String operatorType) throws InvalidTermException {
-        // in each case,
         switch (operatorType) {
             case "Comparator":
                 if (!(lExprBuilder instanceof RealValuedExpressionBuilder &&

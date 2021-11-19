@@ -42,53 +42,64 @@ public class ExpressionValidityChecker {
      */
     public void preCheck(List<String> terms) throws InvalidTermException {
         if (terms.size() == 0) {
-            throw new BaseCaseCreatorException("NullExpressionException!");
+            throw new BaseCaseCreatorException(BaseCaseCreatorException.ERRORMESSAGE_EMPTY_EXPRESSION);
         }
-        else if (terms.size() == 1) { // Important (e.g. for <findFunctionInputs> and <createOnOperators> to catch the
-            // correct exception (BaseCaseException rather than potentially InvalidTermException)).
-            String term = terms.get(0);
-            if (!(checkNumber(term) | constants.getVariables().contains(term))) {
-                throw new BaseCaseCreatorException("InvalidSingleExpressionException!");
-            }
+        // TODO: Perhaps below have the "check..." to throw exceptions to avoid (if/else-if) blocks?
+        else if (!checkAllTermsValid(terms)) { //check if all terms are terms we can interpret.
+            throw new CompoundCaseCreatorException("InvalidTermException!");
         }
-        else{ // TODO: Perhaps below have the "check..." to throw exceptions to avoid (if/else-if) blocks?
-            if (!checkAllTermsValid(terms)) { //check if all terms are terms we can interpret.
-                throw new CompoundCaseCreatorException("InvalidTermException!");
-            } else if (!checkMatchingBrackets(terms)) { //Check if each bracket has a corresponding bracket and we dont
-                                                        // any extra brackets.
-                throw new CompoundCaseCreatorException("UnmatchedBracketsException!");
-            } else if (!checkFunctionBrackets(terms)) { //Check that brackets
-                throw new CompoundCaseCreatorException("FunctionBracketsException!");
-            }
-            else if (!checkCommasWithinFunctions(terms)) {
-                throw new CompoundCaseCreatorException("CommasNotWithinFunctions!");
-            }
-            // TODO: Recheck whether above one block is redundant because of the below the newly added one block.
-            //  Furthermore, check whether above would have been regarded as "InvalidOperandException!" before?
+        else if (terms.size() == 1) {
+            return;
+        }
+        else if (!checkMatchingBrackets(terms)) { //Check if each bracket has a corresponding bracket and we dont
+                                                    // any extra brackets.
+            throw new CompoundCaseCreatorException("UnmatchedBracketsException!");
+        } else if (!checkFunctionBrackets(terms)) { //Check that brackets
+            throw new CompoundCaseCreatorException("FunctionBracketsException!");
+        }
+        else if (!checkCommasWithinFunctions(terms)) {
+            throw new CompoundCaseCreatorException("CommasNotWithinFunctions!");
+        }
+        // TODO: Recheck whether above one block is redundant because of the below the newly added one block.
+        //  Furthermore, check whether above would have been regarded as "InvalidOperandException!" before?
 
-            // TODO: Below one block may be redundant as it's likely to work without it thanks to "ExpressionReader", as it
-            //  promises certain preconditions. But this is way safer.
-            else if (!checkMultipleTermsConnection(terms)) {
-                throw new CompoundCaseCreatorException("NonConnectedMultipleTermsException!");
-            } else if (!checkFunctionInputSize(terms)) {
-                throw new CompoundCaseCreatorException("FunctionInputsSizeException!");
-            }
+        // TODO: Below one block may be redundant as it's likely to work without it thanks to "ExpressionReader", as it
+        //  promises certain preconditions. But this is way safer.
+        else if (!checkMultipleTermsConnection(terms)) {
+            throw new CompoundCaseCreatorException("NonConnectedMultipleTermsException!");
+        } else if (!checkFunctionInputSize(terms)) {
+            throw new CompoundCaseCreatorException("FunctionInputsSizeException!");
         }
     }
+
+//    public void checkShortListValidity(List<String> terms) throws InvalidTermException {
+//        if (terms.size() == 0) {
+//            throw new BaseCaseCreatorException(BaseCaseCreatorException.ERRORMESSAGE_EMPTY_EXPRESSION);
+//        }
+//        // this second case is already checked in RealValuedExpressionBuilder.constructExpression(String input) i.e.
+//        // the single term case.
+//        else if (terms.size() == 1) { // Important (e.g. for <findFunctionInputs> and <createOnOperators> to catch the
+//            // correct exception (BaseCaseException rather than potentially InvalidTermException)).
+//            String term = terms.get(0);
+//            if (!(checkNumber(term) | constants.getVariables().contains(term))) {
+//                throw new BaseCaseCreatorException("InvalidSingleExpressionException!");
+//            }
+//        }
+//    }
 
     // Don't need the three recursive checker since we implicitly have them checked in <ExpressionCreator> already!
 
-    /** A method that checks whether any logical or comparator operators appear in the input terms, and
-     * throws an exception if they appear.
-     *
-     * @param terms The list of terms as accepted by the create method.
-     * @throws CompoundCaseCreatorException thrown if the expression contains logical or comparator operators.
-     */
-    public void realValuedPreconditionCheck(List<String> terms) throws CompoundCaseCreatorException {
-        if (containsOperator(terms, "Logical") || containsOperator(terms, "Comparator")) {
-            throw new CompoundCaseCreatorException("NotRealValuedExpressionException!");
-        }
-    }
+//    /** A method that checks whether any logical or comparator operators appear in the input terms, and
+//     * throws an exception if they appear.
+//     *
+//     * @param terms The list of terms as accepted by the create method.
+//     * @throws CompoundCaseCreatorException thrown if the expression contains logical or comparator operators.
+//     */
+//    public void realValuedPreconditionCheck(List<String> terms) throws CompoundCaseCreatorException {
+//        if (containsOperator(terms, "Logical") || containsOperator(terms, "Comparator")) {
+//            throw new CompoundCaseCreatorException("NotRealValuedExpressionException!");
+//        }
+//    }
 
     /**
      *
@@ -117,7 +128,6 @@ public class ExpressionValidityChecker {
     private boolean checkAllTermsValid(List<String> terms) {
         for (int i = 0; i <= terms.size() - 1; i++) {
             String term = terms.get(i);
-
 
             if (!(checkNumber(term) | // If a term is not a number,
                     constants.getVariables().contains(term) | // or a variable,
