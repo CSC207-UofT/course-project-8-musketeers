@@ -95,7 +95,7 @@ public class ValidityCheckerTest {
     @Test(timeout = 50)
     public void testInvalidOperand() throws InvalidTermException {
         thrown.expect(CompoundCaseCreatorException.class);
-        thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
+        thrown.expectMessage(this.ERRORMESSAGE_OPERAND);
         Expression<?> exp = er.read("(1 & 3) < 3");
     }
 

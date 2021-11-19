@@ -4,6 +4,7 @@ import Backend.Exceptions.*;
 import Backend.ExpressionBuilders.*;
 import Backend.Expressions.*;
 
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,8 +55,8 @@ public class ExpressionCreator {
         return eb.build();
     }
 
-    /* IMPORTANT FOR EVERYONE TO KNOW!!! ONLY "create" CAN CALL ITS TWO HELPERS BELOW!!! BECAUSE "create" IS THE
-       COMPLETE VERSION OF CREATION AS IT HAS ALL CHECKER!!! */
+    /* IMPORTANT FOR EVERYONE TO KNOW!!! ONLY "createExpressionBuilder" CAN CALL ITS TWO HELPERS BELOW!!!
+    BECAUSE "create" IS THE COMPLETE VERSION OF CREATION AS IT HAS ALL CHECKER!!! */
 
     /** If the input list represents a valid expression, this method builds an expression tree from the input list.
      * Otherwise, an exception is thrown.
@@ -72,9 +73,18 @@ public class ExpressionCreator {
             throw new BaseCaseCreatorException(BaseCaseCreatorException.ERRORMESSAGE_EMPTY_EXPRESSION);
         }
 
-        if (vc.containsOperator(minimalTerms, "Logical") ||
-                vc.containsOperator(minimalTerms, "Comparator")) { //check if logical and comparator operators
-                                                                            // are in the expression.
+        /*
+         * Only checking the operators of outer terms i.e. minimalOuterTerms better enables us to do error checking.
+         * For example, if we didn't only check outer operators, (1 < 2) + 3 would be constructed as a boolean
+         * expression with operator <, but we want to detect the error that there's an invalid operand type to +,
+         * and detecting this error requires us to try and build the real-valued expression of +.
+         */
+        List<String> minimalOuterTerms = new ArrayList<>(vc.getOuterItems(minimalTerms,
+                constants.getAllOperators()).keySet());
+
+        // check if there are logical operators or comparators in the outer operators.
+        if (vc.containsOperator(minimalOuterTerms, "Logical") ||
+                vc.containsOperator(minimalOuterTerms, "Comparator")) {
             return booleanValuedCreate(minimalTerms); //if so, create boolean valued expression.
         }
         else {
@@ -129,9 +139,19 @@ public class ExpressionCreator {
     private BooleanValuedExpressionBuilder booleanValuedCreate(List<String> terms) throws InvalidTermException {
         String operatorType;
         // No base case with terms.size() == 0 because "no term => no logical and comparator => realVal".
-
         List<String> unchainedTerms = unchainComparators(terms); // Only unchain the outer comparators.
-        if (vc.containsOperator(unchainedTerms, "Logical")) {
+
+        /*
+         * Only checking the operators of outer terms i.e. minimalOuterTerms better enables us to do error checking.
+         * For example, if we didn't only check outer operators, (1 & 2) < 3 would be constructed as an expression with,
+         * with operator &. However, we want to detect the error that there's an invalid operand type to <,
+         * which requires us to try and build the expression for <.
+         */
+        List<String> outerTerms = new ArrayList<>(vc.getOuterItems(unchainedTerms,
+                constants.getAllOperators()).keySet());
+
+        // check if there are logical operators or comparators in the outer operators.
+        if (vc.containsOperator(outerTerms, "Logical")) {
             operatorType = "Logical";
         }
         else { // Thanks to the precondition.
