@@ -1,8 +1,20 @@
 package Graphics;
 
-
+/**
+ * AxesDrawer is responsible for drawing the Axes and the gridlines
+ */
 public class AxesDrawer {
 
+    /**
+     * drawAxes draws Axes
+     * @param pixels  array of ints representing pixels in image
+     * @param w  width of image (in pixels)
+     * @param h  height of image (in pixels)
+     * @param graphData  array of floats that contains relevant information for our image
+     *                   scale, x-position of origin, y-position of origin
+     * @return an array of ints, whose individual elements represent the pixels of our image after
+     *                   the axes have been drawn.
+     */
     public int[] drawAxes(int[] pixels, int w, int h, float[] graphData) {
 
 	  float scale = graphData[0];
@@ -26,6 +38,16 @@ public class AxesDrawer {
       return pixels;
   }
 
+    /**
+     * Draws gridlines in our image
+     * @param pixels  array of integers representing pixels in image
+     * @param w  width of image (in pixels)
+     * @param h  height of image (in pixels)
+     * @param graphData  array of floats that contains relevant information for our image
+     *                   scale, x-position of origin, y-position of origin
+     * @return an array of ints, whose individual elements represent the pixels of our image after
+     *                   the gridlines have been drawn.
+     */
   public int[] drawGrid(int[] pixels, int w, int h, float[] graphData) {
       RGBA gridColor = new RGBA("FF888888");
       float spacing = 0.5f;
