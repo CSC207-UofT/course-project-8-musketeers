@@ -59,11 +59,15 @@ private void writePixel(int[] pixels, int w, int h, Evaluatable func,
       float cx = (x / (float)w - 0.5f) * scale + xpos;
       float cy = -(y / (float)h - 0.5f) * scale + ypos;
       if (gtype == GraphType.REGION) {
-          if (func.evaluate(cx, cy) > 0) {
-              pixels[y * w + x] = WHITE;
-          } else {
+          if (func.evaluate(cx, cy) < 0){
               pixels[y * w + x] = BLACK;
           }
+//          if (func.evaluate(cx, cy) > 0) {
+//              pixels[y * w + x] = WHITE;
+//
+//          } else {
+//              pixels[y * w + x] = BLACK;
+//          }
       }
       else if (gtype == GraphType.GRAYSCALE) {
           float result = func.evaluate(cx, cy);
@@ -71,8 +75,7 @@ private void writePixel(int[] pixels, int w, int h, Evaluatable func,
           pixels[y * w + x] = (int) Long.parseLong("FF" + outR + outR + outR, 16);
       }
       else if (gtype == GraphType.BOUNDARY) {
-          pixels[y * w + x] = WHITE;
-
+//          pixels[y * w + x] = WHITE;
           if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx + pixelSize, cy) > 0)) {
               pixels[y * w + x] = BLACK;
           }
