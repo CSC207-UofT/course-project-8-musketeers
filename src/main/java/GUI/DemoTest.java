@@ -4,11 +4,16 @@
 
 package GUI;
 
+import Graphics.RGBA;
+
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static Graphics.ImageTest.getImDims;
+import static Graphics.ImageTest.readImage;
 import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -28,6 +33,36 @@ public class DemoTest {
 
     public DemoTest(String eq) {
         this.equation = eq;
+    }
+
+    public static void main(String[] args) throws IOException {
+        String eq = "(cos(x + y) + sin(x*y))/4 + 0.5";
+        if (args.length > 0)
+            eq = args[0];
+        DemoTest guiDemo = new DemoTest(eq);
+        guiDemo.initGL();
+        System.out.println("Fin.");
+    }
+
+    public static int imgToTex(int[] pixels, int iw, int ih) {
+        ByteBuffer tbuf = ByteBuffer.allocateDirect(4 * iw * ih);
+        byte[] pixbytes = new byte[4*iw*ih];
+        for (int i = 0; i < iw*ih; i++) {
+            RGBA rgba = new RGBA(pixels[i]);
+            pixbytes[4*i] = (byte)(rgba.r);
+            pixbytes[4*i+1] = (byte)(rgba.g);
+            pixbytes[4*i+2] = (byte)(rgba.b);
+            pixbytes[4*i+3] = (byte)(rgba.a);
+        }
+        tbuf.put(pixbytes);
+        tbuf.flip();
+        int tid = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, tid);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, iw, ih, 0, GL_RGBA, GL_UNSIGNED_BYTE, tbuf);
+        return tid;
     }
 
     public static void makeShader(String eq) throws IOException {
@@ -127,11 +162,7 @@ public class DemoTest {
      * <p>
      * The example here will upload the position vectors of a simple triangle to an OpenGL Vertex Buffer Object.
      */
-    public static void main(String[] args) throws IOException {
-        DemoTest guiDemo = new DemoTest(args[0]);
-        guiDemo.initGL();
-        System.out.println("Fin.");
-    }
+
 
     private static long createWindow() {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
@@ -145,6 +176,16 @@ public class DemoTest {
     private static void mouseCallback(long win, int button, int action, int mods) {
         /* Print a message when the user pressed down a mouse button */
         if (action == GLFW_PRESS) {
+            int tid = 0;
+            try {
+                int iw = getImDims("sampleOut3D.png")[0];
+                int ih = getImDims("sampleOut3D.png")[1];
+                tid = imgToTex(readImage("sampleOut3D.png"), iw,ih);
+            } catch (Exception e) {
+                System.out.println("Can't read image");
+            }
+            glUniform1i(3, tid);
+
             System.out.println("Pressed! " + clicks);
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
                 clicks += 1;
