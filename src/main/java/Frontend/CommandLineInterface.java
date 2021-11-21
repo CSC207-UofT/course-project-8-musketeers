@@ -27,7 +27,7 @@ public class CommandLineInterface {
 
         // An array of strings containing accepted Commands. This is open to extension as other parts
         // of the code become available to be merged into this CLI.
-        String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load"};
+        String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load", "-pos"};
 
         if (!cliHelper.checkValidInput(acceptedCommands, userInputs)) {
             return;
@@ -38,6 +38,9 @@ public class CommandLineInterface {
 
         if (userInputs.contains("-load")) {
             axes = cliHelper.tryLoadingAxes(cliHelper, userInputs, axes, auc);
+        }
+        if (userInputs.contains("-pos")) {
+            cliHelper.trySettingOrigin(cliHelper, userInputs, axes, auc);
         }
 
         ExpressionReader er = new ExpressionReader(auc.getNamedFunctions(axes));
