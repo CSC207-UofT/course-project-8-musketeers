@@ -96,6 +96,14 @@ public class CLIHelper {
         return axes;
     }
 
+    public void trySettingOrigin(CLIHelper cliHelper, ArrayList<String> userInputs,
+                                 Axes axes, AxesUseCase auc) {
+        String rawpos = cliHelper.getCommandArgument("-pos", userInputs);
+        float x = Float.parseFloat(rawpos.split(",")[0]);
+        float y = Float.parseFloat(rawpos.split(",")[1]);
+        axes.setOrigin(x, y);
+    }
+
     /**
      * Check whether the list of user inputs is (structurally) valid.
      * For the list of user inputs to be valid, there are three minimum requirements to be satisfied:
