@@ -40,7 +40,7 @@ void main() {
 
 
 
-  //fragColor = vec4(m, m, m, 1.0);
-  fragColor = texture(texTest, tc*wh);
+  fragColor = vec4(m, m, m, 1.0);
+  //[INSERT TEXTURE TEST]
   //fragColor = vec4((tc*wh).x, (tc*wh).y, 0.6, 1.0);
 }

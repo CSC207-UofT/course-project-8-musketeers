@@ -29,6 +29,8 @@ public class DemoTest {
     static float mousex;
     static float mousey;
 
+    static boolean textureTest;
+
     String equation;
 
     public DemoTest(String eq) {
@@ -36,9 +38,15 @@ public class DemoTest {
     }
 
     public static void main(String[] args) throws IOException {
+        textureTest = false;
         String eq = "(cos(x + y) + sin(x*y))/4 + 0.5";
-        if (args.length > 0)
+        if (args.length > 0) {
             eq = args[0];
+        }
+        if (args.length > 1) {
+            textureTest = true;
+            System.out.println("testing texture");
+        }
         DemoTest guiDemo = new DemoTest(eq);
         guiDemo.initGL();
         System.out.println("Fin.");
@@ -73,6 +81,10 @@ public class DemoTest {
         fragShader = new String(Files.readAllBytes(Paths.get("src/main/java/GUI/demoFrag.c")));
 
         fragShader = fragShader.replace("[INSERT EQUATION HERE]", eq);
+
+        if (textureTest) {
+            fragShader = fragShader.replace("//[INSERT TEXTURE TEST]", "fragColor = texture(texTest, tc*wh);");
+        }
 
         System.out.println(fragShader);
 
