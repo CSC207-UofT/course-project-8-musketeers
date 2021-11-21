@@ -21,8 +21,8 @@ public class AxesDrawer {
       float xpos = graphData[1];
       float ypos = graphData[2];
 
-      int xOrigin = (int)((xpos / scale + 0.5f) * w);
-	  int yOrigin = (int)((-ypos / scale + 0.5f) * h);
+      int xOrigin = (int)((-xpos / scale + 0.5f) * w);
+	  int yOrigin = (int)((ypos / scale + 0.5f) * h);
 
       RGBA xColor = new RGBA("FFFF0000");
       RGBA yColor = new RGBA("FF0044FF");
