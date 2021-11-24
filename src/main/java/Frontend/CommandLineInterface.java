@@ -27,7 +27,7 @@ public class CommandLineInterface {
 
         // An array of strings containing accepted Commands. This is open to extension as other parts
         // of the code become available to be merged into this CLI.
-        String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load", "-pos"};
+        String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load", "-pos", "-domain"}; // TODO: Move to Constants?
 
         if (!cliHelper.checkValidInput(acceptedCommands, userInputs)) {
             return;
