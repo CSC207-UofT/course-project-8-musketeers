@@ -36,7 +36,7 @@ public class Grapher {
      * @param imgName Name of the output image file
      * @throws IOException If image cannot be saved
      */
-    public void graph(int size, String gType, String imgName) throws IOException {
+    public int[] graph(int size, String gType, String imgName) throws IOException {
         int[] pixels = new int[size*size];
 
         Arrays.fill(pixels, impGrapher.WHITE);
@@ -53,8 +53,9 @@ public class Grapher {
         }
         pixels = ad.drawAxes(pixels, size, size, graphData);
         pixels = ad.drawGrid(pixels, size, size, graphData);
-        ImageWriter writer = new ImageWriter();
-        writer.writeImage(pixels, size, size, imgName);
+        return pixels;
+        //ImageWriter writer = new ImageWriter();
+        //writer.writeImage(pixels, size, size, imgName);
     }
 
     /**

@@ -7,6 +7,7 @@ import Backend.ExpressionReader;
 import Backend.Expressions.Expression;
 import Backend.Expressions.RealValuedExpression;
 import Graphics.Grapher;
+import Graphics.ImageWriter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,7 +46,11 @@ public class CLIHelper {
                                            Grapher grapher) {
         try {
             String gType = cliHelper.getCommandArgument("-graph", userInputs);
-            grapher.graph(512, gType, "test.png");
+            int size = 512;
+            String name = "test.png";
+            int [] pixels = grapher.graph(size, gType, name);
+            ImageWriter writer = new ImageWriter();
+            writer.writeImage(pixels, size, size, name);
         } catch (IOException e) {
             System.out.println("Image could not be saved");
             e.printStackTrace();
