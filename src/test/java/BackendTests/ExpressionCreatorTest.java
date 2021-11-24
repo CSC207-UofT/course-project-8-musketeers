@@ -3,7 +3,6 @@ package BackendTests;
 import Backend.*;
 import Backend.Expressions.*;
 import Backend.Exceptions.InvalidTermException;
-import Backend.Expressions.BuiltInFunctions.Cosine;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -292,7 +291,7 @@ public class ExpressionCreatorTest {
         RealValuedExpression func = (RealValuedExpression) ec.create(List.of("x", "^", "2"));
 
         FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
-        RealValuedExpression f2 = new Cosine(new String[]{"x"});
+        RealValuedExpression f2 = new BuiltinFunctionExpression("cos");
         myFunc.setInputs(new RealValuedExpression[] {f2});
 
         varMap.put("x", 0f);

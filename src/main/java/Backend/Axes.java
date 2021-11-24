@@ -3,14 +3,10 @@ package Backend;
 // TODO: ADJUST/DECIDE WHAT TO DO WITH "Expression", "RealValuedExpression", "BooleanValuedExpression". USE WILDCARD AND CASTING!!!
 
 
-import Backend.Expressions.BuiltInFunctions.*;
 import Backend.Expressions.*;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Axes represents the Euclidean Space in which our Expressions will be graphed.
@@ -48,23 +44,6 @@ public class Axes implements Serializable {
         this.exprCollection = new ArrayList<>();
     }
 
-    /** This is just to find what our initial named functions are, i.e. the ones that are builtin
-     * @return A map between the name of a function and the corresponding expression
-     */
-    private Map<String, FunctionExpression> initialNamedExpressions(){
-        String[] oneVarInput = new String[] {"x"};
-        String[] twoVarInput = new String[] {"x", "y"};
-        return new HashMap<>(Map.of (
-                "cos", new Cosine(oneVarInput),
-                "sin", new Sine(oneVarInput),
-                "tan", new Tangent(oneVarInput),
-                "sqrt", new SquareRoot(oneVarInput),
-                "mandel", new Mandel(twoVarInput),
-                "exp", new Exp(oneVarInput)
-        )
-        );
-    }
-
     /**
      * Constructor for Axes
      * @param scale the scale parameter
@@ -75,6 +54,21 @@ public class Axes implements Serializable {
         this.dimensionSize = origin.length;
         this.origin = origin;
         this.exprCollection = new ArrayList<>();
+    }
+
+    /** This is just to find what our initial named functions are, i.e. the ones that are builtin
+     * @return A map between the name of a function and the corresponding expression
+     */
+    private Map<String, FunctionExpression> initialNamedExpressions(){
+
+        Set<String> builtinFunctions = (new Constants()).getBuiltinFunctions(); // TODO: Remove instance of constants
+        Map<String, FunctionExpression> funcMap = new HashMap<>();
+
+        for (String funcName: builtinFunctions){
+            funcMap.put(funcName, new BuiltinFunctionExpression(funcName));
+        }
+
+        return funcMap;
     }
 
 

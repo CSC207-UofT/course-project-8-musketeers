@@ -9,8 +9,10 @@ public class Constants {
     // List used for operators as the order of operators matter and is used to control the order of precedence in expressions.
     // Sets used for these as only need containment and order is irrelevant.
     private final Set<String> VARIABLES = Set.of("x", "y", "z");
-//    private final Set<String> BUILTINFUNCTIONS = Set.of("cos", "sin", "tan", "sqrt", "mandel"); // Note: We should be able to remove this from here as it's being stored in Axes
+    private final Set<String> BUILTINONEVARFUNCTIONS = Set.of("cos", "sin", "tan", "sqrt", "exp");
+    private final Set<String> BUILTINTWOVARFUNCTIONS = Set.of("mandel");
     private final Set<String> SPECIALCHARACTERS = Set.of("(", ")", ","); // Ted: TODO: Future maybe "\" for "\pi", "\floor", ...
+
     private final List<String> LOGICALOPERATORS = new ArrayList<>(List.of(new String[]{"|", "&"})); // TODO: Recheck The order or "AND" and "OR"!
     private final List<String> COMPARATORS = new ArrayList<>(List.of(new String[]{"<", ">", "<=", ">="}));
     private final List<String> ARITHMETICOPERATORS = new ArrayList<>(List.of(new String[]{"+", "-", "*", "/", "^"}));
@@ -37,6 +39,17 @@ public class Constants {
 
     public Set<String> getVariables() {
         return VARIABLES;
+    }
+
+    public Set<String> getOneVarFunctions(){ return BUILTINONEVARFUNCTIONS; }
+
+    public Set<String> getTwoVarFunctions(){ return BUILTINTWOVARFUNCTIONS; }
+
+    public Set<String> getBuiltinFunctions(){
+        Set<String> allFuncs = new HashSet<>();
+        allFuncs.addAll(BUILTINONEVARFUNCTIONS);
+        allFuncs.addAll(BUILTINTWOVARFUNCTIONS);
+        return allFuncs;
     }
 
     public Set<String> getSpecialCharacters() { return SPECIALCHARACTERS; }
