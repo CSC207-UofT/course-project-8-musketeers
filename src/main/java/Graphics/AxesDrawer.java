@@ -50,6 +50,8 @@ public class AxesDrawer {
      */
   public int[] drawGrid(int[] pixels, int w, int h, float[] graphData) {
       RGBA gridColor = new RGBA("FF888888");
+
+      // How far apart the gridlines are
       float spacing = 0.5f;
 
       float scale = graphData[0];
