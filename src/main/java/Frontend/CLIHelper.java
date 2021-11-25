@@ -68,11 +68,8 @@ public class CLIHelper {
                                       List<String[]> equationsAndDomains) {
         for (String[] expArray: equationsAndDomains) {
             try {
-                Expression<?> exp = er.read(expArray[0]);
-                if (exp instanceof RealValuedExpression) {
-                    // TODO: implement domain restrictions
-                    auc.addExpression((RealValuedExpression) exp, axes);
-                }
+                RealValuedExpression exp = er.readForGraphing(expArray);
+                auc.addExpression(exp, axes);
             } catch (InvalidTermException e) {
                 System.out.println("Error with interpreting input <" + expArray[0] + ">:" + e.getMessage());
             }

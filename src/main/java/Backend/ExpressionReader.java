@@ -25,6 +25,20 @@ public class ExpressionReader {
         this.vc = new ExpressionValidityChecker(funcMap);
     }
 
+    /**
+     * @param expressionInput An array of strings that has either one or two items. First item is the expression and the second item is the domain (if provided)
+     * @return A RealValuedExpression with the appropriate domain
+     * @throws InvalidTermException If either expression cannot be read
+     */
+    public RealValuedExpression readForGraphing(String[] expressionInput) throws InvalidTermException {
+        RealValuedExpression exp = (RealValuedExpression) read(expressionInput[0]);
+        if (expressionInput.length != 1) {
+            BooleanValuedExpression domain = (BooleanValuedExpression) read(expressionInput[1]);
+            exp.setDomain(domain);
+        }
+        return exp;
+    }
+
     // TODO: Update below method documentation!
     /** Converts a string representation of an expression into an instance of Backend.Expressions.Expression
      * @param expression The string representation of the expression to be converted
