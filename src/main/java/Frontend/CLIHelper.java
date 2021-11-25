@@ -25,7 +25,7 @@ public class CLIHelper {
      * @param auc an instance of AxesUseCase
      */
     public void trySavingAxes(CLIHelper cliHelper, ArrayList<String> userInputs,
-                               Axes axes, AxesUseCase auc) {
+                              Axes axes, AxesUseCase auc) {
         String filename = cliHelper.getCommandArgument("-save", userInputs);
         try {
             auc.saveAxes(filename, axes);
@@ -42,7 +42,7 @@ public class CLIHelper {
      * @param grapher an instance of Grapher
      */
     public void tryGraphingAndSavingImage(CLIHelper cliHelper, ArrayList<String> userInputs,
-                                           Grapher grapher) {
+                                          Grapher grapher) {
         try {
             String gType = cliHelper.getCommandArgument("-graph", userInputs);
             int size = 512;
@@ -64,7 +64,7 @@ public class CLIHelper {
      * @param equationsAndDomains a list of strings containing arrays of strings: equations and domains
      */
     public void tryInterpretingInput(Axes axes, AxesUseCase auc, ExpressionReader er,
-                                      List<String[]> equationsAndDomains) {
+                                     List<String[]> equationsAndDomains) {
         for (String[] expArray: equationsAndDomains) {
             try {
                 RealValuedExpression exp = er.readForGraphing(expArray);
@@ -84,7 +84,7 @@ public class CLIHelper {
      * @return an instance of Axes, either the same one from axes or an updated one (if no errors were thrown)
      */
     public Axes tryLoadingAxes(CLIHelper cliHelper, ArrayList<String> userInputs,
-                                Axes axes, AxesUseCase auc) {
+                               Axes axes, AxesUseCase auc) {
         String filename = cliHelper.getCommandArgument("-load", userInputs);
         try {
             axes = auc.loadAxes(filename);
@@ -115,7 +115,7 @@ public class CLIHelper {
      * 2. Every input pair inside the userInputs must be valid. If null was appended after the first check,
      * isUserInputPairValid will automatically return false, thus immediately resulting in an invalid
      * user input. See isUserInputPairValid method for more information.
-     * 3. There are no duplicate commands (except for "-eq") inside the list of user inputs.
+     * 3. There are no duplicate commands (except for "-eq" and "-domain") inside the list of user inputs.
      * Otherwise, this immediately results in an invalid user input.
      * @param acceptedCommands an array of Strings containing accepted commands
      * @param userInputs a list of Strings containing user inputs
@@ -142,13 +142,11 @@ public class CLIHelper {
         }
 
         // Third check: if the first two checks have passed, the array of user inputs contain valid pairs of
-        // (command, response). This final check will check whether the user input contains
-        // duplicate commands (except for "-eq"), immediately making the input invalid.
+        // (command, response).
         if (userInputIsValid && isDuplicateCommandInUserInput(acceptedCommands, userInputs)) {
-            // There should not be duplicate commands except for "-eq"
-            // In this case, it is safe to simply print the error message and return false
             // TODO: Amend if incorrect
-            System.out.println("Most commands (except for -eq) do not allow duplicates. Please try again.");
+            System.out.println("Most commands (except for -eq and -domain) do not allow duplicates. " +
+                    "Please try again.");
             return false;
         }
 
@@ -156,22 +154,23 @@ public class CLIHelper {
     }
 
     /**
-     * Checks whether the list of commands inside userInputs contains duplicates. Only "-eq" command is
-     * allowed to be duplicates.
+     * Checks whether the list of commands inside userInputs contains duplicates. Only "-eq" and "-domain"
+     * commands are allowed to be duplicates.
      * Precondition:
      * - userInputs contains valid input pairs (command, response)
      * @param acceptedCommands an array of Strings containing accepted commands
      * @param userInputs a list of strings containing user inputs
-     * @return true if there are duplicates commands (except for "-eq"), false otherwise
+     * @return true if there are duplicates commands (except for "-eq" and "-domain"), false otherwise
      */
     private boolean isDuplicateCommandInUserInput(String[] acceptedCommands, List<String> userInputs) {
         ArrayList<String> listOfInputCommands = new ArrayList<>();
+        List<String> listOfAllowedDuplicateCommands = Arrays.asList("-eq", "-domain");
         for (int i = 0; i < userInputs.size(); i += 2) {
             listOfInputCommands.add(userInputs.get(i));
         }
         for (String command: acceptedCommands) {
-            if (!command.equals("-eq") && listOfInputCommands.stream().filter(str -> str.equals(command))
-                    .count() > 1) {
+            if (!listOfAllowedDuplicateCommands.contains(command) &&
+                    listOfInputCommands.stream().filter(str -> str.equals(command)).count() > 1) {
                 return true;
             }
         }
