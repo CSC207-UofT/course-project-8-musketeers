@@ -4,7 +4,6 @@ import Backend.Axes;
 import Backend.AxesUseCase;
 import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionReader;
-import Backend.Expressions.Expression;
 import Backend.Expressions.RealValuedExpression;
 import Graphics.Grapher;
 import Graphics.ImageWriter;

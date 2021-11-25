@@ -22,7 +22,7 @@ public class ExpressionReaderTest {
 
     @Before
     public void setUp(){
-        er = new ExpressionReader(ax.getNamedExpressions());
+        er = new ExpressionReader(ax);
     }
 
     @Test(timeout = 50)
@@ -101,5 +101,18 @@ public class ExpressionReaderTest {
     public void testWeirdCombinationsOfOperators() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) er.read("+-++--+1");
         assertEquals(-1f, exp.evaluate(varMap), delta);
+    }
+
+    @Test(timeout = 100)
+    public void testUserDefineFunctions() throws InvalidTermException{
+        RealValuedExpression exp = (RealValuedExpression) er.read("f(x) = x^2");
+
+        assertEquals("f", exp.getItem());
+        assertEquals(4, exp.evaluate(2), delta);
+
+        ax.addExpression(exp);
+        System.out.println(er.vc.funcNumInputs);
+        RealValuedExpression exp2 = (RealValuedExpression) er.read("g(x) = f(x) + 1");
+        assertEquals(5, exp2.evaluate(2), delta);
     }
 }
