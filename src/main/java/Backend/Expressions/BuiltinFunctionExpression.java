@@ -13,12 +13,8 @@ public class BuiltinFunctionExpression extends FunctionExpression{
         Constants constants = new Constants();
         // If function have multiple inputs, we fix this
         if (constants.getTwoVarFunctions().contains(funcName)){
-            setInputs(twoVarInputs());
+            setVariables(new String[] {"x", "y"});
         }
-    }
-
-    private RealValuedExpression[] twoVarInputs(){
-        return new RealValuedExpression[] {new VariableExpression("x"), new VariableExpression("y")};
     }
 
     @Override

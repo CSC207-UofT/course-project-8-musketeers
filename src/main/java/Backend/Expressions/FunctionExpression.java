@@ -5,7 +5,7 @@ package Backend.Expressions;
  */
 public abstract class FunctionExpression extends RealValuedExpression {
 
-    private final String[] variables;
+    private String[] variables;
     private RealValuedExpression[] inputs;
 
     /**
@@ -15,13 +15,20 @@ public abstract class FunctionExpression extends RealValuedExpression {
     public FunctionExpression(String funcName, String[] variables){
         super(funcName);
         this.variables = variables;
-        RealValuedExpression[] inputs = new RealValuedExpression[variables.length];
-        for(int i = 0; i < inputs.length; i++){
-            inputs[i] = new VariableExpression(variables[i]);
-        }
-        this.inputs = inputs;
+        this.inputs = stringArrayToExpressions(variables);
     }
 
+    /**
+     * @param vars An array of string representing the variables of a function
+     * @return An array of expressions for the variables of a function
+     */
+    private RealValuedExpression[] stringArrayToExpressions(String[] vars){
+        RealValuedExpression[] expressions = new RealValuedExpression[vars.length];
+        for(int i = 0; i < expressions.length; i++){
+            expressions[i] = new VariableExpression(vars[i]);
+        }
+        return expressions;
+    }
 
     /** Gets the inputs to a function
      * @return An Array of RealValuedExpressions representing the inputs to a function.
@@ -46,5 +53,12 @@ public abstract class FunctionExpression extends RealValuedExpression {
         return this.variables;
     }
 
+    /** Sets the variables the function is expressed in terms of
+     * @param variables Array of strings that represent the variables that the function is in terms of
+     */
+    public void setVariables(String[] variables){
+        this.variables = variables;
+        this.inputs = stringArrayToExpressions(variables);
+    }
 
 }
