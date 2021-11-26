@@ -33,10 +33,8 @@ public class Grapher {
     /**
      * @param size Size of the output image
      * @param gType The type of graphs, one of BOUNDARY, REGION, GRAYSCALE (for now)
-     * @param imgName Name of the output image file
-     * @throws IOException If image cannot be saved
      */
-    public int[] graph(int size, String gType, String imgName) throws IOException {
+    public int[] graph(int size, String gType) {
         int[] pixels = new int[size*size];
 
         Arrays.fill(pixels, impGrapher.WHITE);

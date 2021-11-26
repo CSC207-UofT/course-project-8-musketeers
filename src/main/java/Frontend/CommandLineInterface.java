@@ -23,6 +23,7 @@ public class CommandLineInterface {
      */
     public static void main(String[] args) {
         CLIHelper cliHelper = new CLIHelper();
+        CLIGraphSaver cliGraphHelper = new CLIGraphSaver();
         ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
 
         // An array of strings containing accepted Commands. This is open to extension as other parts
@@ -47,7 +48,8 @@ public class CommandLineInterface {
         Grapher grapher = new Grapher(axes);
         List<String[]> equationsAndDomains = cliHelper.findAllEquations(args);
         cliHelper.tryInterpretingInput(axes, auc, er, equationsAndDomains);
-        cliHelper.tryGraphingAndSavingImage(cliHelper, userInputs, grapher);
+        int[] graphedImage = cliHelper.tryGraphingImage(cliHelper, userInputs, grapher);
+        cliGraphHelper.trySavingImage(graphedImage);
 
         if (userInputs.contains("-save")) {
             cliHelper.trySavingAxes(cliHelper, userInputs, axes, auc);

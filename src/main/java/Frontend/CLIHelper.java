@@ -6,7 +6,7 @@ import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionReader;
 import Backend.Expressions.RealValuedExpression;
 import Graphics.Grapher;
-import Graphics.ImageWriter;
+//import Graphics.ImageWriter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,19 +41,11 @@ public class CLIHelper {
      * @param userInputs an ArrayList containing user inputs
      * @param grapher an instance of Grapher
      */
-    public void tryGraphingAndSavingImage(CLIHelper cliHelper, ArrayList<String> userInputs,
+    public int[] tryGraphingImage(CLIHelper cliHelper, ArrayList<String> userInputs,
                                           Grapher grapher) {
-        try {
-            String gType = cliHelper.getCommandArgument("-graph", userInputs);
-            int size = 512;
-            String name = "test.png";
-            int [] pixels = grapher.graph(size, gType, name);
-            ImageWriter writer = new ImageWriter();
-            writer.writeImage(pixels, size, size, name);
-        } catch (IOException e) {
-            System.out.println("Image could not be saved");
-            e.printStackTrace();
-        }
+        int size = 512;
+        String gType = cliHelper.getCommandArgument("-graph", userInputs);
+        return grapher.graph(size, gType);
     }
 
     /**
@@ -102,7 +94,8 @@ public class CLIHelper {
         String rawpos = cliHelper.getCommandArgument("-pos", userInputs);
         float x = Float.parseFloat(rawpos.split(",")[0]);
         float y = Float.parseFloat(rawpos.split(",")[1]);
-        axes.setOrigin(x, y);
+        auc.setOrigin(new float[]{x,y}, axes);
+//        axes.setOrigin(x, y);
     }
 
     /**
