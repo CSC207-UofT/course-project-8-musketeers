@@ -60,6 +60,7 @@ public class AxesDrawer {
 
       // vertical lines
       float xLeft = (xpos - scale/2);
+      // round to nearest spacing
       xLeft = (float)Math.ceil(xLeft / spacing) * spacing;
       float xRight = (xpos + scale/2);
       for (float xc = xLeft; xc < xRight; xc += spacing) {
@@ -71,7 +72,9 @@ public class AxesDrawer {
       }
 
       // horizontal lines
+      ypos = -ypos;
       float yLeft = (ypos - scale/2);
+      // round to nearest spacing
       yLeft = (float)Math.ceil(yLeft / spacing) * spacing;
       float yRight = (ypos + scale/2);
       for (float yc = yLeft; yc < yRight; yc += spacing) {
