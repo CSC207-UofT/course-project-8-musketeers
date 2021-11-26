@@ -9,8 +9,8 @@ public class Constants {
     // List used for operators as the order of operators matter and is used to control the order of precedence in expressions.
     // Sets used for these as only need containment and order is irrelevant.
     private final Set<String> VARIABLES = Set.of("x", "y", "z");
-    private final Set<String> BUILTINONEVARFUNCTIONS = Set.of("cos", "sin", "tan", "sqrt", "exp");
-    private final Set<String> BUILTINTWOVARFUNCTIONS = Set.of("mandel");
+    private final Set<String> BUILTINONEVARFUNCTIONS = Set.of("cos", "sin", "tan", "sqrt", "exp", "arctan", "arccos", "arcsin", "log");
+    private final Set<String> BUILTINTWOVARFUNCTIONS = Set.of("mandel", "max", "min");
     private final Set<String> SPECIALCHARACTERS = Set.of("(", ")", ","); // Ted: TODO: Future maybe "\" for "\pi", "\floor", ...
 
     private final List<String> LOGICALOPERATORS = new ArrayList<>(List.of(new String[]{"|", "&"})); // TODO: Recheck The order or "AND" and "OR"!

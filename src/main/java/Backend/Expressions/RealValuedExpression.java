@@ -30,14 +30,18 @@ public abstract class RealValuedExpression extends Expression<Float> implements 
         else{
             return Float.NaN;
         }
-
     }
 
     @Override
     public float evaluate(float x) {
         Map<String, Float> varMap = new HashMap<>();
         varMap.put("x", x);
-        return evaluate(varMap);
+        if (domain.evaluate(varMap)){
+            return evaluate(varMap); // this evaluate is from Expression class
+        }
+        else{
+            return Float.NaN;
+        }
     }
 
     /** Used to define the 'default' domain of everything.
