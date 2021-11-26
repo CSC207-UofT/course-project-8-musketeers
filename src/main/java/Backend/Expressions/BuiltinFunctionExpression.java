@@ -27,6 +27,12 @@ public class BuiltinFunctionExpression extends FunctionExpression{
             case "sqrt": return sqrtEvaluate(arguments);
             case "exp": return expEvaluate(arguments);
             case "mandel": return mandelEvaluate(arguments);
+            case "arcsin": return arcsinEvaluate(arguments);
+            case "arccos": return arccosEvaluate(arguments);
+            case "arctan": return arctanEvaluate(arguments);
+            case "log": return logEvaluate(arguments);
+            case "max": return maxEvaluate(arguments);
+            case "min": return minEvaluate(arguments);
             default: throw new IllegalArgumentException("Undefined function: " + getItem());
         }
     }
@@ -44,12 +50,35 @@ public class BuiltinFunctionExpression extends FunctionExpression{
         return (float) Math.tan(getInputs()[0].evaluate(arguments));
     }
 
+    private float arctanEvaluate(Map<String, Float> arguments) {
+        return (float) Math.atan(getInputs()[0].evaluate(arguments));
+    }
+
+    private float arcsinEvaluate(Map<String, Float> arguments) {
+        return (float) Math.asin(getInputs()[0].evaluate(arguments));
+    }
+
+    private float arccosEvaluate(Map<String, Float> arguments) {
+        return (float) Math.acos(getInputs()[0].evaluate(arguments));
+    }
+
     private float sqrtEvaluate(Map<String, Float> arguments) {
         return (float) Math.sqrt(getInputs()[0].evaluate(arguments));
     }
 
     private float expEvaluate(Map<String, Float> arguments) {
         return (float) Math.exp(getInputs()[0].evaluate(arguments));
+    }
+
+    private float logEvaluate(Map<String, Float> arguments) {
+        return (float) Math.log(getInputs()[0].evaluate(arguments));
+    }
+
+    private float maxEvaluate(Map<String, Float> arguments) {
+        return (float) Math.max(getInputs()[0].evaluate(arguments), getInputs()[1].evaluate(arguments));
+    }
+    private float minEvaluate(Map<String, Float> arguments) {
+        return (float) Math.min(getInputs()[0].evaluate(arguments), getInputs()[1].evaluate(arguments));
     }
 
     private float mandelEvaluate(Map<String, Float> arguments) {
