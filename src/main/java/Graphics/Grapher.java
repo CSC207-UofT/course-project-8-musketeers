@@ -54,8 +54,6 @@ public class Grapher {
         pixels = ad.drawAxes(pixels, size, size, graphData);
         pixels = ad.drawGrid(pixels, size, size, graphData);
         return pixels;
-        //ImageWriter writer = new ImageWriter();
-        //writer.writeImage(pixels, size, size, imgName);
     }
 
     /**
