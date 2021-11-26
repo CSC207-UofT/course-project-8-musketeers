@@ -5,6 +5,7 @@ import Backend.AxesUseCase;
 import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionReader;
 import Backend.Expressions.RealValuedExpression;
+import GUI.GLGUI;
 import Graphics.Grapher;
 //import Graphics.ImageWriter;
 
@@ -32,6 +33,15 @@ public class CLIHelper {
         } catch (IOException e) {
             System.out.println("File could not be save");
             e.printStackTrace();
+        }
+    }
+
+    public void startGUI(Grapher grapher, CLIHelper cliHelper, ArrayList<String> userInputs) {
+        GLGUI gui = new GLGUI(grapher, 512, cliHelper.getCommandArgument("-graph", userInputs));
+        try {
+            gui.initGL();
+        } catch (IOException e) {
+            System.out.println("Error reading assets!");
         }
     }
 

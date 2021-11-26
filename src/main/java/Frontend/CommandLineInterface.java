@@ -3,6 +3,7 @@ package Frontend;
 import Backend.*;
 import Backend.AxesUseCase;
 import Backend.ExpressionReader;
+import GUI.GLGUI;
 import Graphics.Grapher;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class CommandLineInterface {
 
         // An array of strings containing accepted Commands. This is open to extension as other parts
         // of the code become available to be merged into this CLI.
-        String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load", "-pos", "-domain"}; // TODO: Move to Constants?
+        String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load", "-pos", "-domain", "-interactive"}; // TODO: Move to Constants?
 
         if (!cliHelper.checkValidInput(acceptedCommands, userInputs)) {
             return;
@@ -50,6 +51,10 @@ public class CommandLineInterface {
         cliHelper.tryInterpretingInput(axes, auc, er, equationsAndDomains);
         int[] graphedImage = cliHelper.tryGraphingImage(cliHelper, userInputs, grapher);
         cliGraphHelper.trySavingImage(graphedImage);
+
+        if (userInputs.contains("-interactive")) {
+            cliHelper.startGUI(grapher, cliHelper, userInputs);
+        }
 
         if (userInputs.contains("-save")) {
             cliHelper.trySavingAxes(cliHelper, userInputs, axes, auc);

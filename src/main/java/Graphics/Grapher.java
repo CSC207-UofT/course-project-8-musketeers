@@ -30,6 +30,10 @@ public class Grapher {
         this.axes = axes;
     }
 
+    public void setPos(float[] pos) {
+        this.auc.setOrigin(pos, this.axes);
+    }
+
     /**
      * @param size Size of the output image
      * @param gType The type of graphs, one of BOUNDARY, REGION, GRAYSCALE (for now)
