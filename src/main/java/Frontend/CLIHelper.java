@@ -6,6 +6,7 @@ import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionReader;
 import Backend.Expressions.RealValuedExpression;
 import GUI.GLGUI;
+import GUI.GUI;
 import Graphics.Grapher;
 //import Graphics.ImageWriter;
 
@@ -36,13 +37,10 @@ public class CLIHelper {
         }
     }
 
-    public void startGUI(Grapher grapher, CLIHelper cliHelper, ArrayList<String> userInputs) {
-        GLGUI gui = new GLGUI(grapher, 512, cliHelper.getCommandArgument("-graph", userInputs));
-        try {
-            gui.initGL();
-        } catch (IOException e) {
-            System.out.println("Error reading assets!");
-        }
+    public void startGUI(CLIHelper cliHelper, ArrayList<String> userInputs,
+                         GUI gui) {
+        gui.setgType(cliHelper.getCommandArgument("-graph", userInputs));
+        gui.initGUI();
     }
 
     /**
