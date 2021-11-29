@@ -45,8 +45,7 @@ public class RGBA {
     public RGBA(String s) {
 		long t = Long.parseLong(s, 16);
 		this.r = (int)((t >> 16) & 255);
-        System.out.println(this.r);
-		this.g = (int)((t >> 8) & 255);
+        this.g = (int)((t >> 8) & 255);
 		this.b = (int)(t & 255);
 	}
 
