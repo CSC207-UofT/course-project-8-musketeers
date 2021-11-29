@@ -22,7 +22,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33.*;
 
 
-public class GLGUI {
+public class GLGUI implements GUI {
     static int clicks;
     static int progID;
 
@@ -44,12 +44,15 @@ public class GLGUI {
         this.imgDim = imgDim;
         textureTest = true;
     }
-    public GLGUI(Grapher grapher, int imgDim, String gType) {
+    public GLGUI(Grapher grapher, int imgDim) {
         this.imgDim = imgDim;
         this.grapher = grapher;
         this.equation = "x + y";
         textureTest = true;
         this.auc = new AxesUseCase();
+    }
+
+    public void setgType(String gType) {
         this.gType = gType;
     }
 
@@ -134,6 +137,13 @@ public class GLGUI {
         glUniform1f(1, mousey + zy);
     }
 
+    public void initGUI() {
+        try {
+            initGL();
+        } catch (IOException e) {
+            System.out.println("Error reading assets!");
+        }
+    }
     public void initGL() throws IOException {
         glfwInit();
         long window = createWindow();

@@ -4,6 +4,7 @@ import Backend.*;
 import Backend.AxesUseCase;
 import Backend.ExpressionReader;
 import GUI.GLGUI;
+import GUI.GUI;
 import Graphics.Grapher;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class CommandLineInterface {
      * @param args An array of Strings containing the user inputs, split by a space " "
      */
     public static void main(String[] args) {
+        //args = {};
         CLIHelper cliHelper = new CLIHelper();
         CLIGraphSaver cliGraphHelper = new CLIGraphSaver();
         ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
@@ -53,7 +55,8 @@ public class CommandLineInterface {
         cliGraphHelper.trySavingImage(graphedImage);
 
         if (userInputs.contains("-interactive")) {
-            cliHelper.startGUI(grapher, cliHelper, userInputs);
+            GUI gui = (GUI)(new GLGUI(grapher, 512));
+            cliHelper.startGUI(cliHelper, userInputs, gui);
         }
 
         if (userInputs.contains("-save")) {
