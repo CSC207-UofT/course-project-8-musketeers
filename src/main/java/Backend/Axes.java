@@ -8,6 +8,9 @@ import Backend.Expressions.*;
 import java.io.Serializable;
 import java.util.*;
 
+import java.beans.PropertyChangeSupport;
+import java.beans.PropertyChangeListener;
+
 /**
  * Axes represents the Euclidean Space in which our Expressions will be graphed.
  * - stores a 'scale' attribute (type float)
@@ -24,12 +27,12 @@ public class Axes implements Serializable {
     private final List<RealValuedExpression> exprCollection;
     private final Map<String, FunctionExpression> namedExpressions = initialNamedExpressions();
 
+//    private final PropertyChangeSupport;
+
     //Constructors
     public Axes(){
-        this.scale = 5;
-        this.dimensionSize = 2;
-        this.origin = new float[2];
-        this.exprCollection = new ArrayList<>();
+        this(5, new float[2]);
+
     }
 
     /**
@@ -39,9 +42,7 @@ public class Axes implements Serializable {
      * @param oy The y coordinate of the origin
      */
     public Axes(float scale, float ox, float oy){
-        this.scale = scale;
-        this.origin = new float[]{ox, oy};
-        this.exprCollection = new ArrayList<>();
+        this(scale, new float[]{ox, oy});
     }
 
     /**
