@@ -6,6 +6,7 @@ package GUI;
 
 import Graphics.RGBA;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -39,8 +40,9 @@ public class DemoTest {
 
     public static void main(String[] args) throws IOException {
         textureTest = false;
-        String eq = "(cos(x + y) + sin(x*y))/4 + 0.5";
-        if (args.length > 0) {
+        String eq = JOptionPane.showInputDialog(null, "Enter"); // Added by Omar. Has to be implicit for now.
+//        String eq = "(cos(x + y) + sin(x*y))/4 + 0.5";
+        if (args.length > 0) { // If main has at least one argument, then the first one is the equation.
             eq = args[0];
         }
         if (args.length > 1) {
@@ -49,7 +51,7 @@ public class DemoTest {
         }
         DemoTest guiDemo = new DemoTest(eq);
         guiDemo.initGL();
-        System.out.println("Fin.");
+        System.out.println("Finished."); // After the program ends.
     }
 
     public static int imgToTex(int[] pixels, int iw, int ih) {
@@ -121,8 +123,8 @@ public class DemoTest {
     public void initGL() throws IOException {
         glfwInit();
         long window = createWindow();
-        glfwSetMouseButtonCallback(window, DemoTest::mouseCallback);
-        glfwSetCursorPosCallback(window, DemoTest::cursor_pos_callback);
+        glfwSetMouseButtonCallback(window, DemoTest::mouseCallback); // Records when the mouse button is being pressed.
+        glfwSetCursorPosCallback(window, DemoTest::cursor_pos_callback); // Records the position of the cursor.
 
         FloatBuffer buffer = memAllocFloat(3 * 2*2);
         float[] vtest = {
