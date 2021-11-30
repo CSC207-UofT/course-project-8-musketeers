@@ -14,15 +14,26 @@ import Backend.Expressions.*;
 public class ExpressionReader {
     private final Constants constants = new Constants();
     private final ExpressionCreator ec;
-    private final ExpressionValidityChecker vc;
+    public final ExpressionValidityChecker vc;
 
     /** Constructor for ExpressionReader.
      *
      * @param funcMap A map of function names to the actual functions.
      */
     public ExpressionReader(Map<String, FunctionExpression> funcMap) {
-        this.ec = new ExpressionCreator(funcMap);
         this.vc = new ExpressionValidityChecker(funcMap);
+        this.ec = new ExpressionCreator(funcMap, this.vc);
+    }
+
+    /**
+     * @param axes Axes object that ExpressionCreator and ValidityChecker are going to be 'configured' to
+     *             i.e. this is the Axes object that they will observing
+     */
+    public ExpressionReader(Axes axes){
+        this(axes.getNamedExpressions());
+
+        axes.addObserver(this.ec);
+        axes.addObserver(this.vc);
     }
 
     /**

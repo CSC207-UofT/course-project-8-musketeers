@@ -254,19 +254,18 @@ public class ExpressionCreatorTest {
         assertEquals(1.f, myFunc.evaluate(varMap), delta);
     }
 
-// custom functions not implemeneted propertly yet
-//    @Test(timeout = 50)
-//    public void testCustomFunctionDomain() throws InvalidTermException {
-//        String funcName = "f";
-//        String[] variables = {"x"};
-//        RealValuedExpression func = (RealValuedExpression) ec.create(List.of("x", "^", "2"));
-//
-//        ComparatorExpression domain = (ComparatorExpression) ec.create(List.of("x", ">", "0"));
-//        RealValuedExpression myFunc = new CustomFunctionExpression(funcName, variables, func, domain);
-//
-//        varMap.put("x", -1.f);
-//        assertTrue(Float.isNaN(myFunc.evaluate(varMap)));
-//    }
+    @Test(timeout = 50)
+    public void testCustomFunctionDomain() throws InvalidTermException {
+        String funcName = "f";
+        String[] variables = {"x"};
+        RealValuedExpression func = (RealValuedExpression) ec.create(List.of("x", "^", "2"));
+
+        ComparatorExpression domain = (ComparatorExpression) ec.create(List.of("x", ">", "0"));
+        RealValuedExpression myFunc = new CustomFunctionExpression(funcName, variables, func, domain);
+
+        varMap.put("x", -1.f);
+        assertTrue(Float.isNaN(myFunc.evaluate(varMap)));
+    }
 
     @Test(timeout = 50)
     public void testCustomFunctionMultivariable() throws InvalidTermException {
@@ -304,6 +303,7 @@ public class ExpressionCreatorTest {
     public void testCompositionOfCustomFunctions() throws InvalidTermException {
         Axes axes = new Axes();
         ExpressionCreator ec2 = new ExpressionCreator(axes.getNamedExpressions());
+        ExpressionReader er2 = new ExpressionReader(axes);
 
         String funcName = "f";
         String[] variables = {"x"};
@@ -317,7 +317,6 @@ public class ExpressionCreatorTest {
         FunctionExpression myFunc2 = new CustomFunctionExpression(funcName2, variables2, func2);
         axes.addExpression(myFunc2);
 
-        ExpressionReader er2 = new ExpressionReader(axes.getNamedExpressions());
         RealValuedExpression composeFunc = (RealValuedExpression) er2.read("f(g(x, y))");
         varMap.put("x", 2f);
         varMap.put("y", 3f);

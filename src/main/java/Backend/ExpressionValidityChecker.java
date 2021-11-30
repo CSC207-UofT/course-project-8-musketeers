@@ -7,6 +7,9 @@ import Backend.Expressions.FunctionExpression;
 
 import java.util.*;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
+
 /** The ExpressionValidityChecker checks whether a list representing an expression is actually representing a valid
  * expression.
  *
@@ -15,20 +18,41 @@ import java.util.*;
  * each recursive call, this class fully determines whether an expression is valid or not.
  *
  */
-public class ExpressionValidityChecker {
+public class ExpressionValidityChecker implements PropertyChangeListener{
     Constants constants;
-    Map<String, FunctionExpression> definedFuncs;
+    public Map<String, FunctionExpression> definedFuncs = new HashMap<>();
     Map<String, Integer> funcNumInputs = new HashMap<>();
 
     public ExpressionValidityChecker(Map<String, FunctionExpression> definedFuncs) {
         this.constants = new Constants();
-        this.definedFuncs = definedFuncs;
+
+        for (String funcName: definedFuncs.keySet()){
+            this.definedFuncs.put(funcName, definedFuncs.get(funcName));
+        }
 
         for (String funcName: definedFuncs.keySet()){
             funcNumInputs.put(funcName, definedFuncs.get(funcName).getInputs().length);
         }
     }
 
+    /**
+     * @param event An event denoting that Axes object has been modified. This method is specifically listening for
+     *              functions being added to named functions
+     */
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        if ("funcMap".equals(event.getPropertyName())){
+            FunctionExpression exp = (FunctionExpression) event.getNewValue();
+            definedFuncs.put(exp.getItem(), exp);
+            funcNumInputs.put(exp.getItem(), exp.getInputs().length);
+        }
+    }
+
+    /** A function name is valid if and only if it consists entirely of alphabets and
+     *  is not taken is not already in definedFuncs
+     * @param name Determine whether a given string is a valid function name
+     * @return True if and only if name is a valid function name
+     */
     public boolean validFuncName(String name){
         return !definedFuncs.containsKey(name) && name.matches("[a-zA-Z]+");
     }

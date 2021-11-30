@@ -27,7 +27,7 @@ public class Axes implements Serializable {
     private final List<RealValuedExpression> exprCollection;
     private final Map<String, FunctionExpression> namedExpressions = initialNamedExpressions();
 
-//    private final PropertyChangeSupport;
+    private final PropertyChangeSupport observable; // For observer design pattern
 
     //Constructors
     public Axes(){
@@ -55,6 +55,8 @@ public class Axes implements Serializable {
         this.dimensionSize = origin.length;
         this.origin = origin;
         this.exprCollection = new ArrayList<>();
+
+        this.observable = new PropertyChangeSupport(this);
     }
 
     /** This is just to find what our initial named functions are, i.e. the ones that are builtin
@@ -72,7 +74,13 @@ public class Axes implements Serializable {
         return funcMap;
     }
 
-
+    /**
+     * Add a new observer to observe the changes to this class.
+     * @param observer Object that is observing Axes
+     */
+    public void addObserver(PropertyChangeListener observer) {
+        observable.addPropertyChangeListener("funcMap", observer);
+    }
 
     //Getter and Setter methods for scale, origin:
     public float getScale(){return this.scale;}
@@ -96,6 +104,8 @@ public class Axes implements Serializable {
         // if a user adds a named function, we want to add it our collection
         if (expr instanceof FunctionExpression){
             namedExpressions.put(expr.getItem(), (FunctionExpression) expr);
+
+            observable.firePropertyChange("funcMap", null, expr);
         }
     }
 
