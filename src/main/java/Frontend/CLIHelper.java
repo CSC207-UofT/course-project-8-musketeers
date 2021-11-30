@@ -5,7 +5,6 @@ import Backend.AxesUseCase;
 import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionReader;
 import Backend.Expressions.RealValuedExpression;
-import GUI.GLGUI;
 import GUI.GUI;
 import Graphics.Grapher;
 //import Graphics.ImageWriter;
@@ -37,6 +36,12 @@ public class CLIHelper {
         }
     }
 
+    /**
+     * Starts any system which implements the GUI interface.
+     * @param cliHelper an instance of CLIHelper
+     * @param userInputs an ArrayList containing user inputs
+     * @param gui an instance of a GUI class
+     */
     public void startGUI(CLIHelper cliHelper, ArrayList<String> userInputs,
                          GUI gui) {
         gui.setgType(cliHelper.getCommandArgument("-graph", userInputs));
