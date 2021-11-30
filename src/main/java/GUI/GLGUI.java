@@ -118,7 +118,7 @@ public class GLGUI {
         glCompileShader(fsID);
         if (glGetShaderi(fsID, GL_COMPILE_STATUS) != GL_TRUE) {
             System.out.println(glGetShaderInfoLog(fsID, glGetShaderi(fsID, GL_INFO_LOG_LENGTH)));
-        }
+        } // TODO: else block needed?
         System.out.println("fs created");
 
 
@@ -128,7 +128,7 @@ public class GLGUI {
     }
 
     private static void cursor_pos_callback(long l, double x, double y) {
-        mousex = (float)(x-400)/200.f;
+        mousex = -(float)(x-400)/200.f;
         mousey = -(float)(y-400)/200.f;
         glUniform1f(0, mousex + zx);
         glUniform1f(1, mousey + zy);
