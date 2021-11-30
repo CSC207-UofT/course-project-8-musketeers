@@ -24,7 +24,7 @@ float mandel (float cx, float cy) {
 
 void main() {
   vec2 tc = gl_FragCoord.xy;
-  tc.x = -tc.x;
+  tc.y = -tc.y;
   vec2 wh = 1 / vec2(800, 800);
 
   vec2 xypos = vec2(xpos, ypos);
