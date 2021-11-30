@@ -139,7 +139,7 @@ public class ValidityCheckerTest {
     public void testWrongCommas3() throws InvalidTermException {
         thrown.expect(CompoundCaseCreatorException.class);
         thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
-        Expression<?> exp = er.read("f(x+y,)");
+        Expression<?> exp = er.read("cos((x+y,))");
     }
 
 }
