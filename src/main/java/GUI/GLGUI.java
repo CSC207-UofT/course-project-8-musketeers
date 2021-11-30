@@ -21,7 +21,10 @@ import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL33.*;
 
-
+/**
+ * A User Interface which uses GLFW
+ * TODO: split into UI, Controller, Presenter
+ */
 public class GLGUI implements GUI {
     static int clicks;
     static int progID;
@@ -71,6 +74,13 @@ public class GLGUI implements GUI {
         System.out.println("Fin.");
     }
 
+    /**
+     * Converts an int[] RGBA data to a GL texture
+     * @param pixels array representing image
+     * @param iw width of input
+     * @param ih height of input
+     * @return the GL texture ID
+     */
     public static int imgToTex(int[] pixels, int iw, int ih) {
         ByteBuffer tbuf = ByteBuffer.allocateDirect(4 * iw * ih);
         byte[] pixbytes = new byte[4*iw*ih];
@@ -92,6 +102,11 @@ public class GLGUI implements GUI {
         return tid;
     }
 
+    /**
+     * Compiles and links GL shader templates
+     * @param eq an expression with x and y
+     * @throws IOException
+     */
     public static void makeShader(String eq) throws IOException {
         String vertShader;
         String fragShader;
@@ -144,16 +159,21 @@ public class GLGUI implements GUI {
             System.out.println("Error reading assets!");
         }
     }
+
+    /**
+     * Initializes the GLFW and GL environments.
+     * @throws IOException
+     */
     public void initGL() throws IOException {
         glfwInit();
         long window = createWindow();
         glfwSetMouseButtonCallback(window, GLGUI::mouseCallback);
         glfwSetCursorPosCallback(window, GLGUI::cursor_pos_callback);
 
-        FloatBuffer buffer = memAllocFloat(3 * 2*2);
+        FloatBuffer buffer = memAllocFloat(3 * 2 * 2);
         float[] vtest = {
-                -0.9f,-0.9f,0.9f,-0.9f,-0.9f,0.9f,
-                0.9f,-0.9f,-0.9f,0.9f,0.9f,0.9f
+                -0.9f, -0.9f, 0.9f, -0.9f, -0.9f, 0.9f,
+                0.9f, -0.9f, -0.9f, 0.9f, 0.9f, 0.9f
         };
         buffer.put(vtest);
 
@@ -171,7 +191,6 @@ public class GLGUI implements GUI {
         glBindVertexArray(vaoID);
 
 
-
         makeShader(this.equation);
         glUseProgram(progID);
         memFree(buffer);
@@ -181,6 +200,14 @@ public class GLGUI implements GUI {
 
         glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
 
+        startLoop(window);
+    }
+
+    /**
+     * Enters mainloop for UI window
+     * @param window handle of the window
+     */
+    public void startLoop(long window) {
         int[] pixels;
         while (!glfwWindowShouldClose(window)) {
             float[] newO = {-mousex, mousey};
@@ -198,16 +225,6 @@ public class GLGUI implements GUI {
         }
         glfwTerminate();
     }
-
-    /**
-     * In this example, we will use OpenGL to draw a single triangle on a window.
-     * <p>
-     * As mentioned above, we have to use off-heap memory for this in order to communicate the virtual memory address to
-     * OpenGL, which in turn will read the data we provided at that address.
-     * <p>
-     * The example here will upload the position vectors of a simple triangle to an OpenGL Vertex Buffer Object.
-     */
-
 
     private static long createWindow() {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
