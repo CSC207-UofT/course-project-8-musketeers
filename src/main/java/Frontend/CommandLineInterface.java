@@ -47,7 +47,7 @@ public class CommandLineInterface {
             cliHelper.trySettingOrigin(cliHelper, userInputs, axes, auc);
         }
 
-        ExpressionReader er = new ExpressionReader(auc.getNamedFunctions(axes));
+        ExpressionReader er = new ExpressionReader(axes);
         Grapher grapher = new Grapher(axes);
         List<String[]> equationsAndDomains = cliHelper.findAllEquations(args);
         cliHelper.tryInterpretingInput(axes, auc, er, equationsAndDomains);

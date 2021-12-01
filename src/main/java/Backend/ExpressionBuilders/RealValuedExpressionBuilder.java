@@ -37,7 +37,6 @@ public class RealValuedExpressionBuilder extends ExpressionBuilder<RealValuedExp
     }
 
     // Below should construct functions (including build-in and user-defined functions)
-    // TODO: Future: Include User-Defined Functions once we made it clear how we want to treat them. E.g. Where to store them and how to handle them...
     public RealValuedExpressionBuilder constructExpression(String funcName, RealValuedExpressionBuilder[] inputs,
                                                            Map<String, FunctionExpression> funcMap)
             throws EmptyBuilderException {
@@ -47,9 +46,13 @@ public class RealValuedExpressionBuilder extends ExpressionBuilder<RealValuedExp
             inputExpressions[i] = inputs[i].build();
         }
 
-        FunctionExpression func = funcMap.get(funcName);
-        func.setInputs(inputExpressions);
-        this.expr = func;
+        FunctionExpression oldFunc = funcMap.get(funcName);
+
+        // We create a new copy of the function other the set inputs below would overwrite the original values
+        FunctionExpression newFunc = new CustomFunctionExpression(funcName, oldFunc.getVariables(), oldFunc);
+
+        newFunc.setInputs(inputExpressions);
+        this.expr = newFunc;
         return this;
     }
 }
