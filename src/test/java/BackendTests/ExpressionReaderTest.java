@@ -111,7 +111,7 @@ public class ExpressionReaderTest {
     }
 
     @Test(timeout = 50)
-    public void testUserDefineFunctions() throws InvalidTermException{
+    public void testUserDefineFunctions() throws InvalidTermException {
 
         ExpressionReader er2 = new ExpressionReader(ax);
 
@@ -123,7 +123,8 @@ public class ExpressionReaderTest {
         ax.addExpression(exp);
         RealValuedExpression exp2 = (RealValuedExpression) er2.read("g(x) = f(x) + 1");
         assertEquals(5, exp2.evaluate(2), delta);
-
+    }
+    @Test(timeout = 50)
     public void testReadForGraphingLength1() throws InvalidTermException {
         RealValuedExpression exp = er.readForGraphing(new String[]{"1"});
         assertEquals(1, exp.evaluate(varMap), delta);
