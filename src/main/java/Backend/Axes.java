@@ -8,6 +8,9 @@ import Backend.Expressions.*;
 import java.io.Serializable;
 import java.util.*;
 
+import java.beans.PropertyChangeSupport;
+import java.beans.PropertyChangeListener;
+
 /**
  * Axes represents the Euclidean Space in which our Expressions will be graphed.
  * - stores a 'scale' attribute (type float)
@@ -24,12 +27,12 @@ public class Axes implements Serializable {
     private final List<RealValuedExpression> exprCollection;
     private final Map<String, FunctionExpression> namedExpressions = initialNamedExpressions();
 
+    private final PropertyChangeSupport observable; // For observer design pattern
+
     //Constructors
     public Axes(){
-        this.scale = 5;
-        this.dimensionSize = 2;
-        this.origin = new float[2];
-        this.exprCollection = new ArrayList<>();
+        this(5, new float[2]);
+
     }
 
     /**
@@ -39,9 +42,7 @@ public class Axes implements Serializable {
      * @param oy The y coordinate of the origin
      */
     public Axes(float scale, float ox, float oy){
-        this.scale = scale;
-        this.origin = new float[]{ox, oy};
-        this.exprCollection = new ArrayList<>();
+        this(scale, new float[]{ox, oy});
     }
 
     /**
@@ -54,6 +55,8 @@ public class Axes implements Serializable {
         this.dimensionSize = origin.length;
         this.origin = origin;
         this.exprCollection = new ArrayList<>();
+
+        this.observable = new PropertyChangeSupport(this);
     }
 
     /** This is just to find what our initial named functions are, i.e. the ones that are builtin
@@ -71,7 +74,13 @@ public class Axes implements Serializable {
         return funcMap;
     }
 
-
+    /**
+     * Add a new observer to observe the changes to this class.
+     * @param observer Object that is observing Axes
+     */
+    public void addObserver(PropertyChangeListener observer) {
+        observable.addPropertyChangeListener("funcMap", observer);
+    }
 
     //Getter and Setter methods for scale, origin:
     public float getScale(){return this.scale;}
@@ -95,6 +104,8 @@ public class Axes implements Serializable {
         // if a user adds a named function, we want to add it our collection
         if (expr instanceof FunctionExpression){
             namedExpressions.put(expr.getItem(), (FunctionExpression) expr);
+
+            observable.firePropertyChange("funcMap", null, expr);
         }
     }
 

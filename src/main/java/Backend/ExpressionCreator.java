@@ -4,10 +4,10 @@ import Backend.Exceptions.*;
 import Backend.ExpressionBuilders.*;
 import Backend.Expressions.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeEvent;
 
 /**  The ExpressionCreator class is responsible for creating an expression tree representing the user input if the
  * expression the user input is valid.
@@ -22,20 +22,43 @@ import java.util.Map;
  *
  * If the expression is not valid, the expression tree will not be created and an exception is thrown.
  */
-public class ExpressionCreator {
+public class ExpressionCreator implements PropertyChangeListener{
 
     private final Constants constants = new Constants();
-    private final ExpressionValidityChecker vc;
-    private final Map<String, FunctionExpression> funcMap;
-    // TODO: We can likely use Observer Design Pattern to have funcMap be updated automatically when new functions are added to Axes
+    private ExpressionValidityChecker vc;
+    private final Map<String, FunctionExpression> funcMap = new HashMap<>();
 
     /** Constructor for ExpressionCreator.
      *
      * @param funcMap A map of function names to the functions themselves.
      */
     public ExpressionCreator(Map<String, FunctionExpression> funcMap){
-        this.funcMap = funcMap;
+
+        // We create a new copy of the funcMap rather than just simply assigning to avoid aliasing
+        for (String funcName: funcMap.keySet()){
+            this.funcMap.put(funcName, funcMap.get(funcName));
+        }
         this.vc = new ExpressionValidityChecker(funcMap);
+    }
+
+    // This constructor allows us to ensure that vc is properly configured (i.e. observing Axes)
+    // Also implements Dependency Injection I believe
+    public ExpressionCreator(Map<String, FunctionExpression> funcMap, ExpressionValidityChecker vc){
+        this(funcMap);
+        this.vc = vc;
+    }
+
+
+    /**
+     * @param event An event denoting that Axes object has been modified. This method is specifically listening for
+     *              functions being added to named functions
+     */
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        if ("funcMap".equals(event.getPropertyName())){
+            FunctionExpression exp = (FunctionExpression) event.getNewValue();
+            funcMap.put(exp.getItem(), exp);
+        }
     }
 
     public Expression<?> create(List<String> terms) throws InvalidTermException {
