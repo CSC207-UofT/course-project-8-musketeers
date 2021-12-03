@@ -4,7 +4,6 @@
 
 package GUI;
 
-import Backend.AxesUseCase;
 import Graphics.Grapher;
 import Graphics.RGBA;
 
@@ -14,8 +13,6 @@ import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static Graphics.ImageTest.getImDims;
-import static Graphics.ImageTest.readImage;
 import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -36,9 +33,8 @@ public class GLGUI implements GUI {
 
     static boolean textureTest;
 
-    public String equation;
-    public int imgDim;
-    public String gType;
+    private final String equation;
+    private final int imgDim;
 
     private GUIHelper guiHelper;
 
@@ -80,7 +76,7 @@ public class GLGUI implements GUI {
      * @param ih height of input
      * @return the GL texture ID
      */
-    public static int imgToTex(int[] pixels, int iw, int ih) {
+    private static int imgToTex(int[] pixels, int iw, int ih) {
         // Convert int[] RGBA to packed byte[] RGBA for OpenGL use
         ByteBuffer tbuf = ByteBuffer.allocateDirect(4 * iw * ih);
         byte[] pixbytes = new byte[4*iw*ih];
@@ -106,7 +102,6 @@ public class GLGUI implements GUI {
     /**
      * Compiles and links GL shader templates
      * @param eq an expression with x and y
-     * @throws IOException
      */
     public static void makeShader(String eq) throws IOException {
         String vertShader;
@@ -164,7 +159,6 @@ public class GLGUI implements GUI {
 
     /**
      * Initializes the GLFW and GL environments.
-     * @throws IOException
      */
     public void initGL() throws IOException {
         glfwInit();
@@ -240,15 +234,6 @@ public class GLGUI implements GUI {
     private static void mouseCallback(long win, int button, int action, int mods) {
         /* Print a message when the user pressed down a mouse button */
         if (action == GLFW_PRESS) {
-            int tid = 0;
-            try {
-                int iw = getImDims("sampleOut3D.png")[0];
-                int ih = getImDims("sampleOut3D.png")[1];
-                tid = imgToTex(readImage("sampleOut3D.png"), iw,ih);
-            } catch (Exception e) {
-                System.out.println("Can't read image");
-            }
-            glUniform1i(3, tid);
 
             System.out.println("Pressed! " + clicks);
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
