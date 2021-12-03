@@ -38,9 +38,9 @@ public class GLGUI implements GUI {
 
     public String equation;
     public int imgDim;
-    public Grapher grapher;
-    public AxesUseCase auc;
     public String gType;
+
+    private GUIHelper guiHelper;
 
     public GLGUI(String eq, int imgDim) {
         this.equation = eq;
@@ -49,14 +49,13 @@ public class GLGUI implements GUI {
     }
     public GLGUI(Grapher grapher, int imgDim) {
         this.imgDim = imgDim;
-        this.grapher = grapher;
+        this.guiHelper = new GUIHelper(grapher, imgDim);
         this.equation = "x + y";
         textureTest = true;
-        this.auc = new AxesUseCase();
     }
 
     public void setgType(String gType) {
-        this.gType = gType;
+        guiHelper.setgType(gType);
     }
 
     public static void main(String[] args) throws IOException {
@@ -210,8 +209,8 @@ public class GLGUI implements GUI {
         int[] pixels;
         while (!glfwWindowShouldClose(window)) {
             float[] newO = {-mousex, mousey};
-            this.grapher.setPos(newO);
-            pixels = this.grapher.graph(this.imgDim, this.gType);
+            guiHelper.setGraphPos(newO);
+            pixels = guiHelper.drawGraph();
             imgToTex(pixels, this.imgDim, this.imgDim);
 
             glfwPollEvents();
