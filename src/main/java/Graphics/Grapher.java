@@ -6,10 +6,6 @@ import Backend.Expressions.FunctionExpression;
 import Backend.Expressions.RealValuedExpression;
 import Backend.Expressions.VariableExpression;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
