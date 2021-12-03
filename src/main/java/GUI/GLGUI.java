@@ -82,6 +82,7 @@ public class GLGUI implements GUI {
      * @return the GL texture ID
      */
     public static int imgToTex(int[] pixels, int iw, int ih) {
+        // Convert int[] RGBA to packed byte[] RGBA for OpenGL use
         ByteBuffer tbuf = ByteBuffer.allocateDirect(4 * iw * ih);
         byte[] pixbytes = new byte[4*iw*ih];
         for (int i = 0; i < iw*ih; i++) {
@@ -93,11 +94,12 @@ public class GLGUI implements GUI {
         }
         tbuf.put(pixbytes);
         tbuf.flip();
+        // Attach to GL texture, set filtering
         int tid = glGenTextures();
         glBindTexture(GL_TEXTURE_2D, tid);
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, iw, ih, 0, GL_RGBA, GL_UNSIGNED_BYTE, tbuf);
         return tid;
     }
@@ -120,7 +122,7 @@ public class GLGUI implements GUI {
             fragShader = fragShader.replace("//[INSERT TEXTURE TEST]", "fragColor = texture(texTest, tc*wh);");
         }
 
-        System.out.println(fragShader);
+        //System.out.println(fragShader);
 
         progID = glCreateProgram();
         int vsID = glCreateShader(GL_VERTEX_SHADER);
@@ -135,10 +137,11 @@ public class GLGUI implements GUI {
         glShaderSource(fsID, fragShader);
         glCompileShader(fsID);
         if (glGetShaderi(fsID, GL_COMPILE_STATUS) != GL_TRUE) {
+            // Error compiling fragment shader
             System.out.println(glGetShaderInfoLog(fsID, glGetShaderi(fsID, GL_INFO_LOG_LENGTH)));
-        } // TODO: else block needed?
-        System.out.println("fs created");
-
+        } else {
+            System.out.println("fs created");
+        }
 
         glAttachShader(progID, vsID);
         glAttachShader(progID, fsID);
@@ -182,14 +185,11 @@ public class GLGUI implements GUI {
         int vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-
-
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0L);
         glEnableVertexAttribArray(0);
 
         int vaoID = glGenVertexArrays();
         glBindVertexArray(vaoID);
-
 
         makeShader(this.equation);
         glUseProgram(progID);
@@ -197,7 +197,6 @@ public class GLGUI implements GUI {
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glVertexPointer(2, GL_FLOAT, 0, 0L);
-
         glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
 
         startLoop(window);
@@ -226,6 +225,10 @@ public class GLGUI implements GUI {
         glfwTerminate();
     }
 
+    /**
+     * Method that creates a GLFW window
+     * @return window handle
+     */
     private static long createWindow() {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         long window = glfwCreateWindow(800, 800, "Intro2", NULL, NULL);
