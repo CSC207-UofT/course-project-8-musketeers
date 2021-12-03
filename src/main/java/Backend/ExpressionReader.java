@@ -20,7 +20,7 @@ public class ExpressionReader {
      *
      * @param funcMap A map of function names to the actual functions.
      */
-    public ExpressionReader(Map<String, FunctionExpression> funcMap) {
+    private ExpressionReader(Map<String, FunctionExpression> funcMap) {
         this.vc = new ExpressionValidityChecker(funcMap);
         this.ec = new ExpressionCreator(funcMap, this.vc);
     }
@@ -188,7 +188,7 @@ public class ExpressionReader {
      * @param expression This is the expression the user has input.
      * @return A list which we can create an expression tree from.
      */
-    private List<String> expressionParser(String expression) {
+    public List<String> expressionParser(String expression) {
         List<String> parsed = new ArrayList<>();
         StringBuilder section = new StringBuilder(); // section will be storing any series of characters which are not
         // operators.
@@ -314,11 +314,9 @@ public class ExpressionReader {
         // specialCharacters will contain all characters where, if "-" or "+" appear after, they are used in
         // unary context.
         List<String> specialCharacters = constants.getAllOperators();
-        specialCharacters.remove("/"); // The case where we have ??/-??" in the code is bad habit. We are enforcing
-        // rule that we are not responsible for the interpretation of it. So
-        // we remove "/"/
-        specialCharacters.remove("^"); // Same for "??^-??"
-        specialCharacters.add("(");
+        specialCharacters.removeAll(List.of("/","^")); // The case where we have ??/-??" in the code is bad habit. We are enforcing
+        // rule that we are not responsible for the interpretation of it. So we remove "/" and Same for "??^-??"
+        specialCharacters.addAll(List.of("(", "=", ","));
         // If the previous element of the parsed list is special, we interpet the operator as unary.
         if (specialCharacters.contains(parsed.get(i-1))) {
             interpretOperator(i, parsed.get(i), parsed);
