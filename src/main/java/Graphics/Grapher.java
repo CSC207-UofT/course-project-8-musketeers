@@ -1,8 +1,10 @@
 package Graphics;
 
 import Backend.*;
+import Backend.Expressions.ArithmeticOperatorExpression;
 import Backend.Expressions.FunctionExpression;
 import Backend.Expressions.RealValuedExpression;
+import Backend.Expressions.VariableExpression;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -47,7 +49,9 @@ public class Grapher {
 
         for (RealValuedExpression exp: auc.getExpressions(axes)) {
             if (exp instanceof FunctionExpression){
-                expGrapher.graph(pixels, size, size, exp, graphData);
+//                expGrapher.graph(pixels, size, size, exp, graphData);
+                RealValuedExpression newExp = new ArithmeticOperatorExpression("-", new VariableExpression("y"), exp);
+                impGrapher.graph(pixels, size, size, newExp, graphData, stringToGType(gType));
             }
             else {
                 impGrapher.graph(pixels, size, size, exp, graphData, stringToGType(gType));
