@@ -101,7 +101,7 @@ public class AxesUseCaseTest {
         assertArrayEquals(auc.getOrigin(ax), new float[]{6,-4f}, 0.0F);
     }
 
-    @Test(timeout = 50)
+    @Test(timeout = 100)
     public void testAxesAddCustomFunction() throws InvalidTermException {
 
         ExpressionCreator ec = new ExpressionCreator(auc.getNamedFunctions(ax));
@@ -113,6 +113,12 @@ public class AxesUseCaseTest {
 
         assertEquals(13, auc.getNamedFunctions(ax).size(),0);
 
+    }
+
+    @Test(timeout = 50)
+    public void testAxesUseCaseGetExpr(){
+        ArrayList<RealValuedExpression> eList = new ArrayList<>();
+        assertEquals(auc.getExpressions(ax), eList);
     }
 
 

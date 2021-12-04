@@ -44,7 +44,7 @@ public class AxesTest {
         });
     }
 
-    @Test(timeout = 50)
+    @Test(timeout = 100)
     public void testAxesCreation2(){
         ax = new Axes(5, 6, 7);
 
@@ -113,19 +113,5 @@ public class AxesTest {
         assertEquals(ax.getExpressions(), eList);
     }
 
-// Custom functions to be implemented
-//    @Test(timeout = 50)
-//    public void testAxesAddCustomFunction() throws InvalidTermException {
-//        assertEquals(ax.getNamedExpressions().size(), 5);
-//
-//        ExpressionCreator ec = new ExpressionCreator(ax.getNamedExpressions());
-//        String funcName = "f";
-//        String[] variables = {"x"};
-//        RealValuedExpression func = (RealValuedExpression) ec.create(List.of("x", "^", "2"));
-//        FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
-//        ax.addExpression(myFunc);
-//
-//        assertEquals(ax.getNamedExpressions().size(), 6);
-//    }
 
 }
