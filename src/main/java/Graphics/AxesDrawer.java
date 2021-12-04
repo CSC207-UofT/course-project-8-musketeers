@@ -85,6 +85,7 @@ public class AxesDrawer {
           if (yc == 0) continue;
           int yp = (int)((yc - ypos) / scale * h + h/2);
           for (int x = 0; x < w; x++) {
+
               pixels[yp * w + x] = gridColor.blend(new RGBA(pixels[yp * w + x]), 0.8f).toInt();
           }
       }

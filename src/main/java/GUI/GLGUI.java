@@ -1,12 +1,14 @@
 /*
- * Adapted from LWJGL example
+ * Adapted from LWJGL example.
  */
 
 package GUI;
 
+import Backend.Exceptions.InvalidCommandArguments;
 import Graphics.Grapher;
 import Graphics.RGBA;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -30,20 +32,16 @@ public class GLGUI implements GUI {
     static float zy;
     static float mousex;
     static float mousey;
-
-    // Below Ted
     static boolean dragMove = false;
     static boolean prevDragMove = false;
     static float prevMouseX = 0;
     static float prevMouseY = 0;
-    static float currMouseX = 0;
-    static float currMouseY = 0;
     static float initialMouseX = 0;
     static float initialMouseY = 0;
     static float changeInMouseX = 0;
     static float changeInMouseY = 0;
-
-    //
+    static float graphScale = 5; // TODO: Is this good habit to set a default value here?
+    static float scaleInterval = 0.5f;
 
     static boolean textureTest;
 
@@ -68,8 +66,9 @@ public class GLGUI implements GUI {
         guiHelper.setgType(gType);
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, InvalidCommandArguments {
         textureTest = false;
+//        String eq = JOptionPane.showInputDialog(null, "Enter"); // Has to be implicit for now.
         String eq = "(cos(x + y) + sin(x*y))/4 + 0.5";
         if (args.length > 0) {
             eq = args[0];
@@ -156,57 +155,25 @@ public class GLGUI implements GUI {
         glLinkProgram(progID);
     }
 
-    private static void cursor_pos_callback(long l, double x, double y) {
-        mousex = (float)(x-400)/200.f;
-        mousey = (float)(y-400)/200.f;
-        glUniform1f(0, mousex + zx);
-        glUniform1f(1, mousey + zy);
-
-        if (dragMove) {
-//            currMouseX = prevMouseX;
-//            currMouseY = prevMouseY;
-            if (!prevDragMove) {
-                initialMouseX = mousex;
-                initialMouseY = mousey;
-                prevDragMove = true;
-            }
-            else {
-                changeInMouseX = -(mousex - initialMouseX);
-                changeInMouseY = mousey - initialMouseY;
-            }
-        }
-        else {
-            prevMouseX += changeInMouseX;
-            prevMouseY += changeInMouseY;
-            changeInMouseX = 0;
-            changeInMouseY = 0;
-        }
-
-
-        /*System.out.println("X: ");
-        System.out.printf("%.2f", mousex);
-        System.out.println("\n");
-        System.out.println("Y: ");
-        System.out.printf("%.2f", mousey);
-        System.out.println("\n");*/
-    }
-
     public void initGUI() {
         try {
             initGL();
         } catch (IOException e) {
             System.out.println("Error reading assets!");
+        } catch (InvalidCommandArguments e) { // TODO: Good or no or more specific exceptions in future? Considering we can have all kind of invalid inputs for GUI.
+            System.out.println("Something went wrong when setting the scale."); // This should never happen unless our program has a bug.
         }
     }
 
     /**
      * Initializes the GLFW and GL environments.
      */
-    public void initGL() throws IOException {
+    public void initGL() throws IOException, InvalidCommandArguments {
         glfwInit();
         long window = createWindow();
         glfwSetMouseButtonCallback(window, GLGUI::mouseCallback);
         glfwSetCursorPosCallback(window, GLGUI::cursor_pos_callback);
+        glfwSetKeyCallback(window, GLGUI::keyboardCallback);
 
         FloatBuffer buffer = memAllocFloat(3 * 2 * 2);
         float[] vtest = {
@@ -241,11 +208,12 @@ public class GLGUI implements GUI {
      * Enters mainloop for UI window
      * @param window handle of the window
      */
-    public void startLoop(long window) {
+    public void startLoop(long window) throws InvalidCommandArguments {
         int[] pixels;
         while (!glfwWindowShouldClose(window)) {
             float[] newO = {prevMouseX + changeInMouseX, prevMouseY + changeInMouseY};
             guiHelper.setGraphPos(newO);
+            guiHelper.setGraphScale(graphScale);
             pixels = guiHelper.drawGraph();
             imgToTex(pixels, this.imgDim, this.imgDim);
 
@@ -273,7 +241,41 @@ public class GLGUI implements GUI {
         return window;
     }
 
-    private static void mouseCallback(long win, int button, int action, int mods) {
+    private static void cursor_pos_callback(long l, double x, double y) {
+        mousex = (float)(x-400)/200.f;
+        mousey = (float)(y-400)/200.f;
+        glUniform1f(0, mousex + zx);
+        glUniform1f(1, mousey + zy);
+
+        if (dragMove) {
+//            currMouseX = prevMouseX;
+//            currMouseY = prevMouseY;
+            if (!prevDragMove) {
+                initialMouseX = mousex;
+                initialMouseY = mousey;
+                prevDragMove = true;
+            }
+            else {
+                changeInMouseX = -(mousex - initialMouseX) * graphScale / 5;  // TODO: Make '5' a variable? It's like a normalizing constant.
+                changeInMouseY = (mousey - initialMouseY) * graphScale / 5;  // TODO: Make '5' a variable? It's like a normalizing constant. Or make it another option move fast/slow mode?!!!
+            }
+        }
+        else {
+            prevMouseX += changeInMouseX;
+            prevMouseY += changeInMouseY;
+            changeInMouseX = 0;
+            changeInMouseY = 0;
+        }
+
+        /*System.out.println("X: ");
+        System.out.printf("%.2f", mousex);
+        System.out.println("\n");
+        System.out.println("Y: ");
+        System.out.printf("%.2f", mousey);
+        System.out.println("\n");*/
+    }
+
+    private static void mouseCallback(long win, int button, int action, int mods) { // TODO: To Louis, why is the first parameter not GLFWWindow* instead? As specified in the java docs.
         /* Print a message when the user pressed down a mouse button */
 //        if (action == GLFW_PRESS) {
 //
@@ -296,6 +298,26 @@ public class GLGUI implements GUI {
         if (action == GLFW_RELEASE && button == GLFW_MOUSE_BUTTON_LEFT) {
             dragMove = false;
             prevDragMove = false; // Well, technically doesn't match its name, but enough for our purpose.
+        }
+    }
+
+    private static void keyboardCallback(long window, int key, int scancode, int action, int mods) {
+        if (action == GLFW_PRESS) {
+//            if (key == GLFW_KEY_I) {
+//
+//            }
+//            else if (key == GLFW_KEY_O) {
+//
+//            }
+            float smallerScale = graphScale - scaleInterval;
+            float largerScale = graphScale + scaleInterval;
+            if (key == GLFW_KEY_S && smallerScale > 0) {
+                graphScale = smallerScale;
+            }
+            else if (key == GLFW_KEY_L) {
+                // TODO: Should we put an upper bound for the scale for a reasonable runtime.
+                graphScale = largerScale;
+            }
         }
     }
 }

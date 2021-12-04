@@ -3,6 +3,7 @@ package GUI;
 
 import Backend.Axes;
 import Backend.AxesUseCase;
+import Backend.Exceptions.InvalidCommandArguments;
 import Graphics.Grapher;
 
 /**
@@ -25,6 +26,7 @@ public class GUIHelper {
     public void setGraphPos(float[] p) {
         grapher.setPos(p);
     }
+    public void setGraphScale(float scale) throws InvalidCommandArguments { grapher.setScale(scale); }
     public int[] drawGraph() {
         return grapher.graph(imgDim,gType);
     }
