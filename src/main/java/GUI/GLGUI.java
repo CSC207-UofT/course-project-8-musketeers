@@ -31,6 +31,20 @@ public class GLGUI implements GUI {
     static float mousex;
     static float mousey;
 
+    // Below Ted
+    static boolean dragMove = false;
+    static boolean prevDragMove = false;
+    static float prevMouseX = 0;
+    static float prevMouseY = 0;
+    static float currMouseX = 0;
+    static float currMouseY = 0;
+    static float initialMouseX = 0;
+    static float initialMouseY = 0;
+    static float changeInMouseX = 0;
+    static float changeInMouseY = 0;
+
+    //
+
     static boolean textureTest;
 
     private final String equation;
@@ -147,6 +161,34 @@ public class GLGUI implements GUI {
         mousey = (float)(y-400)/200.f;
         glUniform1f(0, mousex + zx);
         glUniform1f(1, mousey + zy);
+
+        if (dragMove) {
+//            currMouseX = prevMouseX;
+//            currMouseY = prevMouseY;
+            if (!prevDragMove) {
+                initialMouseX = mousex;
+                initialMouseY = mousey;
+                prevDragMove = true;
+            }
+            else {
+                changeInMouseX = -(mousex - initialMouseX);
+                changeInMouseY = mousey - initialMouseY;
+            }
+        }
+        else {
+            prevMouseX += changeInMouseX;
+            prevMouseY += changeInMouseY;
+            changeInMouseX = 0;
+            changeInMouseY = 0;
+        }
+
+
+        System.out.println("X: ");
+        System.out.printf("%.2f", mousex);
+        System.out.println("\n");
+        System.out.println("Y: ");
+        System.out.printf("%.2f", mousey);
+        System.out.println("\n");
     }
 
     public void initGUI() {
@@ -202,7 +244,7 @@ public class GLGUI implements GUI {
     public void startLoop(long window) {
         int[] pixels;
         while (!glfwWindowShouldClose(window)) {
-            float[] newO = {-mousex, mousey};
+            float[] newO = {prevMouseX + changeInMouseX, prevMouseY + changeInMouseY};
             guiHelper.setGraphPos(newO);
             pixels = guiHelper.drawGraph();
             imgToTex(pixels, this.imgDim, this.imgDim);
@@ -233,18 +275,27 @@ public class GLGUI implements GUI {
 
     private static void mouseCallback(long win, int button, int action, int mods) {
         /* Print a message when the user pressed down a mouse button */
-        if (action == GLFW_PRESS) {
+//        if (action == GLFW_PRESS) {
+//
+//            System.out.println("Pressed! " + clicks);
+//            if (button == GLFW_MOUSE_BUTTON_LEFT) {
+//                clicks += 1;
+//            } else {clicks -= 1;}
+//            glUniform1f(2, 1.f/(float)Math.pow(1.1f,clicks));
+//
+//            zx += mousex;
+//            zy += mousey;
+//            glUniform1f(0, mousex + zx);
+//            glUniform1f(1, mousey + zy);
+//        }
 
-            System.out.println("Pressed! " + clicks);
-            if (button == GLFW_MOUSE_BUTTON_LEFT) {
-                clicks += 1;
-            } else {clicks -= 1;}
-            glUniform1f(2, 1.f/(float)Math.pow(1.1f,clicks));
-
-            zx += mousex;
-            zy += mousey;
-            glUniform1f(0, mousex + zx);
-            glUniform1f(1, mousey + zy);
+        // Below Ted: Mouse drag:
+        if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
+            dragMove = true;
+        }
+        if (action == GLFW_RELEASE && button == GLFW_MOUSE_BUTTON_LEFT) {
+            dragMove = false;
+            prevDragMove = false; // Well, technically doesn't match its name, but enough for our purpose.
         }
     }
 }
