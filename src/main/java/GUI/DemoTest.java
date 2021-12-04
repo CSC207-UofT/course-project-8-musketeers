@@ -40,7 +40,7 @@ public class DemoTest {
 
     public static void main(String[] args) throws IOException {
         textureTest = false;
-        String eq = JOptionPane.showInputDialog(null, "Enter"); // Added by Omar. Has to be implicit for now.
+        String eq = JOptionPane.showInputDialog(null, "Enter"); // Has to be implicit for now.
 //        String eq = "(cos(x + y) + sin(x*y))/4 + 0.5";
         if (args.length > 0) { // If main has at least one argument, then the first one is the equation.
             eq = args[0];
