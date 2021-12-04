@@ -27,13 +27,17 @@ public class AxesDrawer {
       RGBA xColor = new RGBA("FFFF0000");
       RGBA yColor = new RGBA("FF0044FF");
 
-      // Y axis
-      for (int y = 0; y < h; y++) {
-        pixels[y * w + xOrigin] = yColor.blend(new RGBA(pixels[y * w + xOrigin]), 0.6f).toInt();
+      if ((xOrigin > 0) && (xOrigin < w)) {
+        // Y axis
+        for (int y = 0; y < h; y++) {
+            pixels[y * w + xOrigin] = yColor.blend(new RGBA(pixels[y * w + xOrigin]), 0.6f).toInt();
+        }
       }
-      // X axis
-      for (int x = 0; x < w; x++) {
-        pixels[yOrigin * w + x] = xColor.blend(new RGBA(pixels[yOrigin * w + x]), 0.6f).toInt();
+      if ((yOrigin > 0) && (yOrigin < h)) {
+        // X axis
+        for (int x = 0; x < w; x++) {
+            pixels[yOrigin * w + x] = xColor.blend(new RGBA(pixels[yOrigin * w + x]), 0.6f).toInt();
+        }
       }
       return pixels;
   }
