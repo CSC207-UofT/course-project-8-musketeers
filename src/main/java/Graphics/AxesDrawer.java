@@ -60,7 +60,7 @@ public class AxesDrawer {
 
       // vertical lines
       float xLeft = (xpos - scale/2);
-      // round to nearest spacing
+      // round to the nearest spacing
       xLeft = (float)Math.ceil(xLeft / spacing) * spacing;
       float xRight = (xpos + scale/2);
       for (float xc = xLeft; xc < xRight; xc += spacing) {
