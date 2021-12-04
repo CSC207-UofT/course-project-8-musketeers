@@ -325,4 +325,40 @@ public class ExpressionCreatorTest {
         assertEquals(composeFunc.evaluate(varMap), 36, delta);
     }
 
+    @Test(timeout = 50)
+    public void testExp() throws InvalidTermException {
+        RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("exp", "(", "x", "^", "2", ")"));
+        varMap.put("x", 1.f);
+        assertEquals(Math.exp(1), exp.evaluate(varMap), delta);
+    }
+
+    @Test(timeout = 50)
+    public void testArcsin() throws InvalidTermException {
+        RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("arcsin", "(", "x", "^", "2", ")"));
+        varMap.put("x", 1.f);
+        assertEquals(Math.asin(1), exp.evaluate(varMap), delta);
+    }
+
+    @Test(timeout = 50)
+    public void testArccos() throws InvalidTermException {
+        RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("arccos", "(", "x", "^", "2", ")"));
+        varMap.put("x", 1.f);
+        assertEquals(Math.acos(1), exp.evaluate(varMap), delta);
+    }
+
+    @Test(timeout = 50)
+    public void testArctan() throws InvalidTermException {
+        RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("arctan", "(", "x", "^", "2", ")"));
+        varMap.put("x", 1.f);
+        assertEquals(Math.atan(1), exp.evaluate(varMap), delta);
+    }
+
+    @Test(timeout = 50)
+    public void testLogarithm() throws InvalidTermException {
+        RealValuedExpression exp = (RealValuedExpression) ec.create(List.of("log", "(", "x", "^", "2", ")"));
+        varMap.put("x", 1.f);
+        assertEquals(Math.log(1), exp.evaluate(varMap), delta);
+    }
+
+
 }

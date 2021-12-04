@@ -3,7 +3,9 @@ package Graphics;
 import Backend.Axes;
 import Backend.Expressions.RealValuedExpression;
 
-
+/**
+ * ExplicitGrapher is responsible for graphing explicitly defined functions
+ */
 public class ExplicitGrapher {
 
     public int[] graph(int[] pixels, int w, int h, Evaluatable func, float[] graphData){

@@ -22,7 +22,7 @@ import java.beans.PropertyChangeListener;
 
 public class Axes implements Serializable {
     private float scale;
-    private float dimensionSize; // to be used later
+    private final float dimensionSize; // to be used later
     private float[] origin;
     private final List<RealValuedExpression> exprCollection;
     private final Map<String, FunctionExpression> namedExpressions = initialNamedExpressions();
