@@ -57,8 +57,8 @@ public class Grapher {
                 impGrapher.graph(pixels, size, size, exp, graphData, stringToGType(gType));
             }
         }
-        pixels = ad.drawAxes(pixels, size, size, graphData);
-        pixels = ad.drawGrid(pixels, size, size, graphData);
+        ad.drawAxes(pixels, size, size, graphData);
+        ad.drawGrid(pixels, size, size, graphData);
         return pixels;
     }
 

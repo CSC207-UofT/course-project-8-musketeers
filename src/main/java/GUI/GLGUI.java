@@ -306,6 +306,7 @@ public class GLGUI implements GUI {
 //            else if (key == GLFW_KEY_O) {
 //
 //            }
+            // TODO: NT up/down/left/right continuous move by "changeInMouseX" with scale factor and normalization.
             float smallerScale = graphScale - scaleInterval;
             float largerScale = graphScale + scaleInterval;
             if (key == GLFW_KEY_S && smallerScale > 0) {
