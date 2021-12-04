@@ -4,7 +4,6 @@
 
 package GUI;
 
-import Backend.Exceptions.InvalidCommandArguments;
 import Graphics.Grapher;
 import Graphics.RGBA;
 
@@ -66,7 +65,7 @@ public class GLGUI implements GUI {
         guiHelper.setgType(gType);
     }
 
-    public static void main(String[] args) throws IOException, InvalidCommandArguments {
+    public static void main(String[] args) throws IOException {
         textureTest = false;
 //        String eq = JOptionPane.showInputDialog(null, "Enter"); // Has to be implicit for now.
         String eq = "(cos(x + y) + sin(x*y))/4 + 0.5";
@@ -160,15 +159,13 @@ public class GLGUI implements GUI {
             initGL();
         } catch (IOException e) {
             System.out.println("Error reading assets!");
-        } catch (InvalidCommandArguments e) { // TODO: Good or no or more specific exceptions in future? Considering we can have all kind of invalid inputs for GUI.
-            System.out.println("Something went wrong when setting the scale."); // This should never happen unless our program has a bug.
         }
     }
 
     /**
      * Initializes the GLFW and GL environments.
      */
-    public void initGL() throws IOException, InvalidCommandArguments {
+    public void initGL() throws IOException {
         glfwInit();
         long window = createWindow();
         glfwSetMouseButtonCallback(window, GLGUI::mouseCallback);
@@ -208,7 +205,7 @@ public class GLGUI implements GUI {
      * Enters mainloop for UI window
      * @param window handle of the window
      */
-    public void startLoop(long window) throws InvalidCommandArguments {
+    public void startLoop(long window) {
         int[] pixels;
         while (!glfwWindowShouldClose(window)) {
             float[] newO = {prevMouseX + changeInMouseX, prevMouseY + changeInMouseY};
@@ -267,12 +264,12 @@ public class GLGUI implements GUI {
             changeInMouseY = 0;
         }
 
-        /*System.out.println("X: ");
+        System.out.println("X: ");
         System.out.printf("%.2f", mousex);
         System.out.println("\n");
         System.out.println("Y: ");
         System.out.printf("%.2f", mousey);
-        System.out.println("\n");*/
+        System.out.println("\n");
     }
 
     private static void mouseCallback(long win, int button, int action, int mods) { // TODO: To Louis, why is the first parameter not GLFWWindow* instead? As specified in the java docs.

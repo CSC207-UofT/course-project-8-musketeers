@@ -1,7 +1,6 @@
 package Graphics;
 
 import Backend.*;
-import Backend.Exceptions.InvalidCommandArguments;
 import Backend.Expressions.ArithmeticOperatorExpression;
 import Backend.Expressions.FunctionExpression;
 import Backend.Expressions.RealValuedExpression;
@@ -33,7 +32,7 @@ public class Grapher {
         this.auc.setOrigin(pos, this.axes);
     }
 
-    public void setScale(float scale) throws InvalidCommandArguments {
+    public void setScale(float scale) {
         this.auc.setScale(scale, this.axes);
     }
 
