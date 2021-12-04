@@ -183,12 +183,12 @@ public class GLGUI implements GUI {
         }
 
 
-        System.out.println("X: ");
+        /*System.out.println("X: ");
         System.out.printf("%.2f", mousex);
         System.out.println("\n");
         System.out.println("Y: ");
         System.out.printf("%.2f", mousey);
-        System.out.println("\n");
+        System.out.println("\n");*/
     }
 
     public void initGUI() {
