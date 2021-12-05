@@ -14,4 +14,5 @@ public class NumberExpression extends RealValuedExpression {
     public Float evaluate(Map<String, Float> arguments) {
         return Float.parseFloat(getItem());
     }
+
 }

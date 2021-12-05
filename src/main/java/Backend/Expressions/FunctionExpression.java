@@ -61,4 +61,21 @@ public abstract class FunctionExpression extends RealValuedExpression {
         this.inputs = stringArrayToExpressions(variables);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        str.append(getItem());
+        str.append("(");
+        for (int i = 0; i < getInputs().length; i++) {
+
+            if (i > 0) {
+                str.append(",");
+            }
+            str.append(getInputs()[i].toString());
+        }
+        str.append(")");
+        return str.toString();
+
+    }
+
 }

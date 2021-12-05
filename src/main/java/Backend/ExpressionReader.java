@@ -314,11 +314,9 @@ public class ExpressionReader {
         // specialCharacters will contain all characters where, if "-" or "+" appear after, they are used in
         // unary context.
         List<String> specialCharacters = constants.getAllOperators();
-        specialCharacters.remove("/"); // The case where we have ??/-??" in the code is bad habit. We are enforcing
-        // rule that we are not responsible for the interpretation of it. So
-        // we remove "/"/
-        specialCharacters.remove("^"); // Same for "??^-??"
-        specialCharacters.add("(");
+        specialCharacters.removeAll(List.of("/","^")); // The case where we have ??/-??" in the code is bad habit. We are enforcing
+        // rule that we are not responsible for the interpretation of it. So we remove "/" and Same for "??^-??"
+        specialCharacters.addAll(List.of("(", "=", ","));
         // If the previous element of the parsed list is special, we interpet the operator as unary.
         if (specialCharacters.contains(parsed.get(i-1))) {
             interpretOperator(i, parsed.get(i), parsed);

@@ -22,19 +22,13 @@ public class ExpressionReaderTest {
 
     @Before
     public void setUp(){
-        er = new ExpressionReader(ax.getNamedExpressions());
+        er = new ExpressionReader(ax);
     }
 
     @Test(timeout = 50)
     public void testBinaryOperatorTwoTerms() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) er.read("2 + 3");
         assertEquals(5.0, exp.evaluate(varMap), delta);
-    }
-
-    @Test(timeout = 50)
-    public void testContainsEquals() throws InvalidTermException {
-        RealValuedExpression exp = (RealValuedExpression) er.read("1 = 2");
-        assertEquals(-1f, exp.evaluate(varMap), delta);
     }
 
     // Bracket parsing to be implemented
@@ -46,7 +40,7 @@ public class ExpressionReaderTest {
 
     @Test(timeout = 50)
     public void testBinaryOperatorWithOneVariable() throws InvalidTermException {
-        RealValuedExpression exp = (RealValuedExpression) er.read("x / 3");
+        RealValuedExpression exp = (RealValuedExpression) er.read("x /    3");
         varMap.put("x", 3.f);
         assertEquals(1.0, exp.evaluate(varMap), delta);
     }
