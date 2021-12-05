@@ -26,7 +26,6 @@ public class CommandLineInterface {
     public static void main(String[] args) {
         //args = {};
         CLIHelper cliHelper = new CLIHelper();
-        CLIGraphSaver cliGraphHelper = new CLIGraphSaver();
         ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
 
         // An array of strings containing accepted Commands. This is open to extension as other parts
@@ -52,7 +51,7 @@ public class CommandLineInterface {
         List<String[]> equationsAndDomains = cliHelper.findAllEquations(args);
         cliHelper.tryInterpretingInput(axes, auc, er, equationsAndDomains);
         int[] graphedImage = cliHelper.tryGraphingImage(cliHelper, userInputs, grapher);
-        cliGraphHelper.trySavingImage(graphedImage);
+        cliHelper.trySavingImage(graphedImage);
 
         if (userInputs.contains("-interactive")) {
             GUI gui = (GUI)(new GLGUI(grapher, 512));

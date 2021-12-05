@@ -7,6 +7,7 @@ import Backend.ExpressionReader;
 import Backend.Expressions.RealValuedExpression;
 import GUI.GUI;
 import Graphics.Grapher;
+import Graphics.ImageWriter;
 //import Graphics.ImageWriter;
 
 import java.io.IOException;
@@ -109,6 +110,22 @@ public class CLIHelper {
         float y = Float.parseFloat(rawpos.split(",")[1]);
         auc.setOrigin(new float[]{x,y}, axes);
 //        axes.setOrigin(x, y);
+    }
+
+    /**
+     * Simple try and catch statements to save image.
+     * @param pixels Array of integers corresponding to the colour of each pixel
+     */
+    public void trySavingImage(int[] pixels) {
+        try {
+            int size = 512;
+            String name = "test.png";
+            ImageWriter writer = new ImageWriter();
+            writer.writeImage(pixels, size, size, name);
+        } catch (IOException e) {
+            System.out.println("Image could not be saved");
+            e.printStackTrace();
+        }
     }
 
     /**

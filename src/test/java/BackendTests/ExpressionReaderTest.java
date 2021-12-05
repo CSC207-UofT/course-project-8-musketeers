@@ -77,6 +77,13 @@ public class ExpressionReaderTest {
     }
 
     @Test(timeout = 50)
+    public void testExp() throws InvalidTermException {
+        RealValuedExpression expr = (RealValuedExpression) er.read("exp(x^2)");
+        varMap.put("x", 1.0f);
+        assertEquals(Math.exp(1), expr.evaluate(varMap), delta);
+    }
+
+    @Test(timeout = 50)
     public void testCosWithOtherOperators() throws InvalidTermException {
         RealValuedExpression exp = (RealValuedExpression) er.read("2 * cos ( x^2 ) + 5");
         varMap.put("x", 0.0f);
@@ -103,16 +110,36 @@ public class ExpressionReaderTest {
         assertEquals(-1f, exp.evaluate(varMap), delta);
     }
 
-//    @Test(timeout = 100)
-//    public void testUserDefineFunctions() throws InvalidTermException{
-//        RealValuedExpression exp = (RealValuedExpression) er.read("f(x) = x^2");
-//
-//        assertEquals("f", exp.getItem());
-//        assertEquals(4, exp.evaluate(2), delta);
-//
-//        ax.addExpression(exp);
-//        System.out.println(er.vc.funcNumInputs);
-//        RealValuedExpression exp2 = (RealValuedExpression) er.read("g(x) = f(x) + 1");
-//        assertEquals(5, exp2.evaluate(2), delta);
-//    }
+    @Test(timeout = 50)
+    public void testUserDefineFunctions() throws InvalidTermException {
+
+        ExpressionReader er2 = new ExpressionReader(ax);
+
+        RealValuedExpression exp = (RealValuedExpression) er2.read("f(x) = x^2");
+
+        assertEquals("f", exp.getItem());
+        assertEquals(4, exp.evaluate(2), delta);
+
+        ax.addExpression(exp);
+        RealValuedExpression exp2 = (RealValuedExpression) er2.read("g(x) = f(x) + 1");
+        assertEquals(5, exp2.evaluate(2), delta);
+    }
+
+    @Test(timeout = 50)
+    public void testInvalid() throws InvalidTermException {
+
+        ExpressionReader er2 = new ExpressionReader(ax);
+
+        RealValuedExpression exp = (RealValuedExpression) er2.read("f(x) = sqrt(x)");
+
+        assertEquals(Float.NaN, exp.evaluate(-2), delta);
+
+    }
+
+
+    @Test(timeout = 50)
+    public void testReadForGraphingLength1() throws InvalidTermException {
+        RealValuedExpression exp = er.readForGraphing(new String[]{"1"});
+        assertEquals(1, exp.evaluate(varMap), delta);
+    }
 }

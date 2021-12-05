@@ -1,5 +1,4 @@
 package Backend;
-import Backend.Exceptions.InvalidCommandArguments;
 import Backend.Expressions.*;
 
 import java.io.IOException;
@@ -15,12 +14,20 @@ import java.util.Map;
 public class AxesUseCase {
 
     /**
+     * create an axes object
+     * @return an instance of Axes
+     */
+    public Axes createAxes(){
+        return new Axes();
+    }
+
+    /**
      * Saves Axes ax to fileName
      * @param fileName  String representing name of file
      * @param ax  instance of axes to be saved
      */
     public void saveAxes(String fileName, Axes ax) throws IOException {
-        DataReadWriter d = new DataReadWriter();
+        FileAccess d = new DataReadWriter();
         d.fileSave(fileName, ax);
 
     }
@@ -30,7 +37,7 @@ public class AxesUseCase {
      * @return  an instance of Axes
      */
     public Axes loadAxes(String fileName) throws IOException, ClassNotFoundException {
-        DataReadWriter d = new DataReadWriter();
+        FileAccess d = new DataReadWriter();
         return d.fileRead(fileName);
     }
 
@@ -40,13 +47,8 @@ public class AxesUseCase {
     public float getScale(Axes ax){return ax.getScale();}
 
     // Will be used later to allow for zooming in and out
-    public void setScale(float scale, Axes ax) throws InvalidCommandArguments {
-        if (scale <= 0) {
-            throw new InvalidCommandArguments("Invalid Command Argument: " + scale +
-                    " must be a positive float");
-        } else {
-            ax.setScale(scale);
-        }
+    public void setScale(float scale, Axes ax) {
+        ax.setScale(scale);
     }
 
     public float[] getOrigin(Axes ax){return ax.getOrigin();}
@@ -63,11 +65,9 @@ public class AxesUseCase {
     }
 
     // Might be used later to allow for removal of user-defined functions
-    public void removeExpression(RealValuedExpression expr, Axes ax){ax.removeExpression((RealValuedExpression) expr);}
+    public void removeExpression(RealValuedExpression expr, Axes ax){ax.removeExpression(expr);}
 
     public Map<String, FunctionExpression> getNamedFunctions(Axes ax){
         return ax.getNamedExpressions();
     }
-
-
 }

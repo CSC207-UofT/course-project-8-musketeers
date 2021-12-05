@@ -6,16 +6,14 @@ package Graphics;
 public class AxesDrawer {
 
     /**
-     * drawAxes draws Axes
+     * drawAxes draws Axes (mutate)
      * @param pixels  array of ints representing pixels in image
      * @param w  width of image (in pixels)
      * @param h  height of image (in pixels)
      * @param graphData  array of floats that contains relevant information for our image
      *                   scale, x-position of origin, y-position of origin
-     * @return an array of ints, whose individual elements represent the pixels of our image after
-     *                   the axes have been drawn.
      */
-    public int[] drawAxes(int[] pixels, int w, int h, float[] graphData) {
+    public void drawAxes(int[] pixels, int w, int h, float[] graphData) {
 
 	  float scale = graphData[0];
       float xpos = graphData[1];
@@ -27,28 +25,29 @@ public class AxesDrawer {
       RGBA xColor = new RGBA("FFFF0000");
       RGBA yColor = new RGBA("FF0044FF");
 
-      // Y axis
-      for (int y = 0; y < h; y++) {
-        pixels[y * w + xOrigin] = yColor.blend(new RGBA(pixels[y * w + xOrigin]), 0.6f).toInt();
+      if ((xOrigin > 0) && (xOrigin < w)) {
+        // Y axis
+        for (int y = 0; y < h; y++) {
+            pixels[y * w + xOrigin] = yColor.blend(new RGBA(pixels[y * w + xOrigin]), 0.6f).toInt();
+        }
       }
-      // X axis
-      for (int x = 0; x < w; x++) {
-        pixels[yOrigin * w + x] = xColor.blend(new RGBA(pixels[yOrigin * w + x]), 0.6f).toInt();
+      if ((yOrigin > 0) && (yOrigin < h)) {
+        // X axis
+        for (int x = 0; x < w; x++) {
+            pixels[yOrigin * w + x] = xColor.blend(new RGBA(pixels[yOrigin * w + x]), 0.6f).toInt();
+        }
       }
-      return pixels;
   }
 
     /**
-     * Draws gridlines in our image
+     * Draws gridlines in our image (mutate).
      * @param pixels  array of integers representing pixels in image
      * @param w  width of image (in pixels)
      * @param h  height of image (in pixels)
      * @param graphData  array of floats that contains relevant information for our image
      *                   scale, x-position of origin, y-position of origin
-     * @return an array of ints, whose individual elements represent the pixels of our image after
-     *                   the gridlines have been drawn.
      */
-  public int[] drawGrid(int[] pixels, int w, int h, float[] graphData) {
+  public void drawGrid(int[] pixels, int w, int h, float[] graphData) {
       RGBA gridColor = new RGBA("FF888888");
 
       // How far apart the gridlines are
@@ -60,7 +59,7 @@ public class AxesDrawer {
 
       // vertical lines
       float xLeft = (xpos - scale/2);
-      // round to nearest spacing
+      // round to the nearest spacing
       xLeft = (float)Math.ceil(xLeft / spacing) * spacing;
       float xRight = (xpos + scale/2);
       for (float xc = xLeft; xc < xRight; xc += spacing) {
@@ -81,9 +80,9 @@ public class AxesDrawer {
           if (yc == 0) continue;
           int yp = (int)((yc - ypos) / scale * h + h/2);
           for (int x = 0; x < w; x++) {
+
               pixels[yp * w + x] = gridColor.blend(new RGBA(pixels[yp * w + x]), 0.8f).toInt();
           }
       }
-      return pixels;
   }
 }

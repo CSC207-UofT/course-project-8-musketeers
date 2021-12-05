@@ -6,10 +6,6 @@ import Backend.Expressions.FunctionExpression;
 import Backend.Expressions.RealValuedExpression;
 import Backend.Expressions.VariableExpression;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -36,6 +32,10 @@ public class Grapher {
         this.auc.setOrigin(pos, this.axes);
     }
 
+    public void setScale(float scale) {
+        this.auc.setScale(scale, this.axes);
+    }
+
     /**
      * @param size Size of the output image
      * @param gType The type of graphs, one of BOUNDARY, REGION, GRAYSCALE (for now)
@@ -57,8 +57,8 @@ public class Grapher {
                 impGrapher.graph(pixels, size, size, exp, graphData, stringToGType(gType));
             }
         }
-        pixels = ad.drawAxes(pixels, size, size, graphData);
-        pixels = ad.drawGrid(pixels, size, size, graphData);
+        ad.drawAxes(pixels, size, size, graphData);
+        ad.drawGrid(pixels, size, size, graphData);
         return pixels;
     }
 
