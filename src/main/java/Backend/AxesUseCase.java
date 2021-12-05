@@ -11,7 +11,7 @@ import java.util.Map;
  * file name will be passed from command line
  */
 
-public class AxesUseCase implements FileAccess{
+public class AxesUseCase {
 
     /**
      * create an axes object
@@ -27,7 +27,7 @@ public class AxesUseCase implements FileAccess{
      * @param ax  instance of axes to be saved
      */
     public void saveAxes(String fileName, Axes ax) throws IOException {
-        DataReadWriter d = new DataReadWriter();
+        FileAccess d = new DataReadWriter();
         d.fileSave(fileName, ax);
 
     }
@@ -37,7 +37,7 @@ public class AxesUseCase implements FileAccess{
      * @return  an instance of Axes
      */
     public Axes loadAxes(String fileName) throws IOException, ClassNotFoundException {
-        DataReadWriter d = new DataReadWriter();
+        FileAccess d = new DataReadWriter();
         return d.fileRead(fileName);
     }
 
@@ -69,17 +69,5 @@ public class AxesUseCase implements FileAccess{
 
     public Map<String, FunctionExpression> getNamedFunctions(Axes ax){
         return ax.getNamedExpressions();
-    }
-
-    @Override
-    public void fileSave(String fileName, Object graphs) throws IOException {
-        DataReadWriter d = new DataReadWriter();
-        d.fileSave(fileName, graphs);
-    }
-
-    @Override
-    public Axes fileRead(String fileName) throws IOException, ClassNotFoundException {
-        DataReadWriter d = new DataReadWriter();
-        return d.fileRead(fileName);
     }
 }
