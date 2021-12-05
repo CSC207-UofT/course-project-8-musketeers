@@ -2,7 +2,7 @@ package Backend;
 
 import java.io.*;
 
-public class DataReadWriter {
+public class DataReadWriter implements FileAccess{
     /**
      *
      * @param fileName the name of the file
