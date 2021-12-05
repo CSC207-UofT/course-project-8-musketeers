@@ -84,7 +84,7 @@ public class CLIHelper {
     /**
      * Simple try and catch statements to load axes.
      * @param cliHelper an instance of CLIHelper
-     * @param userInputs an ArrayList of strings representing
+     * @param userInputs an ArrayList of strings containing user inputs
      * @param axes an instance of Axes
      * @param auc an instance of AxesUseCase
      * @return an instance of Axes, either the same one from axes or an updated one (if no errors were thrown)
@@ -114,12 +114,19 @@ public class CLIHelper {
 
     /**
      * Simple try and catch statements to save image.
+     * @param cliHelper an instance of CLIHelper
      * @param pixels Array of integers corresponding to the colour of each pixel
+     * @param userInputs an ArrayList of strings containing user inputs
      */
-    public void trySavingImage(int[] pixels) {
+    public void trySavingImage(CLIHelper cliHelper, int[] pixels, ArrayList<String> userInputs) {
         try {
+            String name;
+            if (userInputs.contains("-save")) {
+                name = cliHelper.getCommandArgument("-save", userInputs) + ".png";
+            } else {
+                name = "graph.png";
+            }
             int size = 512;
-            String name = "test.png";
             ImageWriter writer = new ImageWriter();
             writer.writeImage(pixels, size, size, name);
         } catch (IOException e) {

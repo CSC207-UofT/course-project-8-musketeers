@@ -51,7 +51,7 @@ public class CommandLineInterface {
         List<String[]> equationsAndDomains = cliHelper.findAllEquations(args);
         cliHelper.tryInterpretingInput(axes, auc, er, equationsAndDomains);
         int[] graphedImage = cliHelper.tryGraphingImage(cliHelper, userInputs, grapher);
-        cliHelper.trySavingImage(graphedImage);
+        cliHelper.trySavingImage(cliHelper, graphedImage, userInputs);
 
         if (userInputs.contains("-interactive")) {
             GUI gui = (GUI)(new GLGUI(grapher, 512));
