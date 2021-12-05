@@ -55,10 +55,18 @@ public class ImplicitGrapher {
           pixels[y * w + x] = (int) Long.parseLong("FF" + outR + outR + outR, 16);
       }
       else if (gtype == GraphType.BOUNDARY) {
-          if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx + pixelSize, cy) > 0)) {
+          float currVal = func.evaluate(cx, cy);
+          float xVal = func.evaluate(cx + pixelSize, cy);
+          float yVal = func.evaluate(cx, cy + pixelSize);
+
+          // If any are NaN then the sum will be NaN
+          if (Float.isNaN(currVal + xVal + yVal)) {
+              return;
+          }
+          if ((currVal > 0) ^ (xVal > 0)) {
               pixels[y * w + x] = BLACK;
           }
-          if ((func.evaluate(cx, cy) > 0) ^ (func.evaluate(cx, cy + pixelSize) > 0)) {
+          if ((currVal > 0) ^ (yVal > 0)) {
               pixels[y * w + x] = BLACK;
           }
       }
