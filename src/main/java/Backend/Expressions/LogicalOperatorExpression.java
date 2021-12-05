@@ -33,5 +33,8 @@ public class LogicalOperatorExpression extends BooleanValuedExpression {
 
         }
     }
-
+@Override
+    public String toString() {
+        return "(" + lExpression + getItem() + rExpression + ")";
+}
 }

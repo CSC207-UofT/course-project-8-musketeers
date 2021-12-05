@@ -47,4 +47,8 @@ public class ComparatorExpression extends BooleanValuedExpression {
 
         return comparisonHolds;
     }
+    @Override
+    public String toString() {
+        return "(" + lExpression + getItem() + rExpression + ")";
+    }
 }

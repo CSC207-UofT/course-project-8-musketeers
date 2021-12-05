@@ -19,4 +19,8 @@ public abstract class Expression<T> implements Serializable {
     // All Expressions can be evaluated
     // The arguments Map tells us what values the variables should take
     public abstract T evaluate(Map<String, Float> arguments);
+    @Override
+    public String toString() {
+        return getItem();
+    }
 }

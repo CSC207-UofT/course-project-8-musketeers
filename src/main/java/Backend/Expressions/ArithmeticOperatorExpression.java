@@ -1,5 +1,7 @@
 package Backend.Expressions;
 
+import org.lwjgl.system.CallbackI;
+
 import java.util.Map;
 
 // Backend.Expressions.OperatorExpression stores the 'Backend.Expressions.Expression' with operators, e.g. E_1 + E_2
@@ -15,6 +17,24 @@ public class ArithmeticOperatorExpression extends RealValuedExpression {
         super(operation); // TODO: Future have a complete string representation rather than just a function name!
         this.lExpression = lExpression;
         this.rExpression = rExpression;
+    }
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        if (getItem().equals("^")) {
+            str.append("pow(");
+            str.append(lExpression);
+            str.append(",");
+            str.append(rExpression);
+        }
+        else {
+            str.append("(");
+            str.append(lExpression);
+            str.append(getItem());
+            str.append(rExpression);
+            str.append(")");
+        }
+        return  str.toString();
     }
 
     // We evaluate this expression based on what the operator is
