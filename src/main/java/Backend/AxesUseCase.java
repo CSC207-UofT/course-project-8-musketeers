@@ -14,6 +14,14 @@ import java.util.Map;
 public class AxesUseCase {
 
     /**
+     * create an axes object
+     * @return an instance of Axes
+     */
+    public Axes createAxes(){
+        return new Axes();
+    }
+
+    /**
      * Saves Axes ax to fileName
      * @param fileName  String representing name of file
      * @param ax  instance of axes to be saved

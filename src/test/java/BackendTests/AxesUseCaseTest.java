@@ -2,7 +2,7 @@ package BackendTests;
 
 import Backend.*;
 
-import Backend.Exceptions.InvalidCommandArguments;
+//import Backend.Exceptions.InvalidCommandArguments;
 import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
 import org.junit.Before;
@@ -33,6 +33,18 @@ public class AxesUseCaseTest {
     }
     @Rule
     public ExpectedException thrown = ExpectedException.none();
+
+    /**
+     * test createAxes and make sure the instance of axes has the correct attributes
+     */
+    @Test(timeout = 50)
+    public void testCreateAxes(){
+        Axes ax2 = auc.createAxes();
+        assertEquals(auc.getScale(ax2),5,0);
+        float[] p = {0,0};
+        assertArrayEquals(auc.getOrigin(ax2), p, 0.00001f);
+        assertEquals(auc.getExpressions(ax2), new ArrayList<RealValuedExpression>(){});
+    }
 
     /**
      * Test adding expressions to the Axes
@@ -70,22 +82,9 @@ public class AxesUseCaseTest {
     }
 
     @Test(timeout = 50)
-    public void testAxesUseCaseSetScale5() throws InvalidCommandArguments {
+    public void testAxesUseCaseSetScale5() {
         auc.setScale(5, ax);
         assertEquals(auc.getScale(ax), 5f, 0);
-    }
-//    @Test(timeout = 50)
-//    public void testAxesUseCaseSetScale0() throws InvalidCommandArguments {
-//        auc.setScale(0, ax);
-//
-//    }
-
-
-    @Test
-    public void testAxesUseCaseSetScale0() throws InvalidCommandArguments {
-
-        thrown.expect(InvalidCommandArguments.class);
-        auc.setScale(0, ax);
     }
 
 
