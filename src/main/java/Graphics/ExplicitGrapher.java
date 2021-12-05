@@ -6,7 +6,7 @@ import Backend.Expressions.RealValuedExpression;
 
 public class ExplicitGrapher {
 
-    public int[] graph(int[] pixels, int w, int h, Evaluatable func, float[] graphData){
+    public void graph(int[] pixels, int w, int h, Evaluatable func, float[] graphData){
         float scale = graphData[0];
         float xpos = graphData[1];
         float ypos = graphData[2];
@@ -16,12 +16,10 @@ public class ExplicitGrapher {
         //For each x coordinate, draw the f(x) coordinates that are on the grid approximating it to scale.
         for (int x = 0; x < w; x++) {
             float cx = (x / (float)w) * scale + xpos;
-            System.out.println(w * (int) (Math.floor(func.evaluate(cx) * h / scale)) + x);
-            if((w * (int) (Math.floor(func.evaluate(cx)) * h / scale) + x) > 0) {
+            if((w * (h - (int) (Math.floor(func.evaluate(cx) * h / scale))) + x) > 0 && (w * (h - (int) (Math.floor(func.evaluate(cx) * h / scale))) + x) < pixels.length) {
                 pixels[w * (h - (int) (Math.floor(func.evaluate(cx) * h / scale))) + x] = (int) Long.parseLong("FF000000", 16);
             }
         }
-        return pixels;
     }
 
     public static void graphExplicit(int[] pixels, int w, int h, Axes ax,
