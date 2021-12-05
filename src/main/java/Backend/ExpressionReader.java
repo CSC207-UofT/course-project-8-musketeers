@@ -20,7 +20,7 @@ public class ExpressionReader {
      *
      * @param funcMap A map of function names to the actual functions.
      */
-    private ExpressionReader(Map<String, FunctionExpression> funcMap) {
+    public ExpressionReader(Map<String, FunctionExpression> funcMap) {
         this.vc = new ExpressionValidityChecker(funcMap);
         this.ec = new ExpressionCreator(funcMap, this.vc);
     }
@@ -188,7 +188,7 @@ public class ExpressionReader {
      * @param expression This is the expression the user has input.
      * @return A list which we can create an expression tree from.
      */
-    public List<String> expressionParser(String expression) {
+    private List<String> expressionParser(String expression) {
         List<String> parsed = new ArrayList<>();
         StringBuilder section = new StringBuilder(); // section will be storing any series of characters which are not
         // operators.
