@@ -11,7 +11,7 @@ import java.util.Map;
  * file name will be passed from command line
  */
 
-public class AxesUseCase {
+public class AxesUseCase implements FileAccess{
 
     /**
      * create an axes object
@@ -65,11 +65,21 @@ public class AxesUseCase {
     }
 
     // Might be used later to allow for removal of user-defined functions
-    public void removeExpression(RealValuedExpression expr, Axes ax){ax.removeExpression((RealValuedExpression) expr);}
+    public void removeExpression(RealValuedExpression expr, Axes ax){ax.removeExpression(expr);}
 
     public Map<String, FunctionExpression> getNamedFunctions(Axes ax){
         return ax.getNamedExpressions();
     }
 
+    @Override
+    public void fileSave(String fileName, Object graphs) throws IOException {
+        DataReadWriter d = new DataReadWriter();
+        d.fileSave(fileName, graphs);
+    }
 
+    @Override
+    public Axes fileRead(String fileName) throws IOException, ClassNotFoundException {
+        DataReadWriter d = new DataReadWriter();
+        return d.fileRead(fileName);
+    }
 }
