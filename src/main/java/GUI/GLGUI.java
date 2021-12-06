@@ -1,5 +1,8 @@
 /*
- * Adapted from LWJGL example.
+ * Adapted from LWJGL examples
+ * Copyright 2012-2021 Lightweight Java Game Library
+ * BSD 3-clause License
+ * License terms: https://www.lwjgl.org/license
  */
 
 package GUI;
@@ -7,7 +10,6 @@ package GUI;
 import Graphics.Grapher;
 import Graphics.RGBA;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -24,7 +26,6 @@ import static org.lwjgl.opengl.GL33.*;
  * TODO: split into UI, Controller, Presenter
  */
 public class GLGUI implements GUI {
-    static int clicks;
     static int progID;
 
     static float zx;
@@ -39,8 +40,8 @@ public class GLGUI implements GUI {
     static float initialMouseY = 0;
     static float changeInMouseX = 0;
     static float changeInMouseY = 0;
-    static float graphScale = 5; // TODO: Is this good habit to set a default value here?
-    static float scaleInterval = 0.5f;
+    static float graphScale = 5;
+    static float scaleInterval = 1.1f;
 
     static boolean textureTest;
 
@@ -83,12 +84,12 @@ public class GLGUI implements GUI {
 
     /**
      * Converts an int[] RGBA data to a GL texture
+     *   set to uniform 0
      * @param pixels array representing image
      * @param iw width of input
      * @param ih height of input
-     * @return the GL texture ID
      */
-    private static int imgToTex(int[] pixels, int iw, int ih) {
+    private static void imgToTex(int[] pixels, int iw, int ih) {
         // Convert int[] RGBA to packed byte[] RGBA for OpenGL use
         ByteBuffer tbuf = ByteBuffer.allocateDirect(4 * iw * ih);
         byte[] pixbytes = new byte[4*iw*ih];
@@ -108,7 +109,6 @@ public class GLGUI implements GUI {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, iw, ih, 0, GL_RGBA, GL_UNSIGNED_BYTE, tbuf);
-        return tid;
     }
 
     /**
@@ -137,7 +137,7 @@ public class GLGUI implements GUI {
         if (glGetShaderi(vsID, GL_COMPILE_STATUS) != GL_TRUE) {
             System.out.println(glGetShaderInfoLog(vsID, glGetShaderi(vsID, GL_INFO_LOG_LENGTH)));
         }
-        System.out.println("vs created");
+        //System.out.println("vs created");
 
         int fsID = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fsID, fragShader);
@@ -146,7 +146,7 @@ public class GLGUI implements GUI {
             // Error compiling fragment shader
             System.out.println(glGetShaderInfoLog(fsID, glGetShaderi(fsID, GL_INFO_LOG_LENGTH)));
         } else {
-            System.out.println("fs created");
+            //System.out.println("fs created");
         }
 
         glAttachShader(progID, vsID);
@@ -245,8 +245,6 @@ public class GLGUI implements GUI {
         glUniform1f(1, mousey + zy);
 
         if (dragMove) {
-//            currMouseX = prevMouseX;
-//            currMouseY = prevMouseY;
             if (!prevDragMove) {
                 initialMouseX = mousex;
                 initialMouseY = mousey;
@@ -263,31 +261,9 @@ public class GLGUI implements GUI {
             changeInMouseX = 0;
             changeInMouseY = 0;
         }
-
-        System.out.println("X: ");
-        System.out.printf("%.2f", mousex);
-        System.out.println("\n");
-        System.out.println("Y: ");
-        System.out.printf("%.2f", mousey);
-        System.out.println("\n");
     }
 
     private static void mouseCallback(long win, int button, int action, int mods) { // TODO: To Louis, why is the first parameter not GLFWWindow* instead? As specified in the java docs.
-        /* Print a message when the user pressed down a mouse button */
-//        if (action == GLFW_PRESS) {
-//
-//            System.out.println("Pressed! " + clicks);
-//            if (button == GLFW_MOUSE_BUTTON_LEFT) {
-//                clicks += 1;
-//            } else {clicks -= 1;}
-//            glUniform1f(2, 1.f/(float)Math.pow(1.1f,clicks));
-//
-//            zx += mousex;
-//            zy += mousey;
-//            glUniform1f(0, mousex + zx);
-//            glUniform1f(1, mousey + zy);
-//        }
-
         // Below Ted: Mouse drag:
         if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
             dragMove = true;
@@ -300,21 +276,11 @@ public class GLGUI implements GUI {
 
     private static void keyboardCallback(long window, int key, int scancode, int action, int mods) {
         if (action == GLFW_PRESS) {
-//            if (key == GLFW_KEY_I) {
-//
-//            }
-//            else if (key == GLFW_KEY_O) {
-//
-//            }
-            // TODO: NT up/down/left/right continuous move by "changeInMouseX" with scale factor and normalization.
-            float smallerScale = graphScale - scaleInterval;
-            float largerScale = graphScale + scaleInterval;
-            if (key == GLFW_KEY_S && smallerScale > 0) {
-                graphScale = smallerScale;
+            if (key == GLFW_KEY_UP) {
+                graphScale *= scaleInterval;
             }
-            else if (key == GLFW_KEY_L) {
-                // TODO: Should we put an upper bound for the scale for a reasonable runtime.
-                graphScale = largerScale;
+            else if (key == GLFW_KEY_DOWN) {
+                graphScale /= scaleInterval;
             }
         }
     }
