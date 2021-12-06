@@ -61,11 +61,6 @@ public class TextDrawer {
 
     }
 
-    public static void main(String[] args) throws IOException {
-        TextDrawer a = new TextDrawer();
-        System.out.println(Arrays.toString(a.pixels1));
-    }
-
     public void writeNum(int startX, int startY, String number, int[] pixels) {
         switch(number) {
             case "0":
