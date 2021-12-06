@@ -27,41 +27,43 @@ public class CommandLineInterface {
         //args = {};
         CLIHelper cliHelper = new CLIHelper();
         ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
+        ArrayList<String> userInputsWithoutInteractive = cliHelper.removeCommand(userInputs,
+                "-interactive");
 
         // An array of strings containing accepted Commands. This is open to extension as other parts
         // of the code become available to be merged into this CLI.
         String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load",
                 "-pos", "-domain", "-interactive", "-name"}; // TODO: Move to Constants?
 
-        if (!cliHelper.checkValidInput(acceptedCommands, userInputs)) {
+        if (!cliHelper.checkValidInput(acceptedCommands, userInputsWithoutInteractive)) {
             return;
         }
 
         Axes axes = new Axes();
         AxesUseCase auc = new AxesUseCase();
 
-        if (userInputs.contains("-load")) {
-            axes = cliHelper.tryLoadingAxes(userInputs, axes, auc);
+        if (userInputsWithoutInteractive.contains("-load")) {
+            axes = cliHelper.tryLoadingAxes(userInputsWithoutInteractive, axes, auc);
         }
-        if (userInputs.contains("-pos")) {
-            cliHelper.trySettingOrigin(userInputs, axes, auc);
+        if (userInputsWithoutInteractive.contains("-pos")) {
+            cliHelper.trySettingOrigin(userInputsWithoutInteractive, axes, auc);
         }
 
         ExpressionReader er = new ExpressionReader(axes);
         Grapher grapher = new Grapher(axes);
         List<String[]> equationsAndDomains = cliHelper.findAllEquations(args);
         cliHelper.tryInterpretingInput(axes, auc, er, equationsAndDomains);
-        int[] graphedImage = cliHelper.tryGraphingImage(userInputs, grapher);
+        int[] graphedImage = cliHelper.tryGraphingImage(userInputsWithoutInteractive, grapher);
 
         if (userInputs.contains("-interactive")) {
             GUI gui = (GUI)(new GLGUI(grapher, 512));
-            cliHelper.startGUI(userInputs, gui);
+            cliHelper.startGUI(userInputsWithoutInteractive, gui);
         } else {
-            cliHelper.trySavingImage(graphedImage, userInputs);
+            cliHelper.trySavingImage(graphedImage, userInputsWithoutInteractive);
         }
 
-        if (userInputs.contains("-save")) {
-            cliHelper.trySavingAxes(userInputs, axes, auc);
+        if (userInputsWithoutInteractive.contains("-save")) {
+            cliHelper.trySavingAxes(userInputsWithoutInteractive, axes, auc);
         }
     }
 }
