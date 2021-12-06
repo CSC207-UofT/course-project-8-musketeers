@@ -40,26 +40,26 @@ public class CommandLineInterface {
         AxesUseCase auc = new AxesUseCase();
 
         if (userInputs.contains("-load")) {
-            axes = cliHelper.tryLoadingAxes(cliHelper, userInputs, axes, auc);
+            axes = cliHelper.tryLoadingAxes(userInputs, axes, auc);
         }
         if (userInputs.contains("-pos")) {
-            cliHelper.trySettingOrigin(cliHelper, userInputs, axes, auc);
+            cliHelper.trySettingOrigin(userInputs, axes, auc);
         }
 
         ExpressionReader er = new ExpressionReader(axes);
         Grapher grapher = new Grapher(axes);
         List<String[]> equationsAndDomains = cliHelper.findAllEquations(args);
         cliHelper.tryInterpretingInput(axes, auc, er, equationsAndDomains);
-        int[] graphedImage = cliHelper.tryGraphingImage(cliHelper, userInputs, grapher);
-        cliHelper.trySavingImage(cliHelper, graphedImage, userInputs);
+        int[] graphedImage = cliHelper.tryGraphingImage(userInputs, grapher);
+        cliHelper.trySavingImage(graphedImage, userInputs);
 
         if (userInputs.contains("-interactive")) {
             GUI gui = (GUI)(new GLGUI(grapher, 512));
-            cliHelper.startGUI(cliHelper, userInputs, gui);
+            cliHelper.startGUI(userInputs, gui);
         }
 
         if (userInputs.contains("-save")) {
-            cliHelper.trySavingAxes(cliHelper, userInputs, axes, auc);
+            cliHelper.trySavingAxes(userInputs, axes, auc);
         }
     }
 }

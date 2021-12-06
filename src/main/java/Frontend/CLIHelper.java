@@ -21,14 +21,13 @@ import java.util.List;
 public class CLIHelper {
     /**
      * Simple try and catch statements to save axes.
-     * @param cliHelper an instance of CLIHelper
      * @param userInputs an ArrayList containing user inputs
      * @param axes an instance of Axes
      * @param auc an instance of AxesUseCase
      */
-    public void trySavingAxes(CLIHelper cliHelper, ArrayList<String> userInputs,
+    public void trySavingAxes(ArrayList<String> userInputs,
                               Axes axes, AxesUseCase auc) {
-        String filename = cliHelper.getCommandArgument("-save", userInputs);
+        String filename = getCommandArgument("-save", userInputs);
         try {
             auc.saveAxes(filename, axes);
         } catch (IOException e) {
@@ -39,26 +38,24 @@ public class CLIHelper {
 
     /**
      * Starts any system which implements the GUI interface.
-     * @param cliHelper an instance of CLIHelper
      * @param userInputs an ArrayList containing user inputs
      * @param gui an instance of a GUI class
      */
-    public void startGUI(CLIHelper cliHelper, ArrayList<String> userInputs,
+    public void startGUI(ArrayList<String> userInputs,
                          GUI gui) {
-        gui.setgType(cliHelper.getCommandArgument("-graph", userInputs));
+        gui.setgType(getCommandArgument("-graph", userInputs));
         gui.initGUI();
     }
 
     /**
      * Simple try and catch statements to graph and save the resulting image.
-     * @param cliHelper An instance of CLIHelper
      * @param userInputs an ArrayList containing user inputs
      * @param grapher an instance of Grapher
      */
-    public int[] tryGraphingImage(CLIHelper cliHelper, ArrayList<String> userInputs,
+    public int[] tryGraphingImage(ArrayList<String> userInputs,
                                           Grapher grapher) {
         int size = 512;
-        String gType = cliHelper.getCommandArgument("-graph", userInputs);
+        String gType = getCommandArgument("-graph", userInputs);
         return grapher.graph(size, gType);
     }
 
@@ -83,15 +80,14 @@ public class CLIHelper {
 
     /**
      * Simple try and catch statements to load axes.
-     * @param cliHelper an instance of CLIHelper
      * @param userInputs an ArrayList of strings containing user inputs
      * @param axes an instance of Axes
      * @param auc an instance of AxesUseCase
      * @return an instance of Axes, either the same one from axes or an updated one (if no errors were thrown)
      */
-    public Axes tryLoadingAxes(CLIHelper cliHelper, ArrayList<String> userInputs,
+    public Axes tryLoadingAxes(ArrayList<String> userInputs,
                                Axes axes, AxesUseCase auc) {
-        String filename = cliHelper.getCommandArgument("-load", userInputs);
+        String filename = getCommandArgument("-load", userInputs);
         try {
             axes = auc.loadAxes(filename);
         } catch (IOException e) {
@@ -103,9 +99,9 @@ public class CLIHelper {
         return axes;
     }
 
-    public void trySettingOrigin(CLIHelper cliHelper, ArrayList<String> userInputs,
+    public void trySettingOrigin(ArrayList<String> userInputs,
                                  Axes axes, AxesUseCase auc) {
-        String rawpos = cliHelper.getCommandArgument("-pos", userInputs);
+        String rawpos = getCommandArgument("-pos", userInputs);
         float x = Float.parseFloat(rawpos.split(",")[0]);
         float y = Float.parseFloat(rawpos.split(",")[1]);
         auc.setOrigin(new float[]{x,y}, axes);
@@ -114,15 +110,14 @@ public class CLIHelper {
 
     /**
      * Simple try and catch statements to save image.
-     * @param cliHelper an instance of CLIHelper
      * @param pixels Array of integers corresponding to the colour of each pixel
      * @param userInputs an ArrayList of strings containing user inputs
      */
-    public void trySavingImage(CLIHelper cliHelper, int[] pixels, ArrayList<String> userInputs) {
+    public void trySavingImage(int[] pixels, ArrayList<String> userInputs) {
         try {
             String name;
             if (userInputs.contains("-save")) {
-                name = cliHelper.getCommandArgument("-save", userInputs) + ".png";
+                name = getCommandArgument("-save", userInputs) + ".png";
             } else {
                 name = "graph.png";
             }
