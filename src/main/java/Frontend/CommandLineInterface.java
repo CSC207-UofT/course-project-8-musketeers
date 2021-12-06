@@ -24,7 +24,6 @@ public class CommandLineInterface {
      * @param args An array of Strings containing the user inputs, split by a space " "
      */
     public static void main(String[] args) {
-        //args = {};
         CLIHelper cliHelper = new CLIHelper();
         ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
 
@@ -54,7 +53,7 @@ public class CommandLineInterface {
         int[] graphedImage = cliHelper.tryGraphingImage(userInputs, grapher);
 
         if (userInputs.contains("-interactive")) {
-            GUI gui = (GUI)(new GLGUI(grapher, 512));
+            GUI gui = new GLGUI(grapher, 512);
             cliHelper.startGUI(userInputs, gui);
         } else {
             cliHelper.trySavingImage(graphedImage, userInputs);

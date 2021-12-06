@@ -1,7 +1,6 @@
 
 package GUI;
 
-import Backend.AxesUseCase;
 import Graphics.Grapher;
 
 /**
@@ -9,13 +8,11 @@ import Graphics.Grapher;
  */
 public class GUIHelper {
     public int imgDim;
-    private Grapher grapher;
-    private AxesUseCase auc;
+    private final Grapher grapher;
     private String gType;
 
     public GUIHelper(Grapher g, int dim) {
         grapher = g;
-        auc = new AxesUseCase();
         imgDim = dim;
     }
     public void setgType(String g) {

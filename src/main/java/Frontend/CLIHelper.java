@@ -8,7 +8,6 @@ import Backend.Expressions.RealValuedExpression;
 import GUI.GUI;
 import Graphics.Grapher;
 import Graphics.ImageWriter;
-//import Graphics.ImageWriter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -99,13 +98,18 @@ public class CLIHelper {
         return axes;
     }
 
+    /**
+     * Simple try and catch statements to set origin.
+     * @param userInputs an ArrayList of strings containing user inputs
+     * @param axes an instance of Axes
+     * @param auc an instance of AxesUseCase
+     */
     public void trySettingOrigin(ArrayList<String> userInputs,
                                  Axes axes, AxesUseCase auc) {
         String rawpos = getCommandArgument("-pos", userInputs);
         float x = Float.parseFloat(rawpos.split(",")[0]);
         float y = Float.parseFloat(rawpos.split(",")[1]);
         auc.setOrigin(new float[]{x,y}, axes);
-//        axes.setOrigin(x, y);
     }
 
     /**
@@ -169,7 +173,6 @@ public class CLIHelper {
         // Third check: if the first two checks have passed, the array of user inputs contain valid pairs of
         // (command, response).
         if (userInputIsValid && isDuplicateCommandInUserInput(acceptedCommands, userInputs)) {
-            // TODO: Amend if incorrect
             System.out.println("Most commands (except for -eq and -domain) do not allow duplicates. " +
                     "Please try again.");
             return false;
@@ -271,16 +274,20 @@ public class CLIHelper {
         return true;
     }
 
+    /**
+     * Find the (equation, domain) pairs, and store them in a list of arrays of Strings to return.
+     * @param arguments an array of Strings containing user inputs
+     * @return a list of arrays of Strings containing the equation and domain pairs
+     */
     public List<String[]> findAllEquations(String[] arguments){
         List<String[]> equationsAndDomains = new ArrayList<>();
 
         // TODO: Move commands to constants
         for(int i = 0; i < arguments.length - 3; i+=2){
             if (arguments[i].equals("-eq")){
-                if(arguments[i + 2].equals("-domain")){
+                if(arguments[i + 2].equals("-domain")) {
                     equationsAndDomains.add(new String[]{arguments[i + 1], arguments[i + 3]});
-                }
-                else{
+                } else {
                     equationsAndDomains.add(new String[]{arguments[i + 1]});
                 }
             }

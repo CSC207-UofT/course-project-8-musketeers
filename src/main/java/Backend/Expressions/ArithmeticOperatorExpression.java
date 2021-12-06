@@ -1,7 +1,5 @@
 package Backend.Expressions;
 
-import org.lwjgl.system.CallbackI;
-
 import java.util.Map;
 
 // Backend.Expressions.OperatorExpression stores the 'Backend.Expressions.Expression' with operators, e.g. E_1 + E_2

@@ -75,10 +75,10 @@ public class BuiltinFunctionExpression extends FunctionExpression{
     }
 
     private float maxEvaluate(Map<String, Float> arguments) {
-        return (float) Math.max(getInputs()[0].evaluate(arguments), getInputs()[1].evaluate(arguments));
+        return Math.max(getInputs()[0].evaluate(arguments), getInputs()[1].evaluate(arguments));
     }
     private float minEvaluate(Map<String, Float> arguments) {
-        return (float) Math.min(getInputs()[0].evaluate(arguments), getInputs()[1].evaluate(arguments));
+        return Math.min(getInputs()[0].evaluate(arguments), getInputs()[1].evaluate(arguments));
     }
 
     private float mandelEvaluate(Map<String, Float> arguments) {
