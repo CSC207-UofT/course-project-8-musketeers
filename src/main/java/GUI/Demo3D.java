@@ -1,5 +1,8 @@
 /*
- * Adapted from LWJGL example
+ * Adapted from LWJGL examples
+ * Copyright 2012-2021 Lightweight Java Game Library
+ * BSD 3-clause License
+ * License terms: https://www.lwjgl.org/license
  */
 
 package GUI;
