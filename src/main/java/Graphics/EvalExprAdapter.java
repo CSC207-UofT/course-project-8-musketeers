@@ -29,10 +29,4 @@ public class EvalExprAdapter implements Evaluatable {
         return ex.evaluate(varMap);
     }
 
-//    public static void main(String[] args) throws InvalidTermException {
-//        ExpressionReader er = new ExpressionReader();
-//        RealValuedExpression func = (RealValuedExpression) er.read("cos ( x )");
-//        EvalExprAdapter a = new EvalExprAdapter(func);
-//        System.out.println(a.evaluate(0.5f,0.5f));
-//    }
 }

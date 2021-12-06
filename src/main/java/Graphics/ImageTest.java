@@ -9,13 +9,6 @@ public class ImageTest {
    public ImageTest() {
 
    }
-//   public static void main(String [] args) throws Exception {
-//      int[] mainPixels = readImage("sample.png");
-//      int[] dims1 = getImDims("sample.png");
-//      mainPixels[5] = (int)Long.parseLong("FFFF00FF", 16);
-//      mainPixels[6] = (int)Long.parseLong("FF00FFFF", 16);
-//      writeImage(mainPixels, dims1[0], dims1[1], "sampleOut.png");
-//   }
 
    public static int[] getImDims(String fname) throws Exception {
       BufferedImage bImage = ImageIO.read(new File(fname));
@@ -29,9 +22,6 @@ public class ImageTest {
       int width = bImage.getWidth();
       int height = bImage.getHeight();
       int[] pixels = bImage.getRGB(0, 0, width, height, null, 0, width);
-
-      // ARGB
-      //System.out.println(Integer.toHexString(pixels[0]));
 
       return pixels;
    }

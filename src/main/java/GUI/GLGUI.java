@@ -128,8 +128,6 @@ public class GLGUI implements GUI {
             fragShader = fragShader.replace("//[INSERT TEXTURE TEST]", "fragColor = texture(texTest, tc*wh);");
         }
 
-        //System.out.println(fragShader);
-
         progID = glCreateProgram();
         int vsID = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vsID, vertShader);
@@ -137,7 +135,6 @@ public class GLGUI implements GUI {
         if (glGetShaderi(vsID, GL_COMPILE_STATUS) != GL_TRUE) {
             System.out.println(glGetShaderInfoLog(vsID, glGetShaderi(vsID, GL_INFO_LOG_LENGTH)));
         }
-        //System.out.println("vs created");
 
         int fsID = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fsID, fragShader);
@@ -145,8 +142,6 @@ public class GLGUI implements GUI {
         if (glGetShaderi(fsID, GL_COMPILE_STATUS) != GL_TRUE) {
             // Error compiling fragment shader
             System.out.println(glGetShaderInfoLog(fsID, glGetShaderi(fsID, GL_INFO_LOG_LENGTH)));
-        } else {
-            //System.out.println("fs created");
         }
 
         glAttachShader(progID, vsID);
