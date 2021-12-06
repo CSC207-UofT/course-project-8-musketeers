@@ -116,8 +116,8 @@ public class CLIHelper {
     public void trySavingImage(int[] pixels, ArrayList<String> userInputs) {
         try {
             String name;
-            if (userInputs.contains("-save")) {
-                name = getCommandArgument("-save", userInputs) + ".png";
+            if (userInputs.contains("-name")) {
+                name = getCommandArgument("-name", userInputs) + ".png";
             } else {
                 name = "graph.png";
             }
