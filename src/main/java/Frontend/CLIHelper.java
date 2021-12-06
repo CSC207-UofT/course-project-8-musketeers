@@ -287,18 +287,4 @@ public class CLIHelper {
         }
         return equationsAndDomains;
     }
-
-    /**
-     * Make a copy of the ArrayList userInputs and return such copy without the specified command, if present.
-     * @param userInputs an ArrayList of strings containing user inputs
-     * @param command a String representing a command to remove
-     * @return a (potentially modified) copy of userInputs without the specified command
-     */
-    public ArrayList<String> removeCommand(ArrayList<String> userInputs, String command) {
-         ArrayList<String> userInputsCopy = new ArrayList<>(userInputs);
-         while (userInputsCopy.contains(command)) {
-             userInputsCopy.remove(command);
-         }
-         return userInputsCopy;
-    }
 }
