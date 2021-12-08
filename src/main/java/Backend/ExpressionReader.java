@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import Backend.Exceptions.InvalidTermException;
+import Backend.ExpressionBuilders.BooleanValuedExpressionFactory;
+import Backend.ExpressionBuilders.RealValuedExpressionFactory;
 import Backend.Expressions.*;
 
 /** The ExpressionReader class is responsible for parsing the user input expression that will be graphed.
@@ -22,7 +24,8 @@ public class ExpressionReader {
      */
     public ExpressionReader(Map<String, FunctionExpression> funcMap) {
         this.vc = new ExpressionValidityChecker(funcMap);
-        this.ec = new ExpressionCreator(funcMap, this.vc);
+        this.ec = new ExpressionCreator(funcMap, this.vc, new RealValuedExpressionFactory(),
+                new BooleanValuedExpressionFactory());
     }
 
     /**

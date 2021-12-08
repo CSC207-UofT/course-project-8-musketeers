@@ -1,6 +1,8 @@
 package BackendTests;
 
 import Backend.*;
+import Backend.ExpressionBuilders.BooleanValuedExpressionFactory;
+import Backend.ExpressionBuilders.RealValuedExpressionFactory;
 import Backend.Expressions.*;
 import Backend.Exceptions.InvalidTermException;
 import org.junit.Before;
@@ -14,12 +16,14 @@ public class ExpressionCreatorTest {
 
     Axes ax = new Axes();
     ExpressionCreator ec;
+    RealValuedExpressionFactory rf = new RealValuedExpressionFactory();
+    BooleanValuedExpressionFactory bf = new BooleanValuedExpressionFactory();
     Map<String, Float> varMap = new HashMap<>();
     double delta = Math.pow(10, -5);
 
     @Before
     public void setUp(){
-        ec = new ExpressionCreator(ax.getNamedExpressions());
+        ec = new ExpressionCreator(ax.getNamedExpressions(), rf, bf);
     }
 
     // TEST INPUT PATTERNS
@@ -302,7 +306,7 @@ public class ExpressionCreatorTest {
     @Test(timeout = 50)
     public void testCompositionOfCustomFunctions() throws InvalidTermException {
         Axes axes = new Axes();
-        ExpressionCreator ec2 = new ExpressionCreator(axes.getNamedExpressions());
+        ExpressionCreator ec2 = new ExpressionCreator(axes.getNamedExpressions(), rf, bf);
         ExpressionReader er2 = new ExpressionReader(axes);
 
         String funcName = "f";
