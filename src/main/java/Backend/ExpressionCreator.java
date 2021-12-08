@@ -27,26 +27,47 @@ public class ExpressionCreator implements PropertyChangeListener{
     private final Constants constants = new Constants();
     private ExpressionValidityChecker vc;
     private final Map<String, FunctionExpression> funcMap = new HashMap<>();
+    private final RealValuedExpressionFactory rf;
+    private final BooleanValuedExpressionFactory bf;
 
     /** Constructor for ExpressionCreator.
      *
      * @param funcMap A map of function names to the functions themselves.
      */
-    public ExpressionCreator(Map<String, FunctionExpression> funcMap){
-
+    public ExpressionCreator(Map<String, FunctionExpression> funcMap, RealValuedExpressionFactory rf,
+                             BooleanValuedExpressionFactory bf){
         // We create a new copy of the funcMap rather than just simply assigning to avoid aliasing
         for (String funcName: funcMap.keySet()){
             this.funcMap.put(funcName, funcMap.get(funcName));
         }
         this.vc = new ExpressionValidityChecker(funcMap);
+        this.rf = rf;
+        this.bf = bf;
     }
 
     // This constructor allows us to ensure that vc is properly configured (i.e. observing Axes)
     // Also implements Dependency Injection I believe
-    public ExpressionCreator(Map<String, FunctionExpression> funcMap, ExpressionValidityChecker vc){
-        this(funcMap);
+    public ExpressionCreator(Map<String, FunctionExpression> funcMap, ExpressionValidityChecker vc,
+                             RealValuedExpressionFactory rf, BooleanValuedExpressionFactory bf){
+        // We create a new copy of the funcMap rather than just simply assigning to avoid aliasing
+        for (String funcName: funcMap.keySet()){
+            this.funcMap.put(funcName, funcMap.get(funcName));
+        }
         this.vc = vc;
+        this.rf = rf;
+        this.bf = bf;
     }
+
+//    // This constructor allows us to ensure that vc is properly configured (i.e. observing Axes)
+//    // Also implements Dependency Injection I believe
+//    public ExpressionCreator(Map<String, FunctionExpression> funcMap, ExpressionValidityChecker vc,
+//                             RealValuedExpressionFactory rf, BooleanValuedExpressionFactory bf){
+//        this(funcMap);
+//        this.vc = vc;
+//
+//        this.rf = rf;
+//        this.bf = bf;
+//    }
 
 
     /**
@@ -61,11 +82,6 @@ public class ExpressionCreator implements PropertyChangeListener{
         }
     }
 
-    public Expression<?> create(List<String> terms) throws InvalidTermException {
-        ExpressionBuilder<?> eb = createExpressionBuilder(terms);
-        return eb.build();
-    }
-
     /* IMPORTANT FOR EVERYONE TO KNOW!!! ONLY "create" CAN CALL ITS TWO HELPERS BELOW!!! BECAUSE "create" IS THE
        COMPLETE VERSION OF CREATION AS IT HAS ALL CHECKER!!! */
 
@@ -77,7 +93,7 @@ public class ExpressionCreator implements PropertyChangeListener{
      * @throws InvalidTermException If <terms> represents an invalid expression, then we throw this exception and the
      * expression tree is not built.
      */
-    public ExpressionBuilder<?> createExpressionBuilder(List<String> terms) throws InvalidTermException {
+    public Expression<?> create(List<String> terms) throws InvalidTermException {
         List<String> minimalTerms = bracketsReduction(terms); // remove unnecessary enclosing brackets.
 
         vc.preCheck(minimalTerms); // A basic current-level, NON-RECURSIVE check for the validity of the expression.
@@ -104,17 +120,14 @@ public class ExpressionCreator implements PropertyChangeListener{
      * @return A Backend.Expression (AST) representation of the expression
      */
 
-    private RealValuedExpressionBuilder realValuedCreate(List<String> terms) throws InvalidTermException {
-
+    private RealValuedExpression realValuedCreate(List<String> terms) throws InvalidTermException {
         int termsSize = terms.size();
         String operatorType = "Arithmetic";
-
-        // create empty real valued expression builder we will return.
-        RealValuedExpressionBuilder eb = new RealValuedExpressionBuilder();
+        RealValuedExpression expr;
 
         if (termsSize == 1) {
             String term = terms.get(0); //Its only one term.
-            eb.constructExpression(term); //create expression based on that term.
+            expr = rf.constructExpression(term); //create expression based on that term.
         }
         else if (funcMap.containsKey(terms.get(0)) && // check if first term is a function call.
                 vc.enclosedByOuterBrackets(terms.subList(1, termsSize))) { //check if whole expression is one function.
@@ -124,16 +137,16 @@ public class ExpressionCreator implements PropertyChangeListener{
 
             // We use sublist to remove function name and brackets. Construct a list of expressions, each corresponding
             // to a function input.
-            RealValuedExpressionBuilder[] inputs = findFunctionInputs(terms.subList(2, termsSize - 1));
+            RealValuedExpression[] inputs = findFunctionInputs(terms.subList(2, termsSize - 1));
             //construct expression.
-            eb.constructExpression(terms.get(0), inputs, funcMap);
+            expr = rf.constructExpression(terms.get(0), inputs, funcMap);
         }
         else { //otherwise, there must be some operators within the function. We construct a new expression
             // by calling createOnOperators.
-            eb = (RealValuedExpressionBuilder) createOnOperators(terms, operatorType);
+            expr = (RealValuedExpression) createOnOperators(terms, operatorType);
         }
 
-        return eb;
+        return expr;
     }
 
     /**
@@ -144,7 +157,7 @@ public class ExpressionCreator implements PropertyChangeListener{
      * @throws InvalidTermException If the list of terms represents an invalid expression then this exception is thrown.
      */
     // Below precondition: There exists at least one comparator or logical in input "terms".
-    private BooleanValuedExpressionBuilder booleanValuedCreate(List<String> terms) throws InvalidTermException {
+    private BooleanValuedExpression booleanValuedCreate(List<String> terms) throws InvalidTermException {
         String operatorType;
         // No base case with terms.size() == 0 because "no term => no logical and comparator => realVal".
 
@@ -156,7 +169,7 @@ public class ExpressionCreator implements PropertyChangeListener{
             operatorType = "Comparator";
         }
 
-        return (BooleanValuedExpressionBuilder) createOnOperators(unchainedTerms, operatorType);
+        return (BooleanValuedExpression) createOnOperators(unchainedTerms, operatorType);
     }
 
     /**
@@ -168,22 +181,23 @@ public class ExpressionCreator implements PropertyChangeListener{
      * "Logical" or "Comparator". Both expressions returned represent <terms> in a valid format which can be graphed.
      * @throws InvalidTermException If
      */
-    private ExpressionBuilder<?> createOnOperators(List<String> terms, String operatorType) throws InvalidTermException {
-        ExpressionBuilder<?> lExpr, rExpr, eb; // initialise the expressions on the left and right of the operands.
+    private Expression<?> createOnOperators(List<String> terms, String operatorType) throws InvalidTermException {
+        Expression<?> lExpr, rExpr; // initialise the expressions on the left and right of the operands.
+        ExpressionFactory<?> factory;
         List<String> operators; // List which will store the operators of type <operatorType>.
 
         switch (operatorType) {
             case "Logical":
                 operators = constants.getLogicalOperators();
-                eb = new BooleanValuedExpressionBuilder();
+                factory = bf;
                 break;
             case "Comparator":
                 operators = constants.getComparators();
-                eb = new BooleanValuedExpressionBuilder();
+                factory = bf;
                 break;
             case "Arithmetic":
                 operators = constants.getArithmeticOperators();
-                eb = new RealValuedExpressionBuilder();
+                factory = rf;
                 break;
             default: // throw exception if <operatorType> is invalid.
                 throw new IllegalStateException("Unrecognized Operator Type!");
@@ -202,8 +216,8 @@ public class ExpressionCreator implements PropertyChangeListener{
                 vc.operandsTypeCheck(leftTerms, operatorType, rightTerms); //check if the type of operators in the rest
                 // of the expression match what is expected.
                 try {  // check if any issues arise from creating an expression from <leftTerms> and <rightTerms>.
-                    lExpr = createExpressionBuilder(leftTerms);
-                    rExpr = createExpressionBuilder(rightTerms);
+                    lExpr = create(leftTerms);
+                    rExpr = create(rightTerms);
                 } catch (BaseCaseCreatorException e) { //throw an exception if either is invalid.
                     throw new CompoundCaseCreatorException("Invalid Operand Exception!");
                 }
@@ -211,7 +225,7 @@ public class ExpressionCreator implements PropertyChangeListener{
                 // and right child being <rExpr>.
 
                 // TODO: double check that there is never an issue with lExpr and rExpr's types
-                return eb.constructExpression(lExpr, op, rExpr, operatorType);
+                return factory.constructExpression(lExpr, op, rExpr, operatorType);
             }
         }
         /* Below should never happen if we additionally add the "checkCommasWithinFunctions" checker, which we have
@@ -277,7 +291,7 @@ public class ExpressionCreator implements PropertyChangeListener{
      * @param terms List of terms that are the inputs to some function with the function name and brackets removed.
      * @return A list of Expressions where each expression is a separate input to the function.
      */
-    private RealValuedExpressionBuilder[] findFunctionInputs (List<String> terms) throws InvalidTermException {
+    private RealValuedExpression[] findFunctionInputs (List<String> terms) throws InvalidTermException {
         List<Integer> commaIndices = vc.getOuterItems(terms, List.of(",")).get(","); //get list of the indices where
         // commas appear outside any brackets. These correspond to separating the input for the function wer are
 
@@ -291,7 +305,7 @@ public class ExpressionCreator implements PropertyChangeListener{
         // TODO: Recheck Correctness (logical sense).
         // for below, the number of commas outside brackets + 1 represents the number of inputs to the function, if
         // the terms are in a valid format.
-        RealValuedExpressionBuilder[] inputs = new RealValuedExpressionBuilder[commaIndices.size()];
+        RealValuedExpression[] inputs = new RealValuedExpression[commaIndices.size()];
         int startInd = 0;
 
         for (int i = 0; i < inputs.length; i++){
@@ -300,7 +314,7 @@ public class ExpressionCreator implements PropertyChangeListener{
             vc.realValuedPreconditionCheck(inputTerm); //check each input is a RealValuedExpression.
             try { // Ensure that each input can be constructed as an expression (otherwise it's an invalid input).
                 // TODO: Check that a inputTerm always produces a RealValuedExpression
-                RealValuedExpressionBuilder inputExp = (RealValuedExpressionBuilder) createExpressionBuilder(inputTerm);
+                RealValuedExpression inputExp = (RealValuedExpression) create(inputTerm);
                 /* Above: If two commas adjacent to each other (i.e. has nothing in between, then there will be
                    something like NullExpressionException (a BaseCaseException) thrown, but we should catch it!) */
 
