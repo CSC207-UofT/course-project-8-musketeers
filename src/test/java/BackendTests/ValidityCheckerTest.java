@@ -73,6 +73,20 @@ public class ValidityCheckerTest {
     }
 
     @Test(timeout = 50)
+    public void testInvalidNumber() throws InvalidTermException {
+        thrown.expect(BaseCaseCreatorException.class);
+        thrown.expectMessage(this.ERRORMESSAGE_INVALID_SINGLE_CHARACTER);
+        Expression<?> exp = expressionReader.read("1.2.1");
+    }
+
+    @Test(timeout = 50)
+    public void testInvalidNumber2() throws InvalidTermException {
+        thrown.expect(CompoundCaseCreatorException.class);
+        thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
+        Expression<?> exp = expressionReader.read("sin(1.2.1)");
+    }
+
+    @Test(timeout = 50)
     public void testInvalidFunction() throws InvalidTermException {
         thrown.expect(CompoundCaseCreatorException.class);
         thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);

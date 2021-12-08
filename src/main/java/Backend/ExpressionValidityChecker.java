@@ -95,38 +95,6 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
         }
     }
 
-    // Don't need the three recursive checker since we implicitly have them checked in <ExpressionCreator> already!
-
-    // Below method: First input is one (left or right) operand, and the second input is the operator type.
-
-    public void operandsTypeCheck(List<String> leftTerms, String operatorType, List<String> rightTerms) throws CompoundCaseCreatorException {
-
-        switch (operatorType) {
-            case "Logical": {
-                if (!((containsOperator(leftTerms, "Comparator") ||
-                        containsOperator(leftTerms, "Logical")) &&
-                        (containsOperator(rightTerms, "Comparator") ||
-                                containsOperator(rightTerms, "Logical")))){
-                    throw new CompoundCaseCreatorException("OperandTypeException!");
-                }
-                break;
-            }
-            case "Arithmetic": case "Comparator": {
-
-                if (containsOperator(leftTerms, "Comparator") ||
-                        containsOperator(leftTerms, "Logical") ||
-                        containsOperator(rightTerms, "Comparator") ||
-                        containsOperator(rightTerms, "Logical")) {
-                    throw new CompoundCaseCreatorException("OperandTypeException!");
-                }
-                break;
-            }
-            // In theory, this should be thrown
-            default:
-                throw new IllegalStateException("Unrecognized Operator Type!");
-        }
-    }
-
     /** A method that checks whether any logical or comparator operators appear in the input terms, and
      * throws an exception if they appear.
      *
