@@ -1,4 +1,3 @@
-
 // Deprecated, not necessary anymore
 package Graphics;
 

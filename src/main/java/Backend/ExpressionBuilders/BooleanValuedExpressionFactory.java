@@ -1,10 +1,6 @@
 package Backend.ExpressionBuilders;
 
-import Backend.Constants;
-import Backend.Exceptions.EmptyBuilderException;
 import Backend.Expressions.*;
-
-import java.util.Map;
 
 public class BooleanValuedExpressionFactory implements ExpressionFactory<BooleanValuedExpression> {
     // Below construct with (binary) operators.

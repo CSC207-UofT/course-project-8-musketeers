@@ -31,9 +31,10 @@ public class CLIHelper {
 
     /**
      * Simple try and catch statements to save axes.
+     *
      * @param userInputs a List containing user inputs
-     * @param axes an instance of Axes
-     * @param auc an instance of AxesUseCase
+     * @param axes       an instance of Axes
+     * @param auc        an instance of AxesUseCase
      */
     public void trySavingAxes(List<String> userInputs,
                               Axes axes, AxesUseCase auc) {
@@ -48,8 +49,9 @@ public class CLIHelper {
 
     /**
      * Starts any system which implements the GUI interface.
+     *
      * @param userInputs a List containing user inputs
-     * @param gui an instance of a GUI class
+     * @param gui        an instance of a GUI class
      */
     public void startGUI(List<String> userInputs,
                          GUI gui) {
@@ -59,11 +61,12 @@ public class CLIHelper {
 
     /**
      * Simple try and catch statements to graph and save the resulting image.
+     *
      * @param userInputs a List containing user inputs
-     * @param grapher an instance of Grapher
+     * @param grapher    an instance of Grapher
      */
     public int[] tryGraphingImage(List<String> userInputs,
-                                          Grapher grapher) {
+                                  Grapher grapher) {
         int size = getCustomSize(userInputs);
         String gType = getCommandArgument(graphCommand, userInputs);
         return grapher.graph(size, gType);
@@ -71,14 +74,15 @@ public class CLIHelper {
 
     /**
      * Simple try and catch statements to interpret user input.
-     * @param axes an instance of Axes
-     * @param auc an instance of AxesUseCase
-     * @param er an instance of ExpressionReader
+     *
+     * @param axes                an instance of Axes
+     * @param auc                 an instance of AxesUseCase
+     * @param er                  an instance of ExpressionReader
      * @param equationsAndDomains a list of strings containing arrays of strings: equations and domains
      */
     public void tryInterpretingInput(Axes axes, AxesUseCase auc, ExpressionReader er,
                                      List<String[]> equationsAndDomains) {
-        for (String[] expArray: equationsAndDomains) {
+        for (String[] expArray : equationsAndDomains) {
             try {
                 RealValuedExpression exp = er.readForGraphing(expArray);
                 auc.addExpression(exp, axes);
@@ -90,9 +94,10 @@ public class CLIHelper {
 
     /**
      * Simple try and catch statements to load axes.
+     *
      * @param userInputs a List of strings containing user inputs
-     * @param axes an instance of Axes
-     * @param auc an instance of AxesUseCase
+     * @param axes       an instance of Axes
+     * @param auc        an instance of AxesUseCase
      * @return an instance of Axes, either the same one from axes or an updated one (if no errors were thrown)
      */
     public Axes tryLoadingAxes(List<String> userInputs,
@@ -111,21 +116,23 @@ public class CLIHelper {
 
     /**
      * Simple try and catch statements to set origin.
+     *
      * @param userInputs a List of strings containing user inputs
-     * @param axes an instance of Axes
-     * @param auc an instance of AxesUseCase
+     * @param axes       an instance of Axes
+     * @param auc        an instance of AxesUseCase
      */
     public void trySettingOrigin(List<String> userInputs,
                                  Axes axes, AxesUseCase auc) {
         String rawpos = getCommandArgument(posCommand, userInputs);
         float x = Float.parseFloat(rawpos.split(",")[0]);
         float y = Float.parseFloat(rawpos.split(",")[1]);
-        auc.setOrigin(new float[]{x,y}, axes);
+        auc.setOrigin(new float[]{x, y}, axes);
     }
 
     /**
      * Simple try and catch statements to save image.
-     * @param pixels Array of integers corresponding to the colour of each pixel
+     *
+     * @param pixels     Array of integers corresponding to the colour of each pixel
      * @param userInputs a List of strings containing user inputs
      */
     public void trySavingImage(int[] pixels, List<String> userInputs) {
@@ -143,6 +150,7 @@ public class CLIHelper {
     /**
      * Return a (potentially modified) size value. The default value is 512,
      * if no "-size" command was specified.
+     *
      * @param userInputs a List of strings containing user inputs
      * @return a modified size, or 512 if no "-size" command is present in userInputs
      */
@@ -157,6 +165,7 @@ public class CLIHelper {
     /**
      * Return a (potentially modified) name value. The default value is "graph.png",
      * if no "-name" command was specified.
+     *
      * @param userInputs a List of strings containing user inputs
      * @return a modified name, or "graph.png" if no "-name" command is present in userInputs
      */
@@ -180,11 +189,12 @@ public class CLIHelper {
      * user input. See isUserInputPairValid method for more information.
      * 3. There are no duplicate commands (except for "-eq" and "-domain") inside the list of user inputs.
      * Otherwise, this immediately results in an invalid user input.
+     *
      * @param acceptedCommands an array of Strings containing accepted commands
-     * @param userInputs a list of Strings containing user inputs
+     * @param userInputs       a list of Strings containing user inputs
      * @return whether userInputs is valid, as defined in the docstring
      */
-    public boolean checkValidInput(String[] acceptedCommands, List<String> userInputs){
+    public boolean checkValidInput(String[] acceptedCommands, List<String> userInputs) {
         boolean userInputIsValid = true;
 
         // First check: if the size of the user input list is not an even number, it means the command and
@@ -220,8 +230,9 @@ public class CLIHelper {
      * commands are allowed to be duplicates.
      * Precondition:
      * - userInputs contains valid input pairs (command, response)
+     *
      * @param acceptedCommands an array of Strings containing accepted commands
-     * @param userInputs a list of strings containing user inputs
+     * @param userInputs       a list of strings containing user inputs
      * @return true if there are duplicates commands (except for "-eq" and "-domain"), false otherwise
      */
     private boolean isDuplicateCommandInUserInput(String[] acceptedCommands, List<String> userInputs) {
@@ -230,7 +241,7 @@ public class CLIHelper {
         for (int i = 0; i < userInputs.size(); i += 2) {
             listOfInputCommands.add(userInputs.get(i));
         }
-        for (String command: acceptedCommands) {
+        for (String command : acceptedCommands) {
             if (!listOfAllowedDuplicateCommands.contains(command) &&
                     listOfInputCommands.stream().filter(str -> str.equals(command)).count() > 1) {
                 return true;
@@ -241,11 +252,12 @@ public class CLIHelper {
 
     /**
      * Returns the user argument of a given command.
-     * @param command a given command
+     *
+     * @param command    a given command
      * @param userInputs a list of Strings containing user inputs
      * @return the user argument corresponding to the command.
      */
-    private String getCommandArgument(String command, List<String> userInputs){
+    private String getCommandArgument(String command, List<String> userInputs) {
         return userInputs.get(userInputs.indexOf(command) + 1);
     }
 
@@ -259,8 +271,9 @@ public class CLIHelper {
      * is a positive integer (the dimension of a function can only be a positive dimension)
      * We expect there will be more checks to be done in the CLI level.
      * Thus, this method is open for extension.
-     * @param acceptedCommands an array of String containing accepted commands
-     * @param firstElementOfPair the first element (i.e., command) of the (command, response) pair
+     *
+     * @param acceptedCommands    an array of String containing accepted commands
+     * @param firstElementOfPair  the first element (i.e., command) of the (command, response) pair
      * @param secondElementOfPair the second element (i.e., response) of the (command, response) pair
      * @return whether the user input is valid
      */
@@ -287,6 +300,7 @@ public class CLIHelper {
      * whats-the-best-way-to-check-if-a-string-represents-an-integer-in-java. Returns true if the input string
      * is not a positive integer. This includes cases where the input string is not an integer or a negative
      * integer.
+     *
      * @param userInput The user input
      * @return true if userInput is not a positive integer
      */
@@ -313,15 +327,16 @@ public class CLIHelper {
 
     /**
      * Find the (equation, domain) pairs, and store them in a list of arrays of Strings to return.
+     *
      * @param arguments an array of Strings containing user inputs
      * @return a list of arrays of Strings containing the equation and domain pairs
      */
-    public List<String[]> findAllEquations(String[] arguments){
+    public List<String[]> findAllEquations(String[] arguments) {
         List<String[]> equationsAndDomains = new ArrayList<>();
 
-        for(int i = 0; i < arguments.length - 3; i+=2){
-            if (arguments[i].equals(eqCommand)){
-                if(arguments[i + 2].equals(domainCommand)) {
+        for (int i = 0; i < arguments.length - 3; i += 2) {
+            if (arguments[i].equals(eqCommand)) {
+                if (arguments[i + 2].equals(domainCommand)) {
                     equationsAndDomains.add(new String[]{arguments[i + 1], arguments[i + 3]});
                 } else {
                     equationsAndDomains.add(new String[]{arguments[i + 1]});

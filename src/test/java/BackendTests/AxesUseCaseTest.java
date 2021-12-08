@@ -1,11 +1,11 @@
 package BackendTests;
 
-import Backend.*;
-
-//import Backend.Exceptions.InvalidCommandArguments;
+import Backend.Axes;
+import Backend.AxesUseCase;
 import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionBuilders.BooleanValuedExpressionFactory;
 import Backend.ExpressionBuilders.RealValuedExpressionFactory;
+import Backend.ExpressionCreator;
 import Backend.Expressions.*;
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,8 +15,8 @@ import org.junit.rules.ExpectedException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class AxesUseCaseTest {
 
@@ -26,13 +26,14 @@ public class AxesUseCaseTest {
     RealValuedExpression expr0;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         ax = new Axes();
         auc = new AxesUseCase();
         expr5 = new NumberExpression("5");
         expr0 = new NumberExpression("0");
 
     }
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -40,19 +41,20 @@ public class AxesUseCaseTest {
      * test createAxes and make sure the instance of axes has the correct attributes
      */
     @Test(timeout = 50)
-    public void testCreateAxes(){
+    public void testCreateAxes() {
         Axes ax2 = auc.createAxes();
-        assertEquals(auc.getScale(ax2),5,0);
-        float[] p = {0,0};
+        assertEquals(auc.getScale(ax2), 5, 0);
+        float[] p = {0, 0};
         assertArrayEquals(auc.getOrigin(ax2), p, 0.00001f);
-        assertEquals(auc.getExpressions(ax2), new ArrayList<RealValuedExpression>(){});
+        assertEquals(auc.getExpressions(ax2), new ArrayList<RealValuedExpression>() {
+        });
     }
 
     /**
      * Test adding expressions to the Axes
      */
     @Test(timeout = 50)
-    public void testAxesUseCaseAddExpression(){
+    public void testAxesUseCaseAddExpression() {
         auc.addExpression(expr5, ax);
         ArrayList<RealValuedExpression> eList = new ArrayList<>();
         eList.add(expr5);
@@ -61,7 +63,7 @@ public class AxesUseCaseTest {
 
 
     @Test(timeout = 50)
-    public void testAxesUseCaseRemoveExpression(){
+    public void testAxesUseCaseRemoveExpression() {
         auc.addExpression(expr5, ax);
         auc.removeExpression(expr5, ax);
 
@@ -72,7 +74,7 @@ public class AxesUseCaseTest {
 
     //Test what happens when we try to remove an expression that is not stored in axes
     @Test(timeout = 50)
-    public void testAxesUseCaseRemoveNonExistentExpression(){
+    public void testAxesUseCaseRemoveNonExistentExpression() {
         auc.addExpression(expr5, ax);
 
         ArrayList<RealValuedExpression> eList = new ArrayList<>();
@@ -91,15 +93,15 @@ public class AxesUseCaseTest {
 
 
     @Test(timeout = 50)
-    public void testAxesUseCaseGetOrigin(){
+    public void testAxesUseCaseGetOrigin() {
         auc.getOrigin(ax);
-        assertArrayEquals(auc.getOrigin(ax), new float[]{0,0}, 0.0F);
+        assertArrayEquals(auc.getOrigin(ax), new float[]{0, 0}, 0.0F);
     }
 
     @Test(timeout = 50)
-    public void testAxesUseCaseSetOrigin(){
-        auc.setOrigin(new float[]{6f,-4f}, ax);
-        assertArrayEquals(auc.getOrigin(ax), new float[]{6,-4f}, 0.0F);
+    public void testAxesUseCaseSetOrigin() {
+        auc.setOrigin(new float[]{6f, -4f}, ax);
+        assertArrayEquals(auc.getOrigin(ax), new float[]{6, -4f}, 0.0F);
     }
 
     @Test(timeout = 100)
@@ -113,12 +115,12 @@ public class AxesUseCaseTest {
         FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, (RealValuedExpression) func);
         auc.addExpression(myFunc, ax);
 
-        assertEquals(13, auc.getNamedFunctions(ax).size(),0);
+        assertEquals(13, auc.getNamedFunctions(ax).size(), 0);
 
     }
 
     @Test(timeout = 50)
-    public void testAxesUseCaseGetExpr(){
+    public void testAxesUseCaseGetExpr() {
         ArrayList<RealValuedExpression> eList = new ArrayList<>();
         assertEquals(auc.getExpressions(ax), eList);
     }

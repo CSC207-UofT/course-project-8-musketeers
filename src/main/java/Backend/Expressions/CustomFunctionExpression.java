@@ -16,44 +16,43 @@ public class CustomFunctionExpression extends FunctionExpression {
 
 
     /**
-     * @param funcName String representing the name of a function
+     * @param funcName  String representing the name of a function
      * @param variables Array of strings representing the variables the function is in terms of
-     * @param function A RealValued Expression representing the function itself
+     * @param function  A RealValued Expression representing the function itself
      */
 
-    public CustomFunctionExpression(String funcName, String[] variables, RealValuedExpression function){
+    public CustomFunctionExpression(String funcName, String[] variables, RealValuedExpression function) {
         super(funcName, variables);
         this.function = function;
     }
 
     // These constructors will be useful when we fully implement custom functions
     public CustomFunctionExpression(String funcName, String[] variables, RealValuedExpression function,
-                                    ComparatorExpression domain){
+                                    ComparatorExpression domain) {
         this(funcName, variables, function);
         setDomain(domain);
     }
 
     public CustomFunctionExpression(String funcName, String[] variables,
-                                    RealValuedExpression[] inputs, RealValuedExpression function){
+                                    RealValuedExpression[] inputs, RealValuedExpression function) {
         super(funcName, variables);
         this.function = function;
         setInputs(inputs);
     }
 
 
-
     @Override
     public Float evaluate(Map<String, Float> arguments) {
         Map<String, Float> varMap = new HashMap<>();
         String[] variables = getVariables();
-        for (int i = 0; i < variables.length; i++){
+        for (int i = 0; i < variables.length; i++) {
             // If we have f(2x) for example, we must evaluate 2x first.
             // This is what this for loop is for
             RealValuedExpression exp = getInputs()[i];
 
-            if (exp instanceof FunctionExpression){
-                BooleanValuedExpression expDomain = ((FunctionExpression) exp).getDomain();
-                if (!expDomain.evaluate(arguments)){
+            if (exp instanceof FunctionExpression) {
+                BooleanValuedExpression expDomain = exp.getDomain();
+                if (!expDomain.evaluate(arguments)) {
                     // means the values are out of the domain for at least one of inputs
                     return Float.NaN;
                 }
@@ -64,7 +63,7 @@ public class CustomFunctionExpression extends FunctionExpression {
 
         // we check that the final input is in the domain of our function
         // For the example, above, we check that 2x is in the domain of f
-        if (!getDomain().evaluate(varMap)){
+        if (!getDomain().evaluate(varMap)) {
             return Float.NaN;
         }
         return function.evaluate(varMap);

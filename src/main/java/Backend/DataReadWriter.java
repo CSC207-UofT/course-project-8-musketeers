@@ -4,13 +4,12 @@ import java.io.*;
 
 public class DataReadWriter implements FileAccess {
     /**
-     *
      * @param fileName the name of the file
-     * @param graphs Axes object I think
+     * @param graphs   Axes object I think
      * @throws IOException in case it fails somehow
      */
 
-    public void fileSave(String fileName, Object graphs) throws IOException{
+    public void fileSave(String fileName, Object graphs) throws IOException {
         OutputStream file = new FileOutputStream(fileName);
         OutputStream buffer = new BufferedOutputStream(file);
         ObjectOutput output = new ObjectOutputStream(buffer);
@@ -20,10 +19,9 @@ public class DataReadWriter implements FileAccess {
     }
 
     /**
-     *
      * @param fileName name of the file
      * @return An ArrayList of Axes
-     * @throws IOException In case it fails
+     * @throws IOException            In case it fails
      * @throws ClassNotFoundException in case it fails
      */
 

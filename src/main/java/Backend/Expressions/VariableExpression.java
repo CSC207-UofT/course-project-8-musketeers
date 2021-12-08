@@ -5,7 +5,7 @@ import java.util.Map;
 public class VariableExpression extends RealValuedExpression {
 
     // Variables can only have names x, y, z!
-    public VariableExpression(String varName){
+    public VariableExpression(String varName) {
         super(varName);
     }
 

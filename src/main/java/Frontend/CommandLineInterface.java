@@ -1,6 +1,6 @@
 package Frontend;
 
-import Backend.*;
+import Backend.Axes;
 import Backend.AxesUseCase;
 import Backend.ExpressionReader;
 import GUI.GLGUI;

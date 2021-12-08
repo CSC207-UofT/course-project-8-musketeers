@@ -1,4 +1,3 @@
-
 package GUI;
 
 import Graphics.Grapher;
@@ -15,14 +14,20 @@ public class GUIHelper {
         grapher = g;
         imgDim = dim;
     }
+
     public void setgType(String g) {
         gType = g;
     }
+
     public void setGraphPos(float[] p) {
         grapher.setPos(p);
     }
-    public void setGraphScale(float scale) { grapher.setScale(scale); }
+
+    public void setGraphScale(float scale) {
+        grapher.setScale(scale);
+    }
+
     public int[] drawGraph() {
-        return grapher.graph(imgDim,gType);
+        return grapher.graph(imgDim, gType);
     }
 }

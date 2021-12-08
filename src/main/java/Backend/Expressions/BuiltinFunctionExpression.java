@@ -5,29 +5,42 @@ import java.util.Map;
 /**
  * These Expressions are for builtin functions like cos, sin, exp, etc
  */
-public class BuiltinFunctionExpression extends FunctionExpression{
+public class BuiltinFunctionExpression extends FunctionExpression {
 
-    public BuiltinFunctionExpression(String funcName, String[] variables){
+    public BuiltinFunctionExpression(String funcName, String[] variables) {
         super(funcName, variables);
     }
 
     @Override
     public Float evaluate(Map<String, Float> arguments) {
 
-        switch (getItem()){
-            case "cos": return cosEvaluate(arguments);
-            case "sin": return sinEvaluate(arguments);
-            case "tan": return tanEvaluate(arguments);
-            case "sqrt": return sqrtEvaluate(arguments);
-            case "exp": return expEvaluate(arguments);
-            case "mandel": return mandelEvaluate(arguments);
-            case "arcsin": return arcsinEvaluate(arguments);
-            case "arccos": return arccosEvaluate(arguments);
-            case "arctan": return arctanEvaluate(arguments);
-            case "log": return logEvaluate(arguments);
-            case "max": return maxEvaluate(arguments);
-            case "min": return minEvaluate(arguments);
-            default: throw new IllegalArgumentException("Undefined function: " + getItem());
+        switch (getItem()) {
+            case "cos":
+                return cosEvaluate(arguments);
+            case "sin":
+                return sinEvaluate(arguments);
+            case "tan":
+                return tanEvaluate(arguments);
+            case "sqrt":
+                return sqrtEvaluate(arguments);
+            case "exp":
+                return expEvaluate(arguments);
+            case "mandel":
+                return mandelEvaluate(arguments);
+            case "arcsin":
+                return arcsinEvaluate(arguments);
+            case "arccos":
+                return arccosEvaluate(arguments);
+            case "arctan":
+                return arctanEvaluate(arguments);
+            case "log":
+                return logEvaluate(arguments);
+            case "max":
+                return maxEvaluate(arguments);
+            case "min":
+                return minEvaluate(arguments);
+            default:
+                throw new IllegalArgumentException("Undefined function: " + getItem());
         }
     }
 
@@ -71,6 +84,7 @@ public class BuiltinFunctionExpression extends FunctionExpression{
     private float maxEvaluate(Map<String, Float> arguments) {
         return Math.max(getInputs()[0].evaluate(arguments), getInputs()[1].evaluate(arguments));
     }
+
     private float minEvaluate(Map<String, Float> arguments) {
         return Math.min(getInputs()[0].evaluate(arguments), getInputs()[1].evaluate(arguments));
     }
@@ -83,9 +97,9 @@ public class BuiltinFunctionExpression extends FunctionExpression{
         float y = 0;
         int i;
         for (i = 0; i < 100; i++) {
-            if (x*x + y*y > 4) break;
-            float xtemp = x*x - y*y + cx;
-            y = 2*x*y + cy;
+            if (x * x + y * y > 4) break;
+            float xtemp = x * x - y * y + cx;
+            y = 2 * x * y + cy;
             x = xtemp;
         }
         return i / 100.f;

@@ -6,6 +6,7 @@ import java.util.Map;
 public class LogicalOperatorExpression extends BooleanValuedExpression {
     private final BooleanValuedExpression lExpression;
     private final BooleanValuedExpression rExpression;
+
     public LogicalOperatorExpression(String operation, BooleanValuedExpression lExpression, BooleanValuedExpression rExpression) {
         super(operation);
         this.lExpression = lExpression;
@@ -31,8 +32,9 @@ public class LogicalOperatorExpression extends BooleanValuedExpression {
 
         }
     }
-@Override
+
+    @Override
     public String toString() {
         return "(" + lExpression + getItem() + rExpression + ")";
-}
+    }
 }
