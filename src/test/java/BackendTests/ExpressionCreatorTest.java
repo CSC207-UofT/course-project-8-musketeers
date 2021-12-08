@@ -294,7 +294,7 @@ public class ExpressionCreatorTest {
         RealValuedExpression func = (RealValuedExpression) ec.create(List.of("x", "^", "2"));
 
         FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, func);
-        RealValuedExpression f2 = new BuiltinFunctionExpression("cos");
+        RealValuedExpression f2 = new BuiltinFunctionExpression("cos", new String[]{"x"});
         myFunc.setInputs(new RealValuedExpression[] {f2});
 
         varMap.put("x", 0f);

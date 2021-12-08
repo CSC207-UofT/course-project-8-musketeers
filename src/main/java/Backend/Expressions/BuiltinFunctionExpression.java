@@ -1,20 +1,14 @@
 package Backend.Expressions;
 
-import Backend.Constants;
-
 import java.util.Map;
 
+/**
+ * These Expressions are for builtin functions like cos, sin, exp, etc
+ */
 public class BuiltinFunctionExpression extends FunctionExpression{
 
-    public BuiltinFunctionExpression(String funcName){
-        super(funcName, new String[]{"x"}); // by default we assume all functions are in one variable
-
-        // TODO: Remove instance of constants
-        Constants constants = new Constants();
-        // If function have multiple inputs, we fix this
-        if (constants.getTwoVarFunctions().contains(funcName)){
-            setVariables(new String[] {"x", "y"});
-        }
+    public BuiltinFunctionExpression(String funcName, String[] variables){
+        super(funcName, variables);
     }
 
     @Override
