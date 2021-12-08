@@ -1,7 +1,5 @@
 package Backend;
 
-// TODO: ADJUST/DECIDE WHAT TO DO WITH "Expression", "RealValuedExpression", "BooleanValuedExpression". USE WILDCARD AND CASTING!!!
-
 
 import Backend.Expressions.*;
 
@@ -64,7 +62,7 @@ public class Axes implements Serializable {
      */
     private Map<String, FunctionExpression> initialNamedExpressions(){
         Constants constants = new Constants();
-        Set<String> builtinFunctions = constants.getBuiltinFunctions(); // TODO: Remove instance of constants
+        Set<String> builtinFunctions = constants.getBuiltinFunctions();
         Map<String, FunctionExpression> funcMap = new HashMap<>();
 
         for (String funcName: builtinFunctions){

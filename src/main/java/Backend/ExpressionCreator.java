@@ -25,7 +25,7 @@ import java.beans.PropertyChangeEvent;
 public class ExpressionCreator implements PropertyChangeListener{
 
     private final Constants constants = new Constants();
-    private ExpressionValidityChecker vc;
+    private final ExpressionValidityChecker vc;
     private final Map<String, FunctionExpression> funcMap = new HashMap<>();
     private final RealValuedExpressionFactory rf;
     private final BooleanValuedExpressionFactory bf;
@@ -36,17 +36,11 @@ public class ExpressionCreator implements PropertyChangeListener{
      */
     public ExpressionCreator(Map<String, FunctionExpression> funcMap, RealValuedExpressionFactory rf,
                              BooleanValuedExpressionFactory bf){
-        // We create a new copy of the funcMap rather than just simply assigning to avoid aliasing
-        for (String funcName: funcMap.keySet()){
-            this.funcMap.put(funcName, funcMap.get(funcName));
-        }
-        this.vc = new ExpressionValidityChecker(funcMap);
-        this.rf = rf;
-        this.bf = bf;
+        this(funcMap, new ExpressionValidityChecker(funcMap), rf, bf);
     }
 
     // This constructor allows us to ensure that vc is properly configured (i.e. observing Axes)
-    // Also implements Dependency Injection I believe
+    // Also implements Dependency Injection
     public ExpressionCreator(Map<String, FunctionExpression> funcMap, ExpressionValidityChecker vc,
                              RealValuedExpressionFactory rf, BooleanValuedExpressionFactory bf){
         // We create a new copy of the funcMap rather than just simply assigning to avoid aliasing
@@ -57,17 +51,6 @@ public class ExpressionCreator implements PropertyChangeListener{
         this.rf = rf;
         this.bf = bf;
     }
-
-//    // This constructor allows us to ensure that vc is properly configured (i.e. observing Axes)
-//    // Also implements Dependency Injection I believe
-//    public ExpressionCreator(Map<String, FunctionExpression> funcMap, ExpressionValidityChecker vc,
-//                             RealValuedExpressionFactory rf, BooleanValuedExpressionFactory bf){
-//        this(funcMap);
-//        this.vc = vc;
-//
-//        this.rf = rf;
-//        this.bf = bf;
-//    }
 
 
     /**
@@ -224,7 +207,6 @@ public class ExpressionCreator implements PropertyChangeListener{
                 // if both are valid, construct an expression tree with the root being <op>, left child being <lExpr>
                 // and right child being <rExpr>.
 
-                // TODO: double check that there is never an issue with lExpr and rExpr's types
                 return factory.constructExpression(lExpr, op, rExpr, operatorType);
             }
         }
@@ -240,9 +222,8 @@ public class ExpressionCreator implements PropertyChangeListener{
 
         List<String> unchainedTerms = new ArrayList<>();
 
-        Map<String, List<Integer>> comparatorsAndIndices = vc.getOuterItems(terms, constants.getComparators()); // TODO: For the time being, let's use this helper, but in future, we can improve runtime by writing a more specific helper!
+        Map<String, List<Integer>> comparatorsAndIndices = vc.getOuterItems(terms, constants.getComparators());
 
-        // TODO: Future have another more efficient helper.
         List<Integer> indices = new ArrayList<>();
         for (List<Integer> subIndices: comparatorsAndIndices.values()) {
             indices.addAll(subIndices);
@@ -293,33 +274,25 @@ public class ExpressionCreator implements PropertyChangeListener{
      */
     private RealValuedExpression[] findFunctionInputs (List<String> terms) throws InvalidTermException {
         List<Integer> commaIndices = vc.getOuterItems(terms, List.of(",")).get(","); //get list of the indices where
-        // commas appear outside any brackets. These correspond to separating the input for the function wer are
+        // commas appear outside any brackets. Between the commas is where the inputs are (almost).
 
-        // calling this method for.
         if (commaIndices == null){
+            // corresponds to only 1 input
             commaIndices = new ArrayList<>();
         }
-        //
-        commaIndices.add(terms.size()); // Add the index of ")" that marks the end of the function input to ensure
-        // the last input to the function is considered in the following loop.
-        // TODO: Recheck Correctness (logical sense).
-        // for below, the number of commas outside brackets + 1 represents the number of inputs to the function, if
-        // the terms are in a valid format.
-        RealValuedExpression[] inputs = new RealValuedExpression[commaIndices.size()];
+
         int startInd = 0;
+        commaIndices.add(terms.size()); // Add index of the final term so that there is an input between every index in the list, starting from 0
+        RealValuedExpression[] inputs = new RealValuedExpression[commaIndices.size()];
 
         for (int i = 0; i < inputs.length; i++){
             // this list represents all terms within a pair of commas, thus representing one input to the function.
             List<String> inputTerm = terms.subList(startInd, commaIndices.get(i));
             vc.realValuedPreconditionCheck(inputTerm); //check each input is a RealValuedExpression.
             try { // Ensure that each input can be constructed as an expression (otherwise it's an invalid input).
-                // TODO: Check that a inputTerm always produces a RealValuedExpression
                 RealValuedExpression inputExp = (RealValuedExpression) create(inputTerm);
-                /* Above: If two commas adjacent to each other (i.e. has nothing in between, then there will be
-                   something like NullExpressionException (a BaseCaseException) thrown, but we should catch it!) */
-
                 inputs[i] = inputExp; // Add the expression for this input.
-                startInd = commaIndices.get(i) + 1; // Start looking at the next input.
+                startInd = commaIndices.get(i) + 1;
             } catch (BaseCaseCreatorException e) {
                 throw new CompoundCaseCreatorException("InvalidFunctionInputsException!");
             }
