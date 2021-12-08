@@ -21,13 +21,13 @@ public class AxesTest {
 
 
 
-    Axes ax;
+    Axes axes;
     RealValuedExpression expr5;
     RealValuedExpression expr0;
 
     @Before
     public void setUp(){
-        ax = new Axes();
+        axes = new Axes();
         expr5 = new NumberExpression("5");
         expr0 = new NumberExpression("0");
 
@@ -37,38 +37,38 @@ public class AxesTest {
 
     @Test(timeout = 50)
     public void testAxesCreation(){
-        assertEquals(ax.getScale(),5,0.0001f);
+        assertEquals(axes.getScale(),5,0.0001f);
         float[] p = {0,0};
-        assertArrayEquals(ax.getOrigin(), p, 0.00001f);
-        assertEquals(ax.getExpressions(), new ArrayList<RealValuedExpression>() {
+        assertArrayEquals(axes.getOrigin(), p, 0.00001f);
+        assertEquals(axes.getExpressions(), new ArrayList<RealValuedExpression>() {
         });
     }
 
     @Test(timeout = 100)
     public void testAxesCreation2(){
-        ax = new Axes(5, 6, 7);
+        axes = new Axes(5, 6, 7);
 
-        assertEquals(ax.getScale(),5,0);
-        assertArrayEquals(ax.getOrigin(), new float[]{6, 7}, 0.0F);
-        assertEquals(ax.getExpressions(), new ArrayList<RealValuedExpression>() {});
+        assertEquals(axes.getScale(),5,0);
+        assertArrayEquals(axes.getOrigin(), new float[]{6, 7}, 0.0F);
+        assertEquals(axes.getExpressions(), new ArrayList<RealValuedExpression>() {});
     }
 
     @Test(timeout = 50)
     public void testAxesSetOrigin(){
-        assertArrayEquals(ax.getOrigin(), new float[]{0, 0}, 0.0F);
+        assertArrayEquals(axes.getOrigin(), new float[]{0, 0}, 0.0F);
 
-        ax.setOrigin(2,3);
-        assertArrayEquals(ax.getOrigin(), new float[]{2, 3}, 0.0F);
+        axes.setOrigin(2,3);
+        assertArrayEquals(axes.getOrigin(), new float[]{2, 3}, 0.0F);
 
-        ax.setOrigin(new float[]{-5f,7.55f});
-        assertArrayEquals(ax.getOrigin(), new float[]{-5, 7.55f}, 0.0F);
+        axes.setOrigin(new float[]{-5f,7.55f});
+        assertArrayEquals(axes.getOrigin(), new float[]{-5, 7.55f}, 0.0F);
     }
 
     @Test(timeout = 50)
     public void testAxesSetScale(){
-        assertEquals(ax.getScale(), 5f, 0.0001);
-        ax.setScale(3f);
-        assertEquals(ax.getScale(), 3f, 0.0001);
+        assertEquals(axes.getScale(), 5f, 0.0001);
+        axes.setScale(3f);
+        assertEquals(axes.getScale(), 3f, 0.0001);
 
     }
 
@@ -84,33 +84,33 @@ public class AxesTest {
      */
     @Test(timeout = 50)
     public void testAxesAddExpression(){
-        ax.addExpression(expr5);
+        axes.addExpression(expr5);
         ArrayList<RealValuedExpression> eList = new ArrayList<>();
         eList.add(expr5);
-        assertEquals(ax.getExpressions(), eList);
+        assertEquals(axes.getExpressions(), eList);
     }
 
     @Test(timeout = 50)
     public void testAxesRemoveExpression(){
-        ax.addExpression(expr5);
-        ax.removeExpression(expr5);
+        axes.addExpression(expr5);
+        axes.removeExpression(expr5);
 
         ArrayList<RealValuedExpression> eList = new ArrayList<>();
 
-        assertEquals(ax.getExpressions(), eList);
+        assertEquals(axes.getExpressions(), eList);
     }
 
     //Test what happens when we try to remove an expression that is not stored in axes
     @Test(timeout = 50)
     public void testAxesRemoveNonExistentExpression(){
-        ax.addExpression(expr5);
+        axes.addExpression(expr5);
 
         ArrayList<RealValuedExpression> eList = new ArrayList<>();
         eList.add(expr5);
 
-        ax.removeExpression(expr0);
+        axes.removeExpression(expr0);
 
-        assertEquals(ax.getExpressions(), eList);
+        assertEquals(axes.getExpressions(), eList);
     }
 
 
