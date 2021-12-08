@@ -63,12 +63,19 @@ public class Axes implements Serializable {
      * @return A map between the name of a function and the corresponding expression
      */
     private Map<String, FunctionExpression> initialNamedExpressions(){
-
-        Set<String> builtinFunctions = (new Constants()).getBuiltinFunctions(); // TODO: Remove instance of constants
+        Constants constants = new Constants();
+        Set<String> builtinFunctions = constants.getBuiltinFunctions(); // TODO: Remove instance of constants
         Map<String, FunctionExpression> funcMap = new HashMap<>();
 
         for (String funcName: builtinFunctions){
-            funcMap.put(funcName, new BuiltinFunctionExpression(funcName));
+            FunctionExpression func;
+            if (constants.getTwoVarFunctions().contains(funcName)){
+                func = new BuiltinFunctionExpression(funcName, new String[]{"x", "y"});
+            }
+            else{
+                func = new BuiltinFunctionExpression(funcName, new String[]{"x"});
+            }
+            funcMap.put(funcName, func);
         }
 
         return funcMap;

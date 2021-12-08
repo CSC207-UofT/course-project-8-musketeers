@@ -1,4 +1,5 @@
 package Backend;
+
 import Backend.Expressions.*;
 
 import java.io.IOException;
@@ -14,17 +15,19 @@ import java.util.Map;
 public class AxesUseCase {
 
     /**
-     * create an axes object
+     * Create an axes object
+     *
      * @return an instance of Axes
      */
-    public Axes createAxes(){
+    public Axes createAxes() {
         return new Axes();
     }
 
     /**
      * Saves Axes ax to fileName
-     * @param fileName  String representing name of file
-     * @param ax  instance of axes to be saved
+     *
+     * @param fileName String representing name of file
+     * @param ax       instance of axes to be saved
      */
     public void saveAxes(String fileName, Axes ax) throws IOException {
         FileAccess d = new DataReadWriter();
@@ -33,8 +36,8 @@ public class AxesUseCase {
     }
 
     /**
-     * @param fileName  Name of file to deserialize
-     * @return  an instance of Axes
+     * @param fileName Name of file to deserialize
+     * @return an instance of Axes
      */
     public Axes loadAxes(String fileName) throws IOException, ClassNotFoundException {
         FileAccess d = new DataReadWriter();
@@ -44,30 +47,38 @@ public class AxesUseCase {
     /**
      * methods to get and/or change Axes attributes
      */
-    public float getScale(Axes ax){return ax.getScale();}
+    public float getScale(Axes ax) {
+        return ax.getScale();
+    }
 
     // Will be used later to allow for zooming in and out
     public void setScale(float scale, Axes ax) {
         ax.setScale(scale);
     }
 
-    public float[] getOrigin(Axes ax){return ax.getOrigin();}
+    public float[] getOrigin(Axes ax) {
+        return ax.getOrigin();
+    }
 
     // Will be used later when we allow for movement of the graph
-    public void setOrigin(float[] o, Axes ax){ax.setOrigin(o);}
+    public void setOrigin(float[] o, Axes ax) {
+        ax.setOrigin(o);
+    }
 
-    public List<RealValuedExpression> getExpressions(Axes ax){
+    public List<RealValuedExpression> getExpressions(Axes ax) {
         return ax.getExpressions();
     }
 
-    public void addExpression(RealValuedExpression expr, Axes ax){
+    public void addExpression(RealValuedExpression expr, Axes ax) {
         ax.addExpression(expr);
     }
 
     // Might be used later to allow for removal of user-defined functions
-    public void removeExpression(RealValuedExpression expr, Axes ax){ax.removeExpression(expr);}
+    public void removeExpression(RealValuedExpression expr, Axes ax) {
+        ax.removeExpression(expr);
+    }
 
-    public Map<String, FunctionExpression> getNamedFunctions(Axes ax){
+    public Map<String, FunctionExpression> getNamedFunctions(Axes ax) {
         return ax.getNamedExpressions();
     }
 }

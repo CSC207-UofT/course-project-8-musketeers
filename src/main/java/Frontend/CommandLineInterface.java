@@ -36,8 +36,8 @@ public class CommandLineInterface {
             return;
         }
 
-        Axes axes = new Axes();
         AxesUseCase auc = new AxesUseCase();
+        Axes axes = auc.createAxes();
 
         if (userInputs.contains("-load")) {
             axes = cliHelper.tryLoadingAxes(userInputs, axes, auc);
