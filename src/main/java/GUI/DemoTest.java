@@ -15,10 +15,10 @@ import java.nio.file.Paths;
 
 import static Graphics.ImageTest.getImDims;
 import static Graphics.ImageTest.readImage;
-import static org.lwjgl.opengl.GL.*;
-import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
 
 public class DemoTest {
@@ -56,13 +56,13 @@ public class DemoTest {
 
     public static int imgToTex(int[] pixels, int iw, int ih) {
         ByteBuffer tbuf = ByteBuffer.allocateDirect(4 * iw * ih);
-        byte[] pixbytes = new byte[4*iw*ih];
-        for (int i = 0; i < iw*ih; i++) {
+        byte[] pixbytes = new byte[4 * iw * ih];
+        for (int i = 0; i < iw * ih; i++) {
             RGBA rgba = new RGBA(pixels[i]);
-            pixbytes[4*i] = (byte)(rgba.r);
-            pixbytes[4*i+1] = (byte)(rgba.g);
-            pixbytes[4*i+2] = (byte)(rgba.b);
-            pixbytes[4*i+3] = (byte)(rgba.a);
+            pixbytes[4 * i] = (byte) (rgba.r);
+            pixbytes[4 * i + 1] = (byte) (rgba.g);
+            pixbytes[4 * i + 2] = (byte) (rgba.b);
+            pixbytes[4 * i + 3] = (byte) (rgba.a);
         }
         tbuf.put(pixbytes);
         tbuf.flip();
@@ -114,8 +114,8 @@ public class DemoTest {
     }
 
     private static void cursor_pos_callback(long l, double x, double y) {
-        mousex = (float)(x-400)/200.f;
-        mousey = -(float)(y-400)/200.f;
+        mousex = (float) (x - 400) / 200.f;
+        mousey = -(float) (y - 400) / 200.f;
         glUniform1f(0, mousex + zx);
         glUniform1f(1, mousey + zy);
     }
@@ -126,10 +126,10 @@ public class DemoTest {
         glfwSetMouseButtonCallback(window, DemoTest::mouseCallback); // Records when the mouse button is being pressed.
         glfwSetCursorPosCallback(window, DemoTest::cursor_pos_callback); // Records the position of the cursor.
 
-        FloatBuffer buffer = memAllocFloat(3 * 2*2);
+        FloatBuffer buffer = memAllocFloat(3 * 2 * 2);
         float[] vtest = {
-                -0.9f,-0.9f,0.9f,-0.9f,-0.9f,0.9f,
-                0.9f,-0.9f,-0.9f,0.9f,0.9f,0.9f
+                -0.9f, -0.9f, 0.9f, -0.9f, -0.9f, 0.9f,
+                0.9f, -0.9f, -0.9f, 0.9f, 0.9f, 0.9f
         };
         buffer.put(vtest);
 
@@ -145,7 +145,6 @@ public class DemoTest {
 
         int vaoID = glGenVertexArrays();
         glBindVertexArray(vaoID);
-
 
 
         makeShader(this.equation);
@@ -194,7 +193,7 @@ public class DemoTest {
             try {
                 int iw = getImDims("sampleOut3D.png")[0];
                 int ih = getImDims("sampleOut3D.png")[1];
-                tid = imgToTex(readImage("sampleOut3D.png"), iw,ih);
+                tid = imgToTex(readImage("sampleOut3D.png"), iw, ih);
             } catch (Exception e) {
                 System.out.println("Can't read image");
             }
@@ -203,8 +202,10 @@ public class DemoTest {
             System.out.println("Pressed! " + clicks);
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
                 clicks += 1;
-            } else {clicks -= 1;}
-            glUniform1f(2, 1.f/(float)Math.pow(1.1f,clicks));
+            } else {
+                clicks -= 1;
+            }
+            glUniform1f(2, 1.f / (float) Math.pow(1.1f, clicks));
 
             zx += mousex;
             zy += mousey;

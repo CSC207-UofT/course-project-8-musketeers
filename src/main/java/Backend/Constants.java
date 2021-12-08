@@ -18,7 +18,6 @@ public class Constants {
     private final List<String> ARITHMETICOPERATORS = new ArrayList<>(List.of(new String[]{"+", "-", "*", "/", "^"}));
 
 
-
     public List<String> getLogicalOperators() {
         return LOGICALOPERATORS;
     }
@@ -27,7 +26,9 @@ public class Constants {
         return COMPARATORS;
     }
 
-    public List<String> getArithmeticOperators() { return ARITHMETICOPERATORS; }
+    public List<String> getArithmeticOperators() {
+        return ARITHMETICOPERATORS;
+    }
 
     public List<String> getBooleanValuedOperators() {
         return Stream.of(LOGICALOPERATORS, COMPARATORS).flatMap(Collection::stream).collect(Collectors.toList());
@@ -41,17 +42,23 @@ public class Constants {
         return VARIABLES;
     }
 
-    public Set<String> getOneVarFunctions(){ return BUILTINONEVARFUNCTIONS; }
+    public Set<String> getOneVarFunctions() {
+        return BUILTINONEVARFUNCTIONS;
+    }
 
-    public Set<String> getTwoVarFunctions(){ return BUILTINTWOVARFUNCTIONS; }
+    public Set<String> getTwoVarFunctions() {
+        return BUILTINTWOVARFUNCTIONS;
+    }
 
-    public Set<String> getBuiltinFunctions(){
+    public Set<String> getBuiltinFunctions() {
         Set<String> allFuncs = new HashSet<>();
         allFuncs.addAll(BUILTINONEVARFUNCTIONS);
         allFuncs.addAll(BUILTINTWOVARFUNCTIONS);
         return allFuncs;
     }
 
-    public Set<String> getSpecialCharacters() { return SPECIALCHARACTERS; }
+    public Set<String> getSpecialCharacters() {
+        return SPECIALCHARACTERS;
+    }
 
 }

@@ -9,12 +9,12 @@ public abstract class RealValuedExpression extends Expression<Float> implements 
 
     private BooleanValuedExpression domain; // defines where expression is defined
 
-    public RealValuedExpression(String num){
+    public RealValuedExpression(String num) {
         super(num);
         this.domain = trivialDomain();
     }
 
-    public RealValuedExpression(String num, BooleanValuedExpression domain){
+    public RealValuedExpression(String num, BooleanValuedExpression domain) {
         super(num);
         this.domain = domain;
     }
@@ -24,10 +24,9 @@ public abstract class RealValuedExpression extends Expression<Float> implements 
         Map<String, Float> varMap = new HashMap<>();
         varMap.put("x", x);
         varMap.put("y", y);
-        if (domain.evaluate(varMap)){
+        if (domain.evaluate(varMap)) {
             return evaluate(varMap); // this evaluate is from Expression class
-        }
-        else{
+        } else {
             return Float.NaN;
         }
     }
@@ -36,34 +35,39 @@ public abstract class RealValuedExpression extends Expression<Float> implements 
     public float evaluate(float x) {
         Map<String, Float> varMap = new HashMap<>();
         varMap.put("x", x);
-        if (domain.evaluate(varMap)){
+        if (domain.evaluate(varMap)) {
             return evaluate(varMap); // this evaluate is from Expression class
-        }
-        else{
+        } else {
             return Float.NaN;
         }
     }
 
-    /** Used to define the 'default' domain of everything.
+    /**
+     * Used to define the 'default' domain of everything.
+     *
      * @return A BooleanValuedExpression representing "1 > 0" which always evaluates to True. This forms
      * our 'default' domain for functions
      */
-    private BooleanValuedExpression trivialDomain(){
+    private BooleanValuedExpression trivialDomain() {
         return new BooleanConstantExpression("true");
     }
 
-    /** Gets the domain of an expression
+    /**
+     * Gets the domain of an expression
+     *
      * @return A BooleanValuedExpression representing the domain of the expression
      */
-    public BooleanValuedExpression getDomain(){
+    public BooleanValuedExpression getDomain() {
         return this.domain;
     }
 
 
-    /** Sets the domain of a function
+    /**
+     * Sets the domain of a function
+     *
      * @param domain BooleanValuedExpression representing the domain of the expression
      */
-    public void setDomain(BooleanValuedExpression domain){
+    public void setDomain(BooleanValuedExpression domain) {
         this.domain = domain;
     }
 }

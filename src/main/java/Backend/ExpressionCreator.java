@@ -1,28 +1,35 @@
 package Backend;
 
-import Backend.Exceptions.*;
-import Backend.ExpressionBuilders.*;
-import Backend.Expressions.*;
+import Backend.Exceptions.BaseCaseCreatorException;
+import Backend.Exceptions.CompoundCaseCreatorException;
+import Backend.Exceptions.InvalidTermException;
+import Backend.ExpressionBuilders.BooleanValuedExpressionFactory;
+import Backend.ExpressionBuilders.ExpressionFactory;
+import Backend.ExpressionBuilders.RealValuedExpressionFactory;
+import Backend.Expressions.BooleanValuedExpression;
+import Backend.Expressions.Expression;
+import Backend.Expressions.FunctionExpression;
+import Backend.Expressions.RealValuedExpression;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.*;
 
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeEvent;
-
-/**  The ExpressionCreator class is responsible for creating an expression tree representing the user input if the
+/**
+ * The ExpressionCreator class is responsible for creating an expression tree representing the user input if the
  * expression the user input is valid.
- *
+ * <p>
  * For example, the expression "2*x+3" is transformed to the following tree:
  * 2
- *     *
+ * *
  * x
- *     +
+ * +
  * 3
  * Following the standard for drawing trees set by csc148.
- *
+ * <p>
  * If the expression is not valid, the expression tree will not be created and an exception is thrown.
  */
-public class ExpressionCreator implements PropertyChangeListener{
+public class ExpressionCreator implements PropertyChangeListener {
 
     private final Constants constants = new Constants();
     private final ExpressionValidityChecker vc;
@@ -30,21 +37,22 @@ public class ExpressionCreator implements PropertyChangeListener{
     private final RealValuedExpressionFactory rf;
     private final BooleanValuedExpressionFactory bf;
 
-    /** Constructor for ExpressionCreator.
+    /**
+     * Constructor for ExpressionCreator.
      *
      * @param funcMap A map of function names to the functions themselves.
      */
     public ExpressionCreator(Map<String, FunctionExpression> funcMap, RealValuedExpressionFactory rf,
-                             BooleanValuedExpressionFactory bf){
+                             BooleanValuedExpressionFactory bf) {
         this(funcMap, new ExpressionValidityChecker(funcMap), rf, bf);
     }
 
     // This constructor allows us to ensure that vc is properly configured (i.e. observing Axes)
     // Also implements Dependency Injection
     public ExpressionCreator(Map<String, FunctionExpression> funcMap, ExpressionValidityChecker vc,
-                             RealValuedExpressionFactory rf, BooleanValuedExpressionFactory bf){
+                             RealValuedExpressionFactory rf, BooleanValuedExpressionFactory bf) {
         // We create a new copy of the funcMap rather than just simply assigning to avoid aliasing
-        for (String funcName: funcMap.keySet()){
+        for (String funcName : funcMap.keySet()) {
             this.funcMap.put(funcName, funcMap.get(funcName));
         }
         this.vc = vc;
@@ -59,7 +67,7 @@ public class ExpressionCreator implements PropertyChangeListener{
      */
     @Override
     public void propertyChange(PropertyChangeEvent event) {
-        if ("funcMap".equals(event.getPropertyName())){
+        if ("funcMap".equals(event.getPropertyName())) {
             FunctionExpression exp = (FunctionExpression) event.getNewValue();
             funcMap.put(exp.getItem(), exp);
         }
@@ -68,13 +76,14 @@ public class ExpressionCreator implements PropertyChangeListener{
     /* IMPORTANT FOR EVERYONE TO KNOW!!! ONLY "create" CAN CALL ITS TWO HELPERS BELOW!!! BECAUSE "create" IS THE
        COMPLETE VERSION OF CREATION AS IT HAS ALL CHECKER!!! */
 
-    /** If the input list represents a valid expression, this method builds an expression tree from the input list.
+    /**
+     * If the input list represents a valid expression, this method builds an expression tree from the input list.
      * Otherwise, an exception is thrown.
      *
      * @param terms A list of terms representing a parsed expression input by the user.
      * @return An expression tree representing the expression represented by <terms>
      * @throws InvalidTermException If <terms> represents an invalid expression, then we throw this exception and the
-     * expression tree is not built.
+     *                              expression tree is not built.
      */
     public Expression<?> create(List<String> terms) throws InvalidTermException {
         List<String> minimalTerms = bracketsReduction(terms); // remove unnecessary enclosing brackets.
@@ -87,17 +96,17 @@ public class ExpressionCreator implements PropertyChangeListener{
 
         if (vc.containsOperator(minimalTerms, "Logical") ||
                 vc.containsOperator(minimalTerms, "Comparator")) { //check if logical and comparator operators
-                                                                            // are in the expression.
+            // are in the expression.
             return booleanValuedCreate(minimalTerms); //if so, create boolean valued expression.
-        }
-        else {
+        } else {
             return realValuedCreate(minimalTerms); // If not, create real valued expression.
         }
     }
 
-    /** Converts a (valid) expression (represented as a list) into a Backend.Expression
+    /**
+     * Converts a (valid) expression (represented as a list) into a Backend.Expression
      * Precondition: Should be real-valued expressions, so if there are logical or comparators, then it's likely
-     *        to get into infinite recursion, and example input would be "<=".
+     * to get into infinite recursion, and example input would be "<=".
      *
      * @param terms A list of terms in the expression (see below for how they should be broken up
      * @return A Backend.Expression (AST) representation of the expression
@@ -111,8 +120,7 @@ public class ExpressionCreator implements PropertyChangeListener{
         if (termsSize == 1) {
             String term = terms.get(0); //Its only one term.
             expr = rf.constructExpression(term); //create expression based on that term.
-        }
-        else if (funcMap.containsKey(terms.get(0)) && // check if first term is a function call.
+        } else if (funcMap.containsKey(terms.get(0)) && // check if first term is a function call.
                 vc.enclosedByOuterBrackets(terms.subList(1, termsSize))) { //check if whole expression is one function.
             // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case,
             // where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
@@ -123,8 +131,7 @@ public class ExpressionCreator implements PropertyChangeListener{
             RealValuedExpression[] inputs = findFunctionInputs(terms.subList(2, termsSize - 1));
             //construct expression.
             expr = rf.constructExpression(terms.get(0), inputs, funcMap);
-        }
-        else { //otherwise, there must be some operators within the function. We construct a new expression
+        } else { //otherwise, there must be some operators within the function. We construct a new expression
             // by calling createOnOperators.
             expr = (RealValuedExpression) createOnOperators(terms, operatorType);
         }
@@ -147,8 +154,7 @@ public class ExpressionCreator implements PropertyChangeListener{
         List<String> unchainedTerms = unchainComparators(terms); // Only unchain the outer comparators.
         if (vc.containsOperator(unchainedTerms, "Logical")) {
             operatorType = "Logical";
-        }
-        else { // Thanks to the precondition.
+        } else { // Thanks to the precondition.
             operatorType = "Comparator";
         }
 
@@ -156,8 +162,7 @@ public class ExpressionCreator implements PropertyChangeListener{
     }
 
     /**
-     *
-     * @param terms The list of terms as accepted by the create method.
+     * @param terms        The list of terms as accepted by the create method.
      * @param operatorType The type of operator we will be splitting <terms> based on. Can be "Logical" or "Comparator"
      *                     or "Arithmetic"
      * @return A RealValuedExpression if operatorType is "Arithmetic", a BooleanValuedExpression if operator is
@@ -225,12 +230,12 @@ public class ExpressionCreator implements PropertyChangeListener{
         Map<String, List<Integer>> comparatorsAndIndices = vc.getOuterItems(terms, constants.getComparators());
 
         List<Integer> indices = new ArrayList<>();
-        for (List<Integer> subIndices: comparatorsAndIndices.values()) {
+        for (List<Integer> subIndices : comparatorsAndIndices.values()) {
             indices.addAll(subIndices);
         }
         Collections.sort(indices);
 
-        if (indices.size() <= 1){
+        if (indices.size() <= 1) {
             return terms;
         }
 
@@ -243,8 +248,7 @@ public class ExpressionCreator implements PropertyChangeListener{
             unchainedTerms.addAll(terms.subList(0, secondComparatorIndex));
             unchainedTerms.add("&");
             unchainedTerms.addAll(unchainComparators(terms.subList(firstComparatorIndex + 1, terms.size())));
-        }
-        else {
+        } else {
             unchainedTerms.addAll(terms.subList(0, secondComparatorIndex + 1));
             if (secondComparatorIndex <= terms.size() - 2) {
                 unchainedTerms.addAll(unchainComparators(terms.subList(secondComparatorIndex + 1, terms.size())));
@@ -253,7 +257,8 @@ public class ExpressionCreator implements PropertyChangeListener{
         return unchainedTerms;
     }
 
-    /** Remove brackets which are enclosing the expression represented by the input list <terms>.
+    /**
+     * Remove brackets which are enclosing the expression represented by the input list <terms>.
      *
      * @param terms List representing terms of the expression input by the user.
      * @return A list without unnecessary brackets enclosing the expression. Ex: ["(","(", "cos","(","x",")",")",")"]
@@ -267,16 +272,17 @@ public class ExpressionCreator implements PropertyChangeListener{
         return terms_copy;
     }
 
-    /** A method which returns the list of expressions corresponding to the inputs of a function.
+    /**
+     * A method which returns the list of expressions corresponding to the inputs of a function.
      *
      * @param terms List of terms that are the inputs to some function with the function name and brackets removed.
      * @return A list of Expressions where each expression is a separate input to the function.
      */
-    private RealValuedExpression[] findFunctionInputs (List<String> terms) throws InvalidTermException {
+    private RealValuedExpression[] findFunctionInputs(List<String> terms) throws InvalidTermException {
         List<Integer> commaIndices = vc.getOuterItems(terms, List.of(",")).get(","); //get list of the indices where
         // commas appear outside any brackets. Between the commas is where the inputs are (almost).
 
-        if (commaIndices == null){
+        if (commaIndices == null) {
             // corresponds to only 1 input
             commaIndices = new ArrayList<>();
         }
@@ -285,7 +291,7 @@ public class ExpressionCreator implements PropertyChangeListener{
         commaIndices.add(terms.size()); // Add index of the final term so that there is an input between every index in the list, starting from 0
         RealValuedExpression[] inputs = new RealValuedExpression[commaIndices.size()];
 
-        for (int i = 0; i < inputs.length; i++){
+        for (int i = 0; i < inputs.length; i++) {
             // this list represents all terms within a pair of commas, thus representing one input to the function.
             List<String> inputTerm = terms.subList(startInd, commaIndices.get(i));
             vc.realValuedPreconditionCheck(inputTerm); //check each input is a RealValuedExpression.

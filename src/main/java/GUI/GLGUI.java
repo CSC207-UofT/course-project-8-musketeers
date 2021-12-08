@@ -16,10 +16,10 @@ import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.lwjgl.opengl.GL.*;
-import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
 /**
  * A User Interface which uses GLFW
@@ -55,6 +55,7 @@ public class GLGUI implements GUI {
         this.imgDim = imgDim;
         textureTest = true;
     }
+
     public GLGUI(Grapher grapher, int imgDim) {
         this.imgDim = imgDim;
         this.guiHelper = new GUIHelper(grapher, imgDim);
@@ -84,21 +85,22 @@ public class GLGUI implements GUI {
 
     /**
      * Converts an int[] RGBA data to a GL texture
-     *   set to uniform 0
+     * set to uniform 0
+     *
      * @param pixels array representing image
-     * @param iw width of input
-     * @param ih height of input
+     * @param iw     width of input
+     * @param ih     height of input
      */
     private static void imgToTex(int[] pixels, int iw, int ih) {
         // Convert int[] RGBA to packed byte[] RGBA for OpenGL use
         ByteBuffer tbuf = ByteBuffer.allocateDirect(4 * iw * ih);
-        byte[] pixbytes = new byte[4*iw*ih];
-        for (int i = 0; i < iw*ih; i++) {
+        byte[] pixbytes = new byte[4 * iw * ih];
+        for (int i = 0; i < iw * ih; i++) {
             RGBA rgba = new RGBA(pixels[i]);
-            pixbytes[4*i] = (byte)(rgba.r);
-            pixbytes[4*i+1] = (byte)(rgba.g);
-            pixbytes[4*i+2] = (byte)(rgba.b);
-            pixbytes[4*i+3] = (byte)(rgba.a);
+            pixbytes[4 * i] = (byte) (rgba.r);
+            pixbytes[4 * i + 1] = (byte) (rgba.g);
+            pixbytes[4 * i + 2] = (byte) (rgba.b);
+            pixbytes[4 * i + 3] = (byte) (rgba.a);
         }
         tbuf.put(pixbytes);
         tbuf.flip();
@@ -113,6 +115,7 @@ public class GLGUI implements GUI {
 
     /**
      * Compiles and links GL shader templates
+     *
      * @param eq an expression with x and y
      */
     public static void makeShader(String eq) throws IOException {
@@ -198,6 +201,7 @@ public class GLGUI implements GUI {
 
     /**
      * Enters mainloop for UI window
+     *
      * @param window handle of the window
      */
     public void startLoop(long window) {
@@ -222,6 +226,7 @@ public class GLGUI implements GUI {
 
     /**
      * Method that creates a GLFW window
+     *
      * @return window handle
      */
     private static long createWindow() {
@@ -234,8 +239,8 @@ public class GLGUI implements GUI {
     }
 
     private static void cursor_pos_callback(long l, double x, double y) {
-        mousex = (float)(x-400)/200.f;
-        mousey = (float)(y-400)/200.f;
+        mousex = (float) (x - 400) / 200.f;
+        mousey = (float) (y - 400) / 200.f;
         glUniform1f(0, mousex + zx);
         glUniform1f(1, mousey + zy);
 
@@ -244,13 +249,11 @@ public class GLGUI implements GUI {
                 initialMouseX = mousex;
                 initialMouseY = mousey;
                 prevDragMove = true;
-            }
-            else {
+            } else {
                 changeInMouseX = -(mousex - initialMouseX) * graphScale / 5;  // TODO: Make '5' a variable? It's like a normalizing constant.
                 changeInMouseY = (mousey - initialMouseY) * graphScale / 5;  // TODO: Make '5' a variable? It's like a normalizing constant. Or make it another option move fast/slow mode?!!!
             }
-        }
-        else {
+        } else {
             prevMouseX += changeInMouseX;
             prevMouseY += changeInMouseY;
             changeInMouseX = 0;
@@ -273,8 +276,7 @@ public class GLGUI implements GUI {
         if (action == GLFW_PRESS) {
             if (key == GLFW_KEY_UP) {
                 graphScale *= scaleInterval;
-            }
-            else if (key == GLFW_KEY_DOWN) {
+            } else if (key == GLFW_KEY_DOWN) {
                 graphScale /= scaleInterval;
             }
         }

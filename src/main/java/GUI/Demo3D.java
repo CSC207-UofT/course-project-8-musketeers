@@ -13,10 +13,10 @@ import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static org.lwjgl.opengl.GL.*;
-import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL33.*;
+import static org.lwjgl.system.MemoryUtil.*;
 
 
 public class Demo3D {
@@ -28,7 +28,7 @@ public class Demo3D {
     static float mousex;
     static float mousey;
 
-    public Demo3D () {
+    public Demo3D() {
     }
 
     public static void makeShader() throws IOException {
@@ -63,8 +63,8 @@ public class Demo3D {
     }
 
     private static void cursor_pos_callback(long l, double x, double y) {
-        mousex = (float)(x-400)/200.f;
-        mousey = -(float)(y-400)/200.f;
+        mousex = (float) (x - 400) / 200.f;
+        mousey = -(float) (y - 400) / 200.f;
         glUniform1f(0, mousex + zx);
         glUniform1f(1, mousey + zy);
     }
@@ -76,11 +76,11 @@ public class Demo3D {
         glfwSetMouseButtonCallback(window, Demo3D::mouseCallback);
         glfwSetCursorPosCallback(window, Demo3D::cursor_pos_callback);
 
-        FloatBuffer buffer = memAllocFloat(3 * 2*2);
+        FloatBuffer buffer = memAllocFloat(3 * 2 * 2);
         float[] vtest = {
-                -0.9f,-0.9f,0.9f,-0.9f,-0.9f,0.9f,
-                0.9f,-0.9f,-0.9f,0.9f,0.9f,0.9f
-            };
+                -0.9f, -0.9f, 0.9f, -0.9f, -0.9f, 0.9f,
+                0.9f, -0.9f, -0.9f, 0.9f, 0.9f, 0.9f
+        };
         buffer.put(vtest);
 
         buffer.flip();
@@ -134,8 +134,10 @@ public class Demo3D {
             System.out.println("Pressed! " + clicks);
             if (button == GLFW_MOUSE_BUTTON_LEFT) {
                 clicks += 1;
-            } else {clicks -= 1;}
-            glUniform1f(2, 1.f/(float)Math.pow(1.1f,clicks));
+            } else {
+                clicks -= 1;
+            }
+            glUniform1f(2, 1.f / (float) Math.pow(1.1f, clicks));
 
             zx += mousex;
             zy += mousey;
