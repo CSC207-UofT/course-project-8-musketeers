@@ -25,7 +25,7 @@ public class CommandLineInterface {
      */
     public static void main(String[] args) {
         CLIHelper cliHelper = new CLIHelper();
-        ArrayList<String> userInputs = new ArrayList<>(Arrays.asList(args));
+        List<String> userInputs = new ArrayList<>(Arrays.asList(args));
 
         // An array of strings containing accepted Commands. This is open to extension as other parts
         // of the code become available to be merged into this CLI.

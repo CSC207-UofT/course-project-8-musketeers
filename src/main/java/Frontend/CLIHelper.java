@@ -20,11 +20,11 @@ import java.util.List;
 public class CLIHelper {
     /**
      * Simple try and catch statements to save axes.
-     * @param userInputs an ArrayList containing user inputs
+     * @param userInputs a List containing user inputs
      * @param axes an instance of Axes
      * @param auc an instance of AxesUseCase
      */
-    public void trySavingAxes(ArrayList<String> userInputs,
+    public void trySavingAxes(List<String> userInputs,
                               Axes axes, AxesUseCase auc) {
         String filename = getCommandArgument("-save", userInputs);
         try {
@@ -37,10 +37,10 @@ public class CLIHelper {
 
     /**
      * Starts any system which implements the GUI interface.
-     * @param userInputs an ArrayList containing user inputs
+     * @param userInputs a List containing user inputs
      * @param gui an instance of a GUI class
      */
-    public void startGUI(ArrayList<String> userInputs,
+    public void startGUI(List<String> userInputs,
                          GUI gui) {
         gui.setgType(getCommandArgument("-graph", userInputs));
         gui.initGUI();
@@ -48,10 +48,10 @@ public class CLIHelper {
 
     /**
      * Simple try and catch statements to graph and save the resulting image.
-     * @param userInputs an ArrayList containing user inputs
+     * @param userInputs a List containing user inputs
      * @param grapher an instance of Grapher
      */
-    public int[] tryGraphingImage(ArrayList<String> userInputs,
+    public int[] tryGraphingImage(List<String> userInputs,
                                           Grapher grapher) {
         int size = 512;
         String gType = getCommandArgument("-graph", userInputs);
@@ -79,12 +79,12 @@ public class CLIHelper {
 
     /**
      * Simple try and catch statements to load axes.
-     * @param userInputs an ArrayList of strings containing user inputs
+     * @param userInputs a List of strings containing user inputs
      * @param axes an instance of Axes
      * @param auc an instance of AxesUseCase
      * @return an instance of Axes, either the same one from axes or an updated one (if no errors were thrown)
      */
-    public Axes tryLoadingAxes(ArrayList<String> userInputs,
+    public Axes tryLoadingAxes(List<String> userInputs,
                                Axes axes, AxesUseCase auc) {
         String filename = getCommandArgument("-load", userInputs);
         try {
@@ -100,11 +100,11 @@ public class CLIHelper {
 
     /**
      * Simple try and catch statements to set origin.
-     * @param userInputs an ArrayList of strings containing user inputs
+     * @param userInputs a List of strings containing user inputs
      * @param axes an instance of Axes
      * @param auc an instance of AxesUseCase
      */
-    public void trySettingOrigin(ArrayList<String> userInputs,
+    public void trySettingOrigin(List<String> userInputs,
                                  Axes axes, AxesUseCase auc) {
         String rawpos = getCommandArgument("-pos", userInputs);
         float x = Float.parseFloat(rawpos.split(",")[0]);
@@ -115,9 +115,9 @@ public class CLIHelper {
     /**
      * Simple try and catch statements to save image.
      * @param pixels Array of integers corresponding to the colour of each pixel
-     * @param userInputs an ArrayList of strings containing user inputs
+     * @param userInputs a List of strings containing user inputs
      */
-    public void trySavingImage(int[] pixels, ArrayList<String> userInputs) {
+    public void trySavingImage(int[] pixels, List<String> userInputs) {
         try {
             String name;
             if (userInputs.contains("-name")) {
