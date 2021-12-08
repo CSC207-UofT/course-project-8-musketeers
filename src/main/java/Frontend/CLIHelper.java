@@ -18,6 +18,17 @@ import java.util.List;
  * A helper class of CommandLineInterface.java containing several public and private helper methods.
  */
 public class CLIHelper {
+    final String eqCommand = "-eq";
+    final String dimCommand = "-dim";
+    final String graphCommand = "-graph";
+    final String saveCommand = "-save";
+    final String loadCommand = "-load";
+    final String posCommand = "-pos";
+    final String domainCommand = "-domain";
+    final String interactiveCommand = "-interactive";
+    final String nameCommand = "-name";
+    final String sizeCommand = "-size";
+
     /**
      * Simple try and catch statements to save axes.
      * @param userInputs a List containing user inputs
@@ -26,7 +37,7 @@ public class CLIHelper {
      */
     public void trySavingAxes(List<String> userInputs,
                               Axes axes, AxesUseCase auc) {
-        String filename = getCommandArgument("-save", userInputs);
+        String filename = getCommandArgument(saveCommand, userInputs);
         try {
             auc.saveAxes(filename, axes);
         } catch (IOException e) {
@@ -42,7 +53,7 @@ public class CLIHelper {
      */
     public void startGUI(List<String> userInputs,
                          GUI gui) {
-        gui.setgType(getCommandArgument("-graph", userInputs));
+        gui.setgType(getCommandArgument(graphCommand, userInputs));
         gui.initGUI();
     }
 
@@ -54,7 +65,7 @@ public class CLIHelper {
     public int[] tryGraphingImage(List<String> userInputs,
                                           Grapher grapher) {
         int size = getCustomSize(userInputs);
-        String gType = getCommandArgument("-graph", userInputs);
+        String gType = getCommandArgument(graphCommand, userInputs);
         return grapher.graph(size, gType);
     }
 
@@ -86,7 +97,7 @@ public class CLIHelper {
      */
     public Axes tryLoadingAxes(List<String> userInputs,
                                Axes axes, AxesUseCase auc) {
-        String filename = getCommandArgument("-load", userInputs);
+        String filename = getCommandArgument(loadCommand, userInputs);
         try {
             axes = auc.loadAxes(filename);
         } catch (IOException e) {
@@ -106,7 +117,7 @@ public class CLIHelper {
      */
     public void trySettingOrigin(List<String> userInputs,
                                  Axes axes, AxesUseCase auc) {
-        String rawpos = getCommandArgument("-pos", userInputs);
+        String rawpos = getCommandArgument(posCommand, userInputs);
         float x = Float.parseFloat(rawpos.split(",")[0]);
         float y = Float.parseFloat(rawpos.split(",")[1]);
         auc.setOrigin(new float[]{x,y}, axes);
@@ -137,8 +148,8 @@ public class CLIHelper {
      */
     public int getCustomSize(List<String> userInputs) {
         int size = 512;
-        if (userInputs.contains("-size")) {
-            size = Integer.parseInt(getCommandArgument("-size", userInputs));
+        if (userInputs.contains(sizeCommand)) {
+            size = Integer.parseInt(getCommandArgument(sizeCommand, userInputs));
         }
         return size;
     }
@@ -151,8 +162,8 @@ public class CLIHelper {
      */
     public String getCustomName(List<String> userInputs) {
         String name = "graph.png";
-        if (userInputs.contains("-name")) {
-            name = getCommandArgument("-name", userInputs) + ".png";
+        if (userInputs.contains(nameCommand)) {
+            name = getCommandArgument(nameCommand, userInputs) + ".png";
         }
         return name;
     }
@@ -215,7 +226,7 @@ public class CLIHelper {
      */
     private boolean isDuplicateCommandInUserInput(String[] acceptedCommands, List<String> userInputs) {
         ArrayList<String> listOfInputCommands = new ArrayList<>();
-        List<String> listOfAllowedDuplicateCommands = Arrays.asList("-eq", "-domain");
+        List<String> listOfAllowedDuplicateCommands = Arrays.asList(eqCommand, domainCommand);
         for (int i = 0; i < userInputs.size(); i += 2) {
             listOfInputCommands.add(userInputs.get(i));
         }
@@ -261,10 +272,10 @@ public class CLIHelper {
         } else if (secondElementOfPair == null) {
             System.out.println("\"" + firstElementOfPair + "\" has no valid response. Please try again.");
             return false;
-        } else if (firstElementOfPair.equals("-dim") && !isPositiveInteger(secondElementOfPair)) {
+        } else if (firstElementOfPair.equals(dimCommand) && isNotPositiveInteger(secondElementOfPair)) {
             System.out.println("-dim needs to be followed by a positive integer. Please try again.");
             return false;
-        } else if (firstElementOfPair.equals("-size") && !isPositiveInteger(secondElementOfPair)) {
+        } else if (firstElementOfPair.equals(sizeCommand) && isNotPositiveInteger(secondElementOfPair)) {
             System.out.println("-size needs to be followed by a positive integer. Please try again.");
             return false;
         }
@@ -273,30 +284,31 @@ public class CLIHelper {
 
     /**
      * Adapted from https://stackoverflow.com/questions/237159/
-     * whats-the-best-way-to-check-if-a-string-represents-an-integer-in-java. Checks whether an input string
-     * is a valid positive integer.
+     * whats-the-best-way-to-check-if-a-string-represents-an-integer-in-java. Returns true if the input string
+     * is not a positive integer. This includes cases where the input string is not an integer or a negative
+     * integer.
      * @param userInput The user input
-     * @return whether the user input is a valid positive integer
+     * @return true if userInput is not a positive integer
      */
-    private boolean isPositiveInteger(String userInput) {
+    private boolean isNotPositiveInteger(String userInput) {
         if (userInput == null) {
-            return false;
+            return true;
         }
         int length = userInput.length();
         if (length == 0) {
-            return false;
+            return true;
         }
         int i = 0;
         if (userInput.charAt(0) == '-' || userInput.equals("0")) {
-            return false;
+            return true;
         }
         for (; i < length; i++) {
             char c = userInput.charAt(i);
             if (c < '0' || c > '9') {
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
@@ -309,8 +321,8 @@ public class CLIHelper {
 
         // TODO: Move commands to constants
         for(int i = 0; i < arguments.length - 3; i+=2){
-            if (arguments[i].equals("-eq")){
-                if(arguments[i + 2].equals("-domain")) {
+            if (arguments[i].equals(eqCommand)){
+                if(arguments[i + 2].equals(domainCommand)) {
                     equationsAndDomains.add(new String[]{arguments[i + 1], arguments[i + 3]});
                 } else {
                     equationsAndDomains.add(new String[]{arguments[i + 1]});

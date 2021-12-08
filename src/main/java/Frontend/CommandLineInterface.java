@@ -29,8 +29,18 @@ public class CommandLineInterface {
 
         // An array of strings containing accepted Commands. This is open to extension as other parts
         // of the code become available to be merged into this CLI.
-        String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load",
-                "-pos", "-domain", "-interactive", "-name", "-size"}; // TODO: Move to Constants?
+        String[] acceptedCommands = {
+                cliHelper.eqCommand,
+                cliHelper.dimCommand,
+                cliHelper.graphCommand,
+                cliHelper.saveCommand,
+                cliHelper.loadCommand,
+                cliHelper.posCommand,
+                cliHelper.domainCommand,
+                cliHelper.interactiveCommand,
+                cliHelper.nameCommand,
+                cliHelper.sizeCommand
+        };
 
         if (!cliHelper.checkValidInput(acceptedCommands, userInputs)) {
             return;
@@ -39,10 +49,10 @@ public class CommandLineInterface {
         AxesUseCase auc = new AxesUseCase();
         Axes axes = auc.createAxes();
 
-        if (userInputs.contains("-load")) {
+        if (userInputs.contains(cliHelper.loadCommand)) {
             axes = cliHelper.tryLoadingAxes(userInputs, axes, auc);
         }
-        if (userInputs.contains("-pos")) {
+        if (userInputs.contains(cliHelper.posCommand)) {
             cliHelper.trySettingOrigin(userInputs, axes, auc);
         }
 
@@ -52,14 +62,14 @@ public class CommandLineInterface {
         cliHelper.tryInterpretingInput(axes, auc, er, equationsAndDomains);
         int[] graphedImage = cliHelper.tryGraphingImage(userInputs, grapher);
 
-        if (userInputs.contains("-interactive")) {
+        if (userInputs.contains(cliHelper.interactiveCommand)) {
             GUI gui = new GLGUI(grapher, cliHelper.getCustomSize(userInputs));
             cliHelper.startGUI(userInputs, gui);
         } else {
             cliHelper.trySavingImage(graphedImage, userInputs);
         }
 
-        if (userInputs.contains("-save")) {
+        if (userInputs.contains(cliHelper.saveCommand)) {
             cliHelper.trySavingAxes(userInputs, axes, auc);
         }
     }
