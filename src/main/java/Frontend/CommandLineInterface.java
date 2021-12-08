@@ -30,7 +30,7 @@ public class CommandLineInterface {
         // An array of strings containing accepted Commands. This is open to extension as other parts
         // of the code become available to be merged into this CLI.
         String[] acceptedCommands = {"-eq", "-dim", "-graph", "-save", "-load",
-                "-pos", "-domain", "-interactive", "-name"}; // TODO: Move to Constants?
+                "-pos", "-domain", "-interactive", "-name", "-size"}; // TODO: Move to Constants?
 
         if (!cliHelper.checkValidInput(acceptedCommands, userInputs)) {
             return;
@@ -53,7 +53,7 @@ public class CommandLineInterface {
         int[] graphedImage = cliHelper.tryGraphingImage(userInputs, grapher);
 
         if (userInputs.contains("-interactive")) {
-            GUI gui = new GLGUI(grapher, 512);
+            GUI gui = new GLGUI(grapher, cliHelper.getCustomSize(userInputs));
             cliHelper.startGUI(userInputs, gui);
         } else {
             cliHelper.trySavingImage(graphedImage, userInputs);

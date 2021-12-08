@@ -53,7 +53,7 @@ public class CLIHelper {
      */
     public int[] tryGraphingImage(List<String> userInputs,
                                           Grapher grapher) {
-        int size = 512;
+        int size = getCustomSize(userInputs);
         String gType = getCommandArgument("-graph", userInputs);
         return grapher.graph(size, gType);
     }
@@ -119,19 +119,42 @@ public class CLIHelper {
      */
     public void trySavingImage(int[] pixels, List<String> userInputs) {
         try {
-            String name;
-            if (userInputs.contains("-name")) {
-                name = getCommandArgument("-name", userInputs) + ".png";
-            } else {
-                name = "graph.png";
-            }
-            int size = 512;
+            String name = getCustomName(userInputs);
+            int size = getCustomSize(userInputs);
             ImageWriter writer = new ImageWriter();
             writer.writeImage(pixels, size, size, name);
         } catch (IOException e) {
             System.out.println("Image could not be saved");
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Return a (potentially modified) size value. The default value is 512,
+     * if no "-size" command was specified.
+     * @param userInputs a List of strings containing user inputs
+     * @return a modified size, or 512 if no "-size" command is present in userInputs
+     */
+    public int getCustomSize(List<String> userInputs) {
+        int size = 512;
+        if (userInputs.contains("-size")) {
+            size = Integer.parseInt(getCommandArgument("-size", userInputs));
+        }
+        return size;
+    }
+
+    /**
+     * Return a (potentially modified) name value. The default value is "graph.png",
+     * if no "-name" command was specified.
+     * @param userInputs a List of strings containing user inputs
+     * @return a modified name, or "graph.png" if no "-name" command is present in userInputs
+     */
+    public String getCustomName(List<String> userInputs) {
+        String name = "graph.png";
+        if (userInputs.contains("-name")) {
+            name = getCommandArgument("-name", userInputs) + ".png";
+        }
+        return name;
     }
 
     /**
@@ -221,8 +244,8 @@ public class CLIHelper {
      * A pair of the user input is VALID if all the following is satisfied:
      * 1. the first element of the pair (which is a format of "-****") is in the array of accepted commands.
      * 2. the second element of the pair is not null (null implies one or more commands had missing responses)
-     * 3. the first element of the pair is "-dim" and the second element of the pair (i.e., response) is a
-     * positive integer (the dimension of a function can only be a positive dimension)
+     * 3. the first element of the pair is "-dim" or "-size" and the second element of the pair (i.e., response)
+     * is a positive integer (the dimension of a function can only be a positive dimension)
      * We expect there will be more checks to be done in the CLI level.
      * Thus, this method is open for extension.
      * @param acceptedCommands an array of String containing accepted commands
@@ -232,18 +255,20 @@ public class CLIHelper {
      */
     private boolean isUserInputPairValid(String[] acceptedCommands, String firstElementOfPair,
                                          String secondElementOfPair) {
-        boolean userInputPairIsValid = true;
         if (!Arrays.asList(acceptedCommands).contains(firstElementOfPair)) {
             System.out.println("\"" + firstElementOfPair + "\" is not a valid command. Please try again.");
-            userInputPairIsValid = false;
+            return false;
         } else if (secondElementOfPair == null) {
             System.out.println("\"" + firstElementOfPair + "\" has no valid response. Please try again.");
-            userInputPairIsValid = false;
+            return false;
         } else if (firstElementOfPair.equals("-dim") && !isPositiveInteger(secondElementOfPair)) {
             System.out.println("-dim needs to be followed by a positive integer. Please try again.");
-            userInputPairIsValid = false;
+            return false;
+        } else if (firstElementOfPair.equals("-size") && !isPositiveInteger(secondElementOfPair)) {
+            System.out.println("-size needs to be followed by a positive integer. Please try again.");
+            return false;
         }
-        return userInputPairIsValid;
+        return true;
     }
 
     /**
