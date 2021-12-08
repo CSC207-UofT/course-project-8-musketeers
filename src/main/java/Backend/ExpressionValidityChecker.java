@@ -66,44 +66,22 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
      */
     public void preCheck(List<String> terms) throws InvalidTermException {
         if (terms.size() == 0) {
-            throw new BaseCaseCreatorException("NullExpressionException!");
+            throw new BaseCaseCreatorException(BaseCaseCreatorException.ERRORMESSAGE_EMPTY_EXPRESSION);
+        } else if (!checkAllTermsValid(terms)) { //check if all terms are terms we can interpret.
+            throw new CompoundCaseCreatorException("InvalidTermException!");
+        } else if (!checkMatchingBrackets(terms)) { //Check if each bracket has a corresponding bracket and we dont
+                                                    // any extra brackets.
+            throw new CompoundCaseCreatorException("UnmatchedBracketsException!");
+        } else if (!checkFunctionBrackets(terms)) { //Check that brackets
+            throw new CompoundCaseCreatorException("FunctionBracketsException!");
         }
-        else if (terms.size() == 1) { // Important (e.g. for <findFunctionInputs> and <createOnOperators> to catch the
-            // correct exception (BaseCaseException rather than potentially InvalidTermException)).
-            String term = terms.get(0);
-            if (!(checkNumber(term) | constants.getVariables().contains(term))) {
-                throw new BaseCaseCreatorException("InvalidSingleExpressionException!");
-            }
+        else if (!checkCommasWithinFunctions(terms)) {
+            throw new CompoundCaseCreatorException("CommasNotWithinFunctions!");
         }
-        else{
-            if (!checkAllTermsValid(terms)) { //check if all terms are terms we can interpret.
-                throw new CompoundCaseCreatorException("InvalidTermException!");
-            } else if (!checkMatchingBrackets(terms)) { //Check if each bracket has a corresponding bracket and we dont
-                                                        // any extra brackets.
-                throw new CompoundCaseCreatorException("UnmatchedBracketsException!");
-            } else if (!checkFunctionBrackets(terms)) { //Check that brackets
-                throw new CompoundCaseCreatorException("FunctionBracketsException!");
-            }
-            else if (!checkCommasWithinFunctions(terms)) {
-                throw new CompoundCaseCreatorException("CommasNotWithinFunctions!");
-            }
-            else if (!checkMultipleTermsConnection(terms)) {
-                throw new CompoundCaseCreatorException("NonConnectedMultipleTermsException!");
-            } else if (!checkFunctionInputSize(terms)) {
-                throw new CompoundCaseCreatorException("FunctionInputsSizeException!");
-            }
-        }
-    }
-
-    /** A method that checks whether any logical or comparator operators appear in the input terms, and
-     * throws an exception if they appear.
-     *
-     * @param terms The list of terms as accepted by the create method.
-     * @throws CompoundCaseCreatorException thrown if the expression contains logical or comparator operators.
-     */
-    public void realValuedPreconditionCheck(List<String> terms) throws CompoundCaseCreatorException {
-        if (containsOperator(terms, "Logical") || containsOperator(terms, "Comparator")) {
-            throw new CompoundCaseCreatorException("NotRealValuedExpressionException!");
+        else if (!checkMultipleTermsConnection(terms)) {
+            throw new CompoundCaseCreatorException("NonConnectedMultipleTermsException!");
+        } else if (!checkFunctionInputSize(terms)) {
+            throw new CompoundCaseCreatorException("FunctionInputsSizeException!");
         }
     }
 
@@ -130,7 +108,6 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
     private boolean checkAllTermsValid(List<String> terms) {
         for (int i = 0; i <= terms.size() - 1; i++) {
             String term = terms.get(i);
-
 
             if (!(checkNumber(term) | // If a term is not a number,
                     constants.getVariables().contains(term) | // or a variable,

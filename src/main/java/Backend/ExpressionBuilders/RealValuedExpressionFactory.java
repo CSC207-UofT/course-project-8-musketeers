@@ -1,6 +1,7 @@
 package Backend.ExpressionBuilders;
 
 import Backend.Constants;
+import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
 import Backend.Exceptions.EmptyBuilderException;
 import Backend.Exceptions.InvalidTermException;
@@ -10,12 +11,20 @@ import java.util.Map;
 
 public class RealValuedExpressionFactory implements ExpressionFactory<RealValuedExpression> {
     // Below base case: Construct Number or Variable.
-    public RealValuedExpression constructExpression(String input){
+    public RealValuedExpression constructExpression(String input) throws InvalidTermException {
         RealValuedExpression expr;
         if (this.constants.getVariables().contains(input)){
             expr = new VariableExpression(input);
         }
-        else expr = new NumberExpression(input);
+        else { // only other valid possibility is for it to be a number and not a variable.
+            try {
+                Float.parseFloat(input); // check whether "term" represents a valid float.
+            } catch (NumberFormatException e) {
+                throw new BaseCaseCreatorException(BaseCaseCreatorException.ERRORMESSAGE_INVALID_SINGLE_TERM);
+            }
+
+            expr = new NumberExpression(input);
+        }
 
         return expr;
     }
@@ -52,14 +61,19 @@ public class RealValuedExpressionFactory implements ExpressionFactory<RealValued
     }
 
     // Below should construct functions (including build-in and user-defined functions)
-    public RealValuedExpression constructExpression(String funcName, RealValuedExpression[] inputs,
+    public RealValuedExpression constructExpression(String funcName, Expression<?>[] inputs,
                                                     Map<String, FunctionExpression> funcMap)
-            throws EmptyBuilderException {
-        FunctionExpression oldFunc = funcMap.get(funcName);
+            throws InvalidTermException {
+        for (Expression<?> expr: inputs){
+            if (!(expr instanceof RealValuedExpression)) {
+                throw new CompoundCaseCreatorException("Invalid function input type: RealValuedExpression required");
+            }
+        }
 
+        FunctionExpression oldFunc = funcMap.get(funcName);
         // We create a new copy of the function other the set inputs below would overwrite the original values
         FunctionExpression newFunc = new CustomFunctionExpression(funcName, oldFunc.getVariables(), oldFunc);
-        newFunc.setInputs(inputs);
+        newFunc.setInputs((RealValuedExpression[])inputs);
 
         return newFunc;
     }
