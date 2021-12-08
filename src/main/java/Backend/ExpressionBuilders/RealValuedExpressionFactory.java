@@ -64,6 +64,11 @@ public class RealValuedExpressionFactory implements ExpressionFactory<RealValued
     public RealValuedExpression constructExpression(String funcName, Expression<?>[] inputs,
                                                     Map<String, FunctionExpression> funcMap)
             throws InvalidTermException {
+        // This is all we need to check if the function was given enough inputs.
+        if (funcMap.get(funcName).getInputs().length != inputs.length){
+            throw new CompoundCaseCreatorException("FunctionInputsSizeException!");
+        }
+
         for (Expression<?> expr: inputs){
             if (!(expr instanceof RealValuedExpression)) {
                 throw new CompoundCaseCreatorException("Invalid function input type: RealValuedExpression required");

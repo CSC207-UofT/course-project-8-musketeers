@@ -9,7 +9,6 @@ public class CompoundCaseCreatorException extends InvalidTermException {
     public static final String ERRORMESSAGE_INVALID_FUNCTION_INPUT = "InvalidFunctionInputsException!";
     public static final String ERRORMESSAGE_FUNCTION_INPUT_SIZE = "FunctionInputsSizeException!";
     public static final String ERRORMESSAGE_COMMAS_OUTSIDE_FUNCTIONS = "CommasNotWithinFunctions!";
-    public static final String ERRORMESSAGE_NONCONNECTED_MULTIPLE_TERMS = "NonConnectedMultipleTermsException";
 
     public CompoundCaseCreatorException(String message) {
         super(message);

@@ -95,9 +95,18 @@ public class ExpressionCreator implements PropertyChangeListener{
         if (terms.size() == 0) { // if terms is empty, throw an exception
             throw new BaseCaseCreatorException(BaseCaseCreatorException.ERRORMESSAGE_EMPTY_EXPRESSION);
         }
-        else if (validityChecker.containsOperator(minimalTerms, "Logical") ||
-                validityChecker.containsOperator(minimalTerms, "Comparator")) { //check if logical and comparator operators
-                                                                            // are in the expression.
+        /*
+         * Only checking the operators of outer terms i.e. minimalOuterTerms better enables us to do error checking.
+         * For example, if we didn't only check outer operators, (1 < 2) + 3 would be constructed as a boolean
+         * expression with operator <, but we want to detect the error that there's an invalid operand type to +,
+         * and detecting this error requires us to try and build the real-valued expression of +.
+         */
+        List<String> minimalOuterTerms = new ArrayList<>(validityChecker.getOuterItems(minimalTerms,
+                constants.getAllOperators()).keySet());
+
+        // check if there are logical operators or comparators in the outer operators.
+        if (validityChecker.containsOperator(minimalOuterTerms, "Logical") ||
+                validityChecker.containsOperator(minimalOuterTerms, "Comparator")) {
             return booleanValuedCreate(minimalTerms); //if so, create boolean valued expression.
         }
         else {
@@ -154,7 +163,17 @@ public class ExpressionCreator implements PropertyChangeListener{
         // No base case with terms.size() == 0 because "no term => no logical and comparator => realVal".
 
         List<String> unchainedTerms = unchainComparators(terms); // Only unchain the outer comparators.
-        if (validityChecker.containsOperator(unchainedTerms, "Logical")) {
+        /*
+         * Only checking the operators of outer terms i.e. minimalOuterTerms better enables us to do error checking.
+         * For example, if we didn't only check outer operators, (1 & 2) < 3 would be constructed as an expression with,
+         * with operator &. However, we want to detect the error that there's an invalid operand type to <,
+         * which requires us to try and build the expression for <.
+         */
+        List<String> outerTerms = new ArrayList<>(validityChecker.getOuterItems(unchainedTerms,
+                constants.getAllOperators()).keySet());
+
+        // check if there are logical operators or comparators in the outer operators.
+        if (validityChecker.containsOperator(outerTerms, "Logical")) {
             operatorType = "Logical";
         }
         else { // Thanks to the precondition.
@@ -207,8 +226,8 @@ public class ExpressionCreator implements PropertyChangeListener{
 
                 // of the expression match what is expected.
                 try {  // check if any issues arise from creating an expression from <leftTerms> and <rightTerms>.
-                    lExpr = create(leftTerms);
-                    rExpr = create(rightTerms);
+                    lExpr = createRecursiveStep(leftTerms);
+                    rExpr = createRecursiveStep(rightTerms);
                 } catch (BaseCaseCreatorException e) { //throw an exception if either is invalid.
                     throw new CompoundCaseCreatorException(CompoundCaseCreatorException.ERRORMESSAGE_INVALID_OPERAND);
                 }
@@ -297,7 +316,7 @@ public class ExpressionCreator implements PropertyChangeListener{
             // this list represents all terms within a pair of commas, thus representing one input to the function.
             List<String> inputTerm = terms.subList(startInd, commaIndices.get(i));
             try { // Ensure that each input can be constructed as an expression (otherwise it's an invalid input).
-                Expression<?> inputExp = create(inputTerm);
+                Expression<?> inputExp = createRecursiveStep(inputTerm);
                 inputs[i] = inputExp; // Add the expression for this input.
                 startInd = commaIndices.get(i) + 1;
             } catch (InvalidTermException e) { // Invalid function input detected

@@ -69,6 +69,8 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
             throw new BaseCaseCreatorException(BaseCaseCreatorException.ERRORMESSAGE_EMPTY_EXPRESSION);
         } else if (!checkAllTermsValid(terms)) { //check if all terms are terms we can interpret.
             throw new CompoundCaseCreatorException("InvalidTermException!");
+        } else if (terms.size() == 1){
+            return;
         } else if (!checkMatchingBrackets(terms)) { //Check if each bracket has a corresponding bracket and we dont
                                                     // any extra brackets.
             throw new CompoundCaseCreatorException("UnmatchedBracketsException!");
@@ -80,8 +82,6 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
         }
         else if (!checkMultipleTermsConnection(terms)) {
             throw new CompoundCaseCreatorException("NonConnectedMultipleTermsException!");
-        } else if (!checkFunctionInputSize(terms)) {
-            throw new CompoundCaseCreatorException("FunctionInputsSizeException!");
         }
     }
 
@@ -179,32 +179,6 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
      */
     private boolean checkCommasWithinFunctions(List<String> terms) {
         return getOuterItems(terms, List.of(new String[]{","})).isEmpty();
-    }
-
-    /** Checks if each function called in the expression has correct input size.
-     *
-     * @param terms The list of terms as accepted by the create method.
-     * @return True if and only if all functions have correct input size. Example: ["cos","(","x",")] returns true,
-     * ["sin","(","x","y",")"] returns false.
-     */
-    private boolean checkFunctionInputSize(List<String> terms) {
-
-        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(definedFuncs.keySet()));
-        List<String> functionInputTerms;
-        int numCommas;
-
-        for (List<Integer> indices: functionsAndIndexLists.values()) {
-            for (Integer index: indices) {
-                //Get the list representing the scope of the function.
-                functionInputTerms = terms.subList(index + 2, findCorrespondingBracket(terms, index + 1));
-                numCommas = getOuterItems(functionInputTerms, List.of(",")).size();
-                if (funcNumInputs.get(terms.get(index)) - 1 != numCommas) {
-                    return false;
-                }
-            } // This works thanks to checkers in "precheck" that is done before this checker.
-        }
-        // All functions have correct input sizes, so return true.
-        return true;
     }
 
     /** This method ensures that if no operators appear in an expression then it's just a function call
