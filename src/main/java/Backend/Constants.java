@@ -11,9 +11,9 @@ public class Constants {
     private final Set<String> VARIABLES = Set.of("x", "y", "z");
     private final Set<String> BUILTINONEVARFUNCTIONS = Set.of("cos", "sin", "tan", "sqrt", "exp", "arctan", "arccos", "arcsin", "log");
     private final Set<String> BUILTINTWOVARFUNCTIONS = Set.of("mandel", "max", "min");
-    private final Set<String> SPECIALCHARACTERS = Set.of("(", ")", ","); // Ted: TODO: Future maybe "\" for "\pi", "\floor", ...
+    private final Set<String> SPECIALCHARACTERS = Set.of("(", ")", ",");
 
-    private final List<String> LOGICALOPERATORS = new ArrayList<>(List.of(new String[]{"|", "&"})); // TODO: Recheck The order or "AND" and "OR"!
+    private final List<String> LOGICALOPERATORS = new ArrayList<>(List.of(new String[]{"|", "&"}));
     private final List<String> COMPARATORS = new ArrayList<>(List.of(new String[]{"<", ">", "<=", ">="}));
     private final List<String> ARITHMETICOPERATORS = new ArrayList<>(List.of(new String[]{"+", "-", "*", "/", "^"}));
 

@@ -53,23 +53,18 @@ public class ExpressionReader {
         return exp;
     }
 
-    // TODO: Update below method documentation!
-    /** Converts a string representation of an expression into an instance of Backend.Expressions.Expression
+    /** Converts a string representation of an expression into an instance of Expression
      * @param expression The string representation of the expression to be converted
-     * @return Backend.Expressions.Expression object for the string provided
+     * @return Expression object for the string provided
      */
-    // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
-    // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
-    // e.g. cos(x) -> ["cos", "(", "x", ")"]
     public Expression<?> read(String expression) throws InvalidTermException {
         List<String> terms = expressionParser(expression);
-        // TODO: Below is to use helpers "containsLogicalOperator" and "containsComparator" for now. In future we'll find another way to use this helper.
         if (vc.containsOperator(terms, "Logical") || vc.containsOperator(terms, "Comparator")) {
             return booleanValuedRead(terms);
         }
         else
         {   if (!terms.contains("=")){
-            // TODO: Add error for the future?
+            // If no "=" then just a regular expression
                 return realValuedRead(terms);
             }
             if (isExplicit(terms)){
@@ -101,7 +96,6 @@ public class ExpressionReader {
         if (!vc.validFuncName(funcHeader.get(0))){
             return false;
         }
-
         // Check condition 2
         if (!vc.enclosedByOuterBrackets(funcHeader.subList(1, funcHeader.size()))){
             return false;
@@ -109,17 +103,14 @@ public class ExpressionReader {
 
         // checks until the last comma
         for (int i = 2; i < funcHeader.size() - 2; i++){
-
             // Check condition 4
             if (!constants.getVariables().contains(funcHeader.get(i))){
                 return false;
             }
-
             // Check condition 3
             if (!funcHeader.get(i + 1).equals(",")){
                 return false;
             }
-
         }
         // the term preceding the final bracket is a variable
         return constants.getVariables().contains(funcHeader.get(funcHeader.size() - 2));
@@ -181,9 +172,7 @@ public class ExpressionReader {
         return (BooleanValuedExpression) ec.create(terms);
     }
 
-    /** expressionParser takes an input string and parses it to form a list. If given valid input, it will form
-     * a list that gives us the corresponding valid expression tree.
-     * If given invalid input, it will return an invalid list.
+    /** expressionParser takes an input string and parses it to form a list. See below for examples
      * As minus and plus may also be unary operators as well as binary ones, if there is any instance of a unary usage
      * of these operators, expressionParser interprets them as binary similar to the following example:
      * -x is interpreted to be ["-1", "*", "x"]
@@ -191,6 +180,9 @@ public class ExpressionReader {
      * @param expression This is the expression the user has input.
      * @return A list which we can create an expression tree from.
      */
+    // e.g. x ^ 2 + 5 -> ["x", "^", "2", "+", "5"]
+    // e.g. (2) + 3 or 3 + (2) -> ["(", "2", ")", "+", "3"]
+    // e.g. cos(x) -> ["cos", "(", "x", ")"]
     private List<String> expressionParser(String expression) {
         List<String> parsed = new ArrayList<>();
         StringBuilder section = new StringBuilder(); // section will be storing any series of characters which are not

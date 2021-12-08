@@ -319,7 +319,6 @@ public class CLIHelper {
     public List<String[]> findAllEquations(String[] arguments){
         List<String[]> equationsAndDomains = new ArrayList<>();
 
-        // TODO: Move commands to constants
         for(int i = 0; i < arguments.length - 3; i+=2){
             if (arguments[i].equals(eqCommand)){
                 if(arguments[i + 2].equals(domainCommand)) {

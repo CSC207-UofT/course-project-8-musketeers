@@ -34,7 +34,6 @@ public class RealValuedExpressionFactory implements ExpressionFactory<RealValued
             // If our program is correct, below should never happen.
             default:
                 throw new IllegalStateException("Unrecognized Operator Type!");
-            // TODO: Above: IllegalStateException or IllegalArgumentException? Java automatically defaults "IllegalStateException" so...
         }
 
         return expr;

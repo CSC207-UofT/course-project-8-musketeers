@@ -12,7 +12,7 @@ public class ArithmeticOperatorExpression extends RealValuedExpression {
     // OperatorExpressions store both the operation they correspond to
     // and the expressions to their left and right
     public ArithmeticOperatorExpression(String operation, RealValuedExpression lExpression, RealValuedExpression rExpression){
-        super(operation); // TODO: Future have a complete string representation rather than just a function name!
+        super(operation);
         this.lExpression = lExpression;
         this.rExpression = rExpression;
     }

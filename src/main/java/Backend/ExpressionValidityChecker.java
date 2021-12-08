@@ -75,7 +75,7 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
                 throw new BaseCaseCreatorException("InvalidSingleExpressionException!");
             }
         }
-        else{ // TODO: Perhaps below have the "check..." to throw exceptions to avoid (if/else-if) blocks?
+        else{
             if (!checkAllTermsValid(terms)) { //check if all terms are terms we can interpret.
                 throw new CompoundCaseCreatorException("InvalidTermException!");
             } else if (!checkMatchingBrackets(terms)) { //Check if each bracket has a corresponding bracket and we dont
@@ -87,11 +87,6 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
             else if (!checkCommasWithinFunctions(terms)) {
                 throw new CompoundCaseCreatorException("CommasNotWithinFunctions!");
             }
-            // TODO: Recheck whether above one block is redundant because of the below the newly added one block.
-            //  Furthermore, check whether above would have been regarded as "InvalidOperandException!" before?
-
-            // TODO: Below one block may be redundant as it's likely to work without it thanks to "ExpressionReader", as it
-            //  promises certain preconditions. But this is way safer.
             else if (!checkMultipleTermsConnection(terms)) {
                 throw new CompoundCaseCreatorException("NonConnectedMultipleTermsException!");
             } else if (!checkFunctionInputSize(terms)) {
@@ -149,7 +144,7 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
      * @param term A single term from the parsed expression.
      * @return True if term represents a double, False otherwise.
      */
-    private boolean checkNumber(String term) { // TODO: Is this good practice by using RuntimeException?
+    private boolean checkNumber(String term) {
         try {
             Float.parseFloat(term); // Just check for whether "term" represents a number.
             return true;
@@ -157,10 +152,6 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
             return false;
         }
     }
-
-    // TODO: Use "findCorrespondingBracket" helper to make this method more recursive. Or NO? Since
-    //  "checkMatchingBrackets" might have to be static?! Because many recursive helpers rely on matching brackets as
-    //  they use the helper "findCorrespondingBraket"? Otherwise we'd have to handle many exceptions.
 
     /**
      *
@@ -219,7 +210,7 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
      * @return True if and only if a function call in <terms> has brackets where may find its inputs.
      * Example: ["cos","(",")"] returns True, ["cos","x"] returns False.
      */
-    private boolean checkFunctionBrackets(List<String> terms) { // TODO: Check correctness!
+    private boolean checkFunctionBrackets(List<String> terms) {
         Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(definedFuncs.keySet()));
         for (List<Integer> indices: functionsAndIndexLists.values()) {
             for (Integer index: indices) {
@@ -242,11 +233,8 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
      * @return True if and only if commas are within function brackets, if they exist.
      */
     private boolean checkCommasWithinFunctions(List<String> terms) {
-        // TODO: WARNING: Be careful in future that a comma can be outside, or inside of function brackets, or inside of any other brackets...
         return getOuterItems(terms, List.of(new String[]{","})).isEmpty();
     }
-
-    // TODO: Support User-Defined Functions!
 
     /** Checks if each function called in the expression has correct input size.
      *
@@ -274,34 +262,31 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
         return true;
     }
 
-    /**
+    /** This method ensures that if no operators appear in an expression then it's just a function call
      *
      * @param terms The list of terms as accepted by the create method.
      * @return True if and only if <terms> represents one or zero functions, variables, or numbers.
      */
 
-    private boolean checkMultipleTermsConnection(List<String> terms) { // TODO: Recheck correctness (logically)!
+    private boolean checkMultipleTermsConnection(List<String> terms) {
         if (!(definedFuncs.containsKey(terms.get(0)) &&
-                enclosedByOuterBrackets(terms.subList(1, terms.size())))) { // The second condition is to prevent treating case like "cos(x) + 1" as a semi-base case, where the terms are not entirely within a function (a semi-base case example: "cos(x + 1^2 - 2sin(x))").
+                enclosedByOuterBrackets(terms.subList(1, terms.size())))) {
             return !(getOuterItems(terms, constants.getAllOperators()).isEmpty());
         }
         return true;
     }
 
-    // TODO: Update below method documentation!
-    /** Returns a map of items that are not in any brackets (in the order that they appear)
-     *  along with the indices that they appear at being represented as a list.
+    /** Finds the indices in which some given collection of items appears in
      * @param terms The list of terms as accepted by the create method
      *              e.g. ["2", "*", "(", "5", "+", "6", ")", "-", "9"]
-     * @param items Any collection of specific terms which we may want to keep track of.
+     * @param items Any collection of specific <terms> which we may want to keep track of.
      *             For example, constants.getOperators
      * @return A map of terms that are in items that are not in any brackets, with their values being the list of
      *              indices they appear at.
      *             For the example above, with the list of items being constants.getOperators, we get
      *             {"*": [1], "-": [7]}.
      */
-    // TODO: Update the second parameter to "Collection<String>" type. Similarly for all other helpers!!!
-    public Map<String, List<Integer>> getOuterItems(List<String> terms, List<String> items) { // TODO: Change the implementation to using "findCorrespondingBracket"!
+    public Map<String, List<Integer>> getOuterItems(List<String> terms, List<String> items) {
         Map<String, List<Integer>> itemsAndIndices = new HashMap<>();
         int bracketCounter = 0;
         for (int i = terms.size() - 1; i > -1; i--){
@@ -328,7 +313,6 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
 
     }
 
-    // TODO: IMPORTANT!!! ADD BELOW PRECONDITION 2 TO MOST HELPER IN "ExpresionValidityChecker" and "ExpressionCreator"!
     // Below precondition:
     //     1. terms.get(index) must be either "(" or ")" to derive the right functionality it promises.
     //     2. Use this helper before ensuring that checkMatchingBrackets(terms) is true.
@@ -380,9 +364,6 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
      * is the last term of the list. Example: The input ["(", "x" "+", "3", ")"] returns true.
      */
     public boolean enclosedByOuterBrackets(List<String> terms){
-        // TODO: Could have used "finCorrespondingBracket" to improve readability but unsure
-        //  if it's a good thing to exert precondition (that checkMatchingBrackets(terms) evaluates to true)).
-
         if (terms.size() <= 1){ // There can't exist two brackets, so <terms> can't be enclosed by outer brackets.
             return false;
         }
@@ -406,15 +387,6 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
         return counter == 0;
     }
 
-    // TODO: IMPORTANT! Now that we want all checkers to be recursive rather than static, so maybe using the
-    //  "findCorrespondingBracket" helper would help with the implementation of all these checkers to skip index! To
-    //  reduce runtime! Or no because "findCorrespondingBracket" helper also takes much runtime! Or maybe yes, since
-    //  runtime is likely to be the same, and we improve code readability and reduce the likelihood of bugs.
-
-    // TODO: Decide whether only checker for outer ones or everything (including ones within a pair of bracket)?
-    // Below for now only check for comparator and logical operator. In case we want more, we just add another case.
-    // I think for now let's do a THROUGHOUT/STATIC check, highly likely to do the same in future though.
-
     /** Checks if a list of terms contains an operator of a specific type.
      *
      * @param terms A sublist of the input to the create method.
@@ -422,7 +394,7 @@ public class ExpressionValidityChecker implements PropertyChangeListener{
      * @return True if and only if <terms> contains an operator of the same type as <operatorType>.
      */
     public boolean containsOperator(List<String> terms, String operatorType) throws IllegalStateException {
-        List<String> operators; // TODO: Confirm with Rishibh whether we should have all constants in list form? Be careful if it is a Set in Constants.
+        List<String> operators;
         switch (operatorType) {
             case "Logical": {
                 operators = constants.getLogicalOperators();

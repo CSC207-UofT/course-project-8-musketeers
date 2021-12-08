@@ -22,7 +22,6 @@ public class BooleanValuedExpressionFactory implements ExpressionFactory<Boolean
                 break;
             default:
                 throw new IllegalStateException("Unrecognized Operator Type!");
-                // TODO: Above: IllegalStateException or IllegalArgumentException? Java automatically defaults "IllegalStateException" so...
         }
 
         return expr;
