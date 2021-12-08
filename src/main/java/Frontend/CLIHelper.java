@@ -164,15 +164,18 @@ public class CLIHelper {
 
     /**
      * Return a (potentially modified) name value. The default value is "graph.png",
-     * if no "-name" command was specified.
+     * if no "-name" or "-load" command was specified. The order of precedence for the name is
+     * (name specified by "-name") > (name specified from "-load") > (default name "graph.png")
      *
      * @param userInputs a List of strings containing user inputs
-     * @return a modified name, or "graph.png" if no "-name" command is present in userInputs
+     * @return a modified name, or "graph.png" if no "-name" or "-load" command is present in userInputs
      */
     public String getCustomName(List<String> userInputs) {
         String name = "graph.png";
         if (userInputs.contains(nameCommand)) {
             name = getCommandArgument(nameCommand, userInputs) + ".png";
+        } else if (userInputs.contains(loadCommand)) {
+            name = getCommandArgument(loadCommand, userInputs) + ".png";
         }
         return name;
     }
