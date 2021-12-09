@@ -1,6 +1,7 @@
 package Graphics;
 
-import Backend.*;
+import Backend.Axes;
+import Backend.AxesUseCase;
 import Backend.Expressions.ArithmeticOperatorExpression;
 import Backend.Expressions.FunctionExpression;
 import Backend.Expressions.RealValuedExpression;
@@ -24,7 +25,7 @@ public class Grapher {
     /**
      * @param axes Axes object that we are graphing
      */
-    public Grapher(Axes axes){
+    public Grapher(Axes axes) {
         this.axes = axes;
     }
 
@@ -37,23 +38,22 @@ public class Grapher {
     }
 
     /**
-     * @param size Size of the output image
+     * @param size  Size of the output image
      * @param gType The type of graphs, one of BOUNDARY, REGION, GRAYSCALE (for now)
      */
     public int[] graph(int size, String gType) {
-        int[] pixels = new int[size*size];
+        int[] pixels = new int[size * size];
 
         Arrays.fill(pixels, impGrapher.WHITE);
 
         float[] graphData = new float[]{auc.getScale(axes), auc.getOrigin(axes)[0], auc.getOrigin(axes)[1]};
 
-        for (RealValuedExpression exp: auc.getExpressions(axes)) {
-            if (exp instanceof FunctionExpression){
+        for (RealValuedExpression exp : auc.getExpressions(axes)) {
+            if (exp instanceof FunctionExpression) {
 //                expGrapher.graph(pixels, size, size, exp, graphData);
                 RealValuedExpression newExp = new ArithmeticOperatorExpression("-", new VariableExpression("y"), exp);
                 impGrapher.graph(pixels, size, size, newExp, graphData, stringToGType(gType));
-            }
-            else {
+            } else {
                 impGrapher.graph(pixels, size, size, exp, graphData, stringToGType(gType));
             }
         }
@@ -66,7 +66,7 @@ public class Grapher {
      * @param gtype The type of graph that is to be graphed
      * @return The type of graph that is to be graphed from the GraphType enum
      */
-    private GraphType stringToGType(String gtype){
+    private GraphType stringToGType(String gtype) {
         Map<String, GraphType> gtypeMap = Map.of(
                 "BOUNDARY", GraphType.BOUNDARY,
                 "REGION", GraphType.REGION,

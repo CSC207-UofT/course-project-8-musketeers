@@ -7,11 +7,13 @@ import java.io.IOException;
 
 public class ImageWriter {
 
-    /** Saves a pixel array as an image
+    /**
+     * Saves a pixel array as an image
+     *
      * @param pixels Array of integers corresponding to the colour of each pixel
-     * @param iw Width of image (in pixels)
-     * @param ih Height of the image (in pixel)
-     * @param fname Name of file to which we save the image
+     * @param iw     Width of image (in pixels)
+     * @param ih     Height of the image (in pixel)
+     * @param fname  Name of file to which we save the image
      * @throws IOException If there is an error with saving image
      */
     public void writeImage(int[] pixels, int iw, int ih, String fname) throws IOException {

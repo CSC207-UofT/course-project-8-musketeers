@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class NumberExpression extends RealValuedExpression {
 
-    public NumberExpression(String num){
+    public NumberExpression(String num) {
         super(num);
     }
 

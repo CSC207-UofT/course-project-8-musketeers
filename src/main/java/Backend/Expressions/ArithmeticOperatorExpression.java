@@ -11,11 +11,12 @@ public class ArithmeticOperatorExpression extends RealValuedExpression {
 
     // OperatorExpressions store both the operation they correspond to
     // and the expressions to their left and right
-    public ArithmeticOperatorExpression(String operation, RealValuedExpression lExpression, RealValuedExpression rExpression){
+    public ArithmeticOperatorExpression(String operation, RealValuedExpression lExpression, RealValuedExpression rExpression) {
         super(operation);
         this.lExpression = lExpression;
         this.rExpression = rExpression;
     }
+
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
@@ -24,15 +25,14 @@ public class ArithmeticOperatorExpression extends RealValuedExpression {
             str.append(lExpression);
             str.append(",");
             str.append(rExpression);
-        }
-        else {
+        } else {
             str.append("(");
             str.append(lExpression);
             str.append(getItem());
             str.append(rExpression);
             str.append(")");
         }
-        return  str.toString();
+        return str.toString();
     }
 
     // We evaluate this expression based on what the operator is
@@ -50,8 +50,8 @@ public class ArithmeticOperatorExpression extends RealValuedExpression {
             case "^":
                 return (float) Math.pow(lExpression.evaluate(arguments), rExpression.evaluate(arguments));
             default:
-                    // If our program works, then this should never be run
-                    throw new IllegalArgumentException("Unexpected operator");
+                // If our program works, then this should never be run
+                throw new IllegalArgumentException("Unexpected operator");
         }
 
     }

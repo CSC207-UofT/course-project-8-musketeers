@@ -4,7 +4,6 @@ import Backend.Constants;
 import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
 import Backend.Exceptions.EmptyBuilderException;
-import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
 
 import java.util.Map;
@@ -13,7 +12,7 @@ public class RealValuedExpressionFactory implements ExpressionFactory<RealValued
     // Below base case: Construct Number or Variable.
     public RealValuedExpression constructExpression(String input) throws InvalidTermException {
         RealValuedExpression expr;
-        if (this.constants.getVariables().contains(input)){
+        if (this.constants.getVariables().contains(input)) {
             expr = new VariableExpression(input);
         }
         else { // only other valid possibility is for it to be a number and not a variable.

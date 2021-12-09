@@ -12,7 +12,7 @@ public class ComparatorExpression extends BooleanValuedExpression {
     private final RealValuedExpression lExpression;
     private final RealValuedExpression rExpression;
 
-    public ComparatorExpression(String comparatorOp, RealValuedExpression lExpression, RealValuedExpression rExpression){
+    public ComparatorExpression(String comparatorOp, RealValuedExpression lExpression, RealValuedExpression rExpression) {
         super(comparatorOp);
         this.lExpression = lExpression;
         this.rExpression = rExpression;
@@ -47,6 +47,7 @@ public class ComparatorExpression extends BooleanValuedExpression {
 
         return comparisonHolds;
     }
+
     @Override
     public String toString() {
         return "(" + lExpression + getItem() + rExpression + ")";

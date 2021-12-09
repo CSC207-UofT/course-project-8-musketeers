@@ -24,9 +24,9 @@ public class TextDrawer {
         int width = numbers.getWidth();
         int height = numbers.getHeight();
         int[] allNumPixels = numbers.getRGB(0, 0, width, height, null, 0, width);
-        for(int i = 0; i < width - 8; i += 8) {
+        for (int i = 0; i < width - 8; i += 8) {
             int[] pixels = Arrays.copyOfRange(allNumPixels, i, i + 80);
-            switch(i) {
+            switch (i) {
                 case 0:
                     pixels1 = pixels;
                     break;
@@ -62,54 +62,54 @@ public class TextDrawer {
     }
 
     public void writeNum(int startX, int startY, String number, int[] pixels) {
-        switch(number) {
+        switch (number) {
             case "0":
-                for(int i = 0; i < pixels0.length; i++) {
-                    pixels[startX*startY + i] = pixels0[i];
+                for (int i = 0; i < pixels0.length; i++) {
+                    pixels[startX * startY + i] = pixels0[i];
                 }
                 break;
             case "1":
-                for(int i = 0; i < pixels1.length; i++) {
-                    pixels[startX*startY + i] = pixels1[i];
+                for (int i = 0; i < pixels1.length; i++) {
+                    pixels[startX * startY + i] = pixels1[i];
                 }
                 break;
             case "2":
-                for(int i = 0; i < pixels2.length; i++) {
-                    pixels[startX*startY + i] = pixels2[i];
+                for (int i = 0; i < pixels2.length; i++) {
+                    pixels[startX * startY + i] = pixels2[i];
                 }
                 break;
             case "3":
-                for(int i = 0; i < pixels3.length; i++) {
-                    pixels[startX*startY + i] = pixels3[i];
+                for (int i = 0; i < pixels3.length; i++) {
+                    pixels[startX * startY + i] = pixels3[i];
                 }
                 break;
             case "4":
-                for(int i = 0; i < pixels4.length; i++) {
-                    pixels[startX*startY + i] = pixels4[i];
+                for (int i = 0; i < pixels4.length; i++) {
+                    pixels[startX * startY + i] = pixels4[i];
                 }
                 break;
             case "5":
-                for(int i = 0; i < pixels5.length; i++) {
-                    pixels[startX*startY + i] = pixels5[i];
+                for (int i = 0; i < pixels5.length; i++) {
+                    pixels[startX * startY + i] = pixels5[i];
                 }
                 break;
             case "6":
-                for(int i = 0; i < pixels6.length; i++) {
-                    pixels[startX*startY + i] = pixels6[i];
+                for (int i = 0; i < pixels6.length; i++) {
+                    pixels[startX * startY + i] = pixels6[i];
                 }
                 break;
             case "7":
-                for(int i = 0; i < pixels7.length; i++) {
-                    pixels[startX*startY + i] = pixels7[i];
+                for (int i = 0; i < pixels7.length; i++) {
+                    pixels[startX * startY + i] = pixels7[i];
                 }
             case "8":
-                for(int i = 0; i < pixels8.length; i++) {
-                    pixels[startX*startY + i] = pixels8[i];
+                for (int i = 0; i < pixels8.length; i++) {
+                    pixels[startX * startY + i] = pixels8[i];
                 }
                 break;
             case "9":
-                for(int i = 0; i < pixels9.length; i++) {
-                    pixels[startX*startY + i] = pixels9[i];
+                for (int i = 0; i < pixels9.length; i++) {
+                    pixels[startX * startY + i] = pixels9[i];
                 }
                 break;
         }

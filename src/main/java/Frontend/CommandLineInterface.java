@@ -1,6 +1,6 @@
 package Frontend;
 
-import Backend.*;
+import Backend.Axes;
 import Backend.AxesUseCase;
 import Backend.ExpressionReader;
 import GUI.GLGUI;
@@ -62,11 +62,13 @@ public class CommandLineInterface {
         cliHelper.tryInterpretingInput(axes, auc, er, equationsAndDomains);
         int[] graphedImage = cliHelper.tryGraphingImage(userInputs, grapher);
 
+        if (userInputs.contains(cliHelper.graphCommand)) {
+            cliHelper.trySavingImage(graphedImage, userInputs);
+        }
+
         if (userInputs.contains(cliHelper.interactiveCommand)) {
             GUI gui = new GLGUI(grapher, cliHelper.getCustomSize(userInputs));
             cliHelper.startGUI(userInputs, gui);
-        } else {
-            cliHelper.trySavingImage(graphedImage, userInputs);
         }
 
         if (userInputs.contains(cliHelper.saveCommand)) {

@@ -1,11 +1,11 @@
 package BackendTests;
 
-import Backend.*;
-
-//import Backend.Exceptions.InvalidCommandArguments;
+import Backend.Axes;
+import Backend.AxesUseCase;
 import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionBuilders.BooleanValuedExpressionFactory;
 import Backend.ExpressionBuilders.RealValuedExpressionFactory;
+import Backend.ExpressionCreator;
 import Backend.Expressions.*;
 import org.junit.Before;
 import org.junit.Rule;
@@ -15,8 +15,8 @@ import org.junit.rules.ExpectedException;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class AxesUseCaseTest {
 
@@ -33,6 +33,7 @@ public class AxesUseCaseTest {
         expr0 = new NumberExpression("0");
 
     }
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -112,13 +113,11 @@ public class AxesUseCaseTest {
         Expression<?> func = ec.create(List.of("x", "^", "2"));
         FunctionExpression myFunc = new CustomFunctionExpression(funcName, variables, (RealValuedExpression) func);
         axesUseCase.addExpression(myFunc, axes);
-
         assertEquals(13, axesUseCase.getNamedFunctions(axes).size(),0);
-
     }
 
     @Test(timeout = 50)
-    public void testAxesUseCaseGetExpr(){
+    public void testAxesUseCaseGetExpr() {
         ArrayList<RealValuedExpression> eList = new ArrayList<>();
         assertEquals(axesUseCase.getExpressions(axes), eList);
     }

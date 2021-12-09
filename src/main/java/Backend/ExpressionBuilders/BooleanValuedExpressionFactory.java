@@ -6,8 +6,6 @@ import Backend.Exceptions.EmptyBuilderException;
 import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
 
-import java.util.Map;
-
 public class BooleanValuedExpressionFactory implements ExpressionFactory<BooleanValuedExpression> {
     /**This method creates an operator Expression in which the operator's inputs are the given left and right input
      * expressions e.g. applies < to 1 and 3 to get a 1 < 3 expression.
