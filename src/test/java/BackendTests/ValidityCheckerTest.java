@@ -25,7 +25,7 @@ public class ValidityCheckerTest {
 
     // TEST INPUT PATTERNS
 
-    // Todo: add a test for the errors that ExpressionValidityChecker.checkMultipleTermsConnection checks
+    // Todo: add a test for the errors that ExpressionPropertyReporter.checkMultipleTermsConnection checks
 
     @Test(timeout = 50)
     public void testEmptyExpression() throws InvalidTermException {

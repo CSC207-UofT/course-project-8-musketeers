@@ -5,7 +5,7 @@ import Backend.AxesUseCase;
 import Backend.Exceptions.InvalidTermException;
 import Backend.ExpressionBuilders.BooleanValuedExpressionFactory;
 import Backend.ExpressionBuilders.RealValuedExpressionFactory;
-import Backend.ExpressionCreator;
+import Backend.RealBooleanCreatorImp;
 import Backend.Expressions.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,7 +102,7 @@ public class AxesUseCaseTest {
     @Test(timeout = 100)
     public void testAxesAddCustomFunction() throws InvalidTermException {
 
-        ExpressionCreator ec = new ExpressionCreator(axesUseCase.getNamedFunctions(axes),
+        RealBooleanCreatorImp ec = new RealBooleanCreatorImp(axesUseCase.getNamedFunctions(axes),
                 new RealValuedExpressionFactory(), new BooleanValuedExpressionFactory());
         String funcName = "f";
         String[] variables = {"x"};

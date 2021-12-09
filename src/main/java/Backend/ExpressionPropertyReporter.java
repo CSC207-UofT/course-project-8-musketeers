@@ -13,19 +13,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The ExpressionValidityChecker checks whether a list representing an expression is actually representing a valid
+ * The ExpressionPropertyReporter checks whether a list representing an expression is actually representing a valid
  * expression.
  * <p>
- * The checker works recursively within ExpressionCreator. ExpressionCreator creates the tree recursively, and
+ * The checker works recursively within RealBooleanCreatorImp. RealBooleanCreatorImp creates the tree recursively, and
  * this class is responsible for checking the correctness of each step at a surface level. As this happens with
  * each recursive call, this class fully determines whether an expression is valid or not.
  */
-public class ExpressionValidityChecker implements PropertyChangeListener {
+public class ExpressionPropertyReporter implements PropertyChangeListener {
     Constants constants;
     public Map<String, FunctionExpression> definedFuncs = new HashMap<>();
     Map<String, Integer> funcNumInputs = new HashMap<>();
 
-    public ExpressionValidityChecker(Map<String, FunctionExpression> definedFuncs) {
+    public ExpressionPropertyReporter(Map<String, FunctionExpression> definedFuncs) {
         this.constants = new Constants();
 
         for (String funcName : definedFuncs.keySet()) {
@@ -63,7 +63,7 @@ public class ExpressionValidityChecker implements PropertyChangeListener {
 
     /**
      * A preliminary check that throws an exception if the input expression from the user is invalid in specific ways.
-     * This function will be called recursively in ExpressionCreator on operands of operators,
+     * This function will be called recursively in RealBooleanCreatorImp on operands of operators,
      * which ensures correctness.
      *
      * @param terms A parsed list as accepted by the create method.
