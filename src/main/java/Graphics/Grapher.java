@@ -22,23 +22,34 @@ public class Grapher {
     private final AxesDrawer ad = new AxesDrawer(); // AxesDrawer to draw Axes and grids
 
     /**
+     * Initialize.
      * @param axes Axes object that we are graphing
      */
     public Grapher(Axes axes) {
         this.axes = axes;
     }
 
+    /**
+     * Set position for graph.
+     * @param pos Float array representing positions.
+     */
     public void setPos(float[] pos) {
         this.auc.setOrigin(pos, this.axes);
     }
 
+    /**
+     * Set the scale for graph.
+     * @param scale A number representing the scale we use to graph.
+     */
     public void setScale(float scale) {
         this.auc.setScale(scale, this.axes);
     }
 
     /**
+     * Graph and actually outputs an array of integers representing that graph.
      * @param size  Size of the output image
      * @param gType The type of graphs, one of BOUNDARY, REGION, GRAYSCALE (for now)
+     * @return An array of integers representing the graph.
      */
     public int[] graph(int size, String gType) {
         int[] pixels = new int[size * size];
