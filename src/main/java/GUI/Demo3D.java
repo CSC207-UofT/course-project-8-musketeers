@@ -9,17 +9,20 @@ package GUI;
 
 
 import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL.*;
 import static org.lwjgl.opengl.GL33.*;
-import static org.lwjgl.system.MemoryUtil.*;
 
 
-public class Demo3D {
+public class Demo3D extends GLFWApp {
+    /**
+     * This is a demonstration of 3D implicit / explicit graphing
+     *   using OpenGL fragment shaders.
+     *   It is not integrated with the rest of our project yet.
+     */
+
     static int clicks;
     static int progID;
 
@@ -72,40 +75,15 @@ public class Demo3D {
 
     public static void main(String[] args) throws IOException {
         glfwInit();
-        long window = createWindow();
+        Demo3D demo = new Demo3D();
+        long window = demo.createWindow();
         glfwSetMouseButtonCallback(window, Demo3D::mouseCallback);
         glfwSetCursorPosCallback(window, Demo3D::cursor_pos_callback);
 
-        FloatBuffer buffer = memAllocFloat(3 * 2 * 2);
-        float[] vtest = {
-                -0.9f, -0.9f, 0.9f, -0.9f, -0.9f, 0.9f,
-                0.9f, -0.9f, -0.9f, 0.9f, 0.9f, 0.9f
-        };
-        buffer.put(vtest);
-
-        buffer.flip();
-
-        int vbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-
-
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 0, 0L);
-        glEnableVertexAttribArray(0);
-
-        int vaoID = glGenVertexArrays();
-        glBindVertexArray(vaoID);
-
+        demo.setupGL();
         makeShader();
         glUseProgram(progID);
 
-
-        memFree(buffer);
-
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glVertexPointer(2, GL_FLOAT, 0, 0L);
-
-        glClearColor(0.1f, 0.2f, 0.3f, 0.0f);
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
 
@@ -117,15 +95,6 @@ public class Demo3D {
         }
         glfwTerminate();
         System.out.println("Fin.");
-    }
-
-    private static long createWindow() {
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-        long window = glfwCreateWindow(800, 800, "Intro2", NULL, NULL);
-        glfwMakeContextCurrent(window);
-        glfwSwapInterval(1);
-        createCapabilities();
-        return window;
     }
 
     private static void mouseCallback(long win, int button, int action, int mods) {
