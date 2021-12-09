@@ -41,7 +41,7 @@ public class GLGUI extends GLFWApp implements GUI {
 
     private final int imgDim;
 
-    private GUIHelper guiHelper;
+    private final GUIHelper guiHelper;
 
     public GLGUI(Grapher grapher, int imgDim) {
         this.imgDim = imgDim;
