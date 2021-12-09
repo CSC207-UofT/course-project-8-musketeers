@@ -239,57 +239,6 @@ public class ExpressionPropertyReporter implements PropertyChangeListener {
 
     }
 
-    // Below precondition:
-    //     1. terms.get(index) must be either "(" or ")" to derive the right functionality it promises.
-    //     2. Use this helper before ensuring that checkMatchingBrackets(terms) is true.
-
-    /**
-     * Find the corresponding bracket of a bracket in the list of terms.
-     * Precondition: parsed.get(index) is either "(" or ")".
-     *
-     * @param terms The list of terms as accepted by the create method.
-     * @param index The index of a specific bracket.
-     * @return Index of the corresponding bracket of <parsed.get(index)
-     */
-    private int findCorrespondingBracket(List<String> terms, int index) {
-        int counter = 0;
-        boolean initialState = true;
-        boolean rightTraverse = true;
-
-        while (0 <= index && index <= terms.size() - 1) {
-            // Below section initializes the traversal direction. <rightTraverse> =
-            // True means "go right" and False means "go left" to find the corresponding bracket.
-            if (initialState) {
-                if (terms.get(index).equals(")")) {
-                    rightTraverse = false; // Go left to find corresponding "(". Otherwise, go right to find ")".
-                }
-                initialState = false;
-            }
-
-            // Below section tries to find the corresponding bracket.
-            if (terms.get(index).equals("(")) {
-                counter += 1;
-            } else if (terms.get(index).equals(")")) {
-                counter -= 1;
-            }
-
-            if (counter == 0) { // By the precondition, we know that <counter> is not 0 in the first
-                // of the loop. Exactly one of the previous if conditions will be true. 0nce <counter> is 0,
-                // we passed an equal number of the opposite brackets as the original one. So we are at the corresponding \
-                // bracket.
-                return index;  // return the index of that bracket.
-            }
-
-            // Below section decides the traversal direction.
-            if (rightTraverse) {
-                index++;
-            } //Keep going right to find  corresponding ")".
-            else {
-                index--;
-            } // Keep going left to find corresponding "(" .
-        }
-        throw new IllegalArgumentException("Precondition Violated When Finding The Corresponding Bracket!");
-    }
 
     /**
      * Checks if the list of input terms begins with "(" and ends with the corresponding ")".
