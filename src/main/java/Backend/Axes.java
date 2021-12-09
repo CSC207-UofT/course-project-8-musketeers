@@ -21,7 +21,6 @@ import java.util.*;
 
 public class Axes implements Serializable {
     private float scale;
-    private final float dimensionSize; // to be used later
     private float[] origin;
     private final List<RealValuedExpression> exprCollection;
     private final Map<String, FunctionExpression> namedExpressions = initialNamedExpressions();
@@ -53,7 +52,6 @@ public class Axes implements Serializable {
      */
     public Axes(float scale, float[] origin) {
         this.scale = scale;
-        this.dimensionSize = origin.length;
         this.origin = origin;
         this.exprCollection = new ArrayList<>();
 

@@ -8,9 +8,8 @@ import Backend.ExpressionBuilders.RealValuedExpressionFactory;
 import Backend.ExpressionCreator;
 import Backend.Expressions.*;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +32,6 @@ public class AxesUseCaseTest {
         expr0 = new NumberExpression("0");
 
     }
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     /**
      * test createAxes and make sure the instance of axes has the correct attributes
