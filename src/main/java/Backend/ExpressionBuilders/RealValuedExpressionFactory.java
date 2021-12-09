@@ -4,6 +4,7 @@ import Backend.Constants;
 import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
 import Backend.Exceptions.EmptyBuilderException;
+import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
 
 import java.util.Map;
