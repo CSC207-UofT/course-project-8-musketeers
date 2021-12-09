@@ -34,19 +34,15 @@ public class RealBooleanCreatorImp extends RealBooleanCreator implements Propert
      *
      * @param funcMap A map of function names to the functions themselves.
      */
-    public RealBooleanCreatorImp(Map<String, FunctionExpression> funcMap, RealValuedExpressionFactory realValuedExpressionFactory,
-                                 BooleanValuedExpressionFactory booleanValuedExpressionFactory){
-        this(funcMap, new ExpressionPropertyReporter(funcMap), realValuedExpressionFactory,
-                booleanValuedExpressionFactory);
+    public RealBooleanCreatorImp(Map<String, FunctionExpression> funcMap){
+        this(funcMap, new ExpressionPropertyReporter(funcMap));
     }
 
     // This constructor allows us to ensure that vc is properly configured (i.e. observing Axes)
     // Also implements Dependency Injection
-    public RealBooleanCreatorImp(Map<String, FunctionExpression> funcMap, ExpressionPropertyReporter validityChecker,
-                                 RealValuedExpressionFactory realValuedExpressionFactory,
-                                 BooleanValuedExpressionFactory booleanValuedExpressionFactory){
+    public RealBooleanCreatorImp(Map<String, FunctionExpression> funcMap, ExpressionPropertyReporter validityChecker){
         // We create a new copy of the funcMap rather than just simply assigning to avoid aliasing
-        super(funcMap, validityChecker, realValuedExpressionFactory, booleanValuedExpressionFactory);
+        super(funcMap, validityChecker);
     }
 
 
