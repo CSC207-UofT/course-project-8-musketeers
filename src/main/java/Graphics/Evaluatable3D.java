@@ -1,5 +1,9 @@
 package Graphics;
 
+/**
+ * This is an interface for evaluatable expressions in 3D
+ * implemented by RealValuedExpression, EvalExprAdapter
+ */
 interface Evaluatable3D {
     float evaluate(float x, float y, float z);
 

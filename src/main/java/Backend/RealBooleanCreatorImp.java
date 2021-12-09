@@ -38,13 +38,18 @@ public class RealBooleanCreatorImp extends RealBooleanCreator implements Propert
         this(funcMap, new ExpressionPropertyReporter(funcMap));
     }
 
+    /**
+     * Constructor for RealBooleanCreatorImp.
+     *
+     * @param funcMap A map of function names to the functions themselves.
+     * @param propertyReporter A property reporter that reports properties of list of strings.
+     */
     // This constructor allows us to ensure that vc is properly configured (i.e. observing Axes)
     // Also implements Dependency Injection
-    public RealBooleanCreatorImp(Map<String, FunctionExpression> funcMap, ExpressionPropertyReporter validityChecker){
+    public RealBooleanCreatorImp(Map<String, FunctionExpression> funcMap, ExpressionPropertyReporter propertyReporter){
         // We create a new copy of the funcMap rather than just simply assigning to avoid aliasing
-        super(funcMap, validityChecker);
+        super(funcMap, propertyReporter);
     }
-
 
     /**
      * @param event An event denoting that Axes object has been modified. This method is specifically listening for
@@ -58,6 +63,13 @@ public class RealBooleanCreatorImp extends RealBooleanCreator implements Propert
         }
     }
 
+    /**
+     *
+     * @param terms        The list of terms as accepted by the create method.
+     * @return An Expression wildcard which is the desired expression.
+     * "Logical" or "Comparator". Both expressions returned represent <terms> in a valid format which can be graphed.
+     * @throws InvalidTermException If terms cannot be interpreted
+     */
     public Expression<?> create(List<String> terms) throws InvalidTermException {
         List<String> minimalTerms = bracketsReduction(terms); // remove unnecessary enclosing brackets.
         propertyReporter.preCheck(minimalTerms); // A NON-RECURSIVE check for the validity of the expression.
@@ -175,6 +187,7 @@ public class RealBooleanCreatorImp extends RealBooleanCreator implements Propert
     }
 
     /**
+     *
      * @param terms        The list of terms as accepted by the create method.
      * @param operatorType The type of operator we will be splitting <terms> based on. Can be "Logical" or "Comparator"
      *                     or "Arithmetic"
@@ -233,6 +246,11 @@ public class RealBooleanCreatorImp extends RealBooleanCreator implements Propert
         throw new CompoundCaseCreatorException(CompoundCaseCreatorException.ERRORMESSAGE_MISSING_OPERATOR);
     }
 
+    /**
+     * Unchain comparators to have logical operator "AND" in between comparators.
+     * @param terms        The list of terms.
+     * @return A list of strings that has any chained comparators unchained.
+     */
     private List<String> unchainComparators(List<String> terms) { // Only unchain the outer ones.
         // Convert chained comparators to ... AND ...
         // E.g. 1 < x < 2 -> 1 < x & x < 2
