@@ -180,7 +180,7 @@ public class RealBooleanCreatorImp extends RealBooleanCreator implements Propert
      *                     or "Arithmetic"
      * @return A RealValuedExpression if operatorType is "Arithmetic", a BooleanValuedExpression if operator is
      * "Logical" or "Comparator". Both expressions returned represent <terms> in a valid format which can be graphed.
-     * @throws InvalidTermException If
+     * @throws InvalidTermException If terms cannot be interpreted
      */
     private Expression<?> createOnOperators(List<String> terms, String operatorType) throws InvalidTermException {
         Expression<?> lExpr, rExpr; // initialise the expressions on the left and right of the operands.
