@@ -30,10 +30,6 @@ public class Constants {
         return ARITHMETICOPERATORS;
     }
 
-    public List<String> getBooleanValuedOperators() {
-        return Stream.of(LOGICALOPERATORS, COMPARATORS).flatMap(Collection::stream).collect(Collectors.toList());
-    }
-
     public List<String> getAllOperators() {
         return Stream.of(LOGICALOPERATORS, COMPARATORS, ARITHMETICOPERATORS).flatMap(Collection::stream).collect(Collectors.toList());
     }
@@ -42,9 +38,6 @@ public class Constants {
         return VARIABLES;
     }
 
-    public Set<String> getOneVarFunctions() {
-        return BUILTINONEVARFUNCTIONS;
-    }
 
     public Set<String> getTwoVarFunctions() {
         return BUILTINTWOVARFUNCTIONS;

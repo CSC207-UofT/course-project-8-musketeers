@@ -30,7 +30,7 @@ public class ExpressionReader {
 
     /**
      * @param axes Axes object that ExpressionCreator and ValidityChecker are going to be 'configured' to
-     *             i.e. this is the Axes object that they will observing
+     *             i.e. this is the Axes object that they will be observing
      */
     public ExpressionReader(Axes axes) {
         this(axes.getNamedExpressions());
@@ -83,7 +83,7 @@ public class ExpressionReader {
      * 1. the first term is all alphabets (lower or upper case), assumed to be the name of the function
      * 2. The second term is '(' and the term before the equals sign in ')'
      * 3. Everything in between alternates between alphabets and commas
-     * 4. The alphabets are variables, as defined in Constants.VARIABLES
+     * 4. The alphabets are variables, as defined in Constants.VARIABLES.
      *
      * @param terms A list of strings representing userInput after parsing by expressionParser()
      * @return true if and only if the expression appears to be an explicit function
@@ -160,15 +160,15 @@ public class ExpressionReader {
         return variables;
     }
 
-    // Below precondition: Should be real-valued expressions, so if there's logicals or comparators, then some exception
-    // will be thrown, or program crashes, depends.. //
+    // Below precondition: Should be real-valued expressions, so if there are logical operators or comparators,
+    // then some exception will be thrown, or program crashes, depends.. //
     // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
     private RealValuedExpression realValuedRead(List<String> terms) throws InvalidTermException {
         return (RealValuedExpression) expressionCreator.create(terms);
     }
 
-    // Below precondition: Should be boolean-valued expressions, so if there's no logicals or comparators at all, then
-    // some exception will be thrown.
+    // Below precondition: Should be boolean-valued expressions, so if there are no logical operators or
+    // comparators at all, then some exception will be thrown.
     // E.g. "x = 4" is acceptable; "x^2 + y" will evoke some exceptions.
     private BooleanValuedExpression booleanValuedRead(List<String> terms) throws InvalidTermException {
         return (BooleanValuedExpression) expressionCreator.create(terms);
@@ -190,11 +190,11 @@ public class ExpressionReader {
         List<String> parsed = new ArrayList<>();
         StringBuilder section = new StringBuilder(); // section will be storing any series of characters which are not
         // operators.
-        // We will loop over expression to interpret it and add to parsed.
+        // We will loop over expression to interpret it and add to <parsed>.
         for (int character = 0; character < expression.length(); character++) {
             String letter = String.valueOf(expression.charAt(character));
-            //If its not alphanumeric, its a special character, in which case we add whatever section refers to into parsed
-            //and add the special character aftwerwards.
+            //If it's not alphanumeric, it's a special character, in which case we add whatever section refers to into parsed
+            //and add the special character afterwards.
             if (letter.matches("^.*[^a-zA-Z0-9. ].*$")) {
                 //we want to be sure that section does not refer to an empty string.
                 if (!section.toString().equals("")) {
@@ -204,29 +204,29 @@ public class ExpressionReader {
                 section = new StringBuilder();
 
             }
-            // If its a space, then we add whatever section refers to to parsed to ensure we dont mix "section" with the next
-            //character.
+            // If it's a space, then we add whatever section refers to, to parsed to ensure we don't mix "section"
+            // with the next character.
             else if (letter.equals(" ")) {
                 if (!section.toString().equals("")) {
                     parsed.add(section.toString());
                 }
                 section = new StringBuilder();
             } else {
-                //If its neither of those cases. then it must be alphanumeric and so we append "section".
+                //If it's neither of those cases. then it must be alphanumeric, and so we append "section".
                 section.append(letter);
             }
         }
 
 
         //As we finished looping over expression, we may have that section refers to the last bit of the input.
-        // We add it to parsed if its nonempty.
+        // We add it to parsed if it's nonempty.
 
         if (!section.toString().equals("")) {
             parsed.add(section.toString());
         }
         //We may have valid input from the user, but it may not be interpreted correctly as is.
         //We call this function to modify our parsed list to give a form that can be transformed into a valid AST.
-        fixParsedlist(parsed);
+        fixParsedList(parsed);
         return parsed;
 
     }
@@ -238,11 +238,11 @@ public class ExpressionReader {
      * @param parsed The list we have parsed in the first pass through expression parser.
      */
 
-    private void fixParsedlist(List<String> parsed) {
+    private void fixParsedList(List<String> parsed) {
         //
         fixLogicalOperators(parsed); // account for logical operators which may not be read correctly.
         handleOperators(parsed); // remove all accounts of sequences of "+" and "-".
-        handleSign(parsed); // intepret unary usage of "-" and "+" correctly.
+        handleSign(parsed); // interpret unary usage of "-" and "+" correctly.
 
     }
 
@@ -294,7 +294,7 @@ public class ExpressionReader {
             String current = parsed.get(i);
             //This function is called after handleOperators, so there are no consecutive unary operators, ensuring it
             // makes sense.
-            //Special case i = 0. We immediately know its a unary use of "+" and "-".
+            //Special case i = 0. We immediately know it's a unary use of "+" and "-".
             if (i == 0 && (current.equals("-") || current.equals("+"))) {
                 interpretOperator(i, current, parsed);
             } else if (i > 0 && (current.equals("-") || current.equals("+"))) {
@@ -314,10 +314,11 @@ public class ExpressionReader {
         // specialCharacters will contain all characters where, if "-" or "+" appear after, they are used in
         // unary context.
         List<String> specialCharacters = constants.getAllOperators();
-        specialCharacters.removeAll(List.of("/", "^")); // The case where we have ??/-??" in the code is bad habit. We are enforcing
-        // rule that we are not responsible for the interpretation of it. So we remove "/" and Same for "??^-??"
+        specialCharacters.removeAll(List.of("/", "^")); // The case where we have "??/-??" in the code is bad habit.
+        // We are enforcing rule that we are not responsible for the interpretation of it.
+        // So we remove "/" and Same for "??^-??"
         specialCharacters.addAll(List.of("(", "=", ","));
-        // If the previous element of the parsed list is special, we interpet the operator as unary.
+        // If the previous element of the parsed list is special, we interpret the operator as unary.
         if (specialCharacters.contains(parsed.get(i - 1))) {
             interpretOperator(i, parsed.get(i), parsed);
         }
@@ -358,7 +359,7 @@ public class ExpressionReader {
             if ((current.toString().equals("<") || current.toString().equals(">")) && parsed.get(i + 1).equals("=")) {
                 concatenateOperators(parsed, current, i); // replace "<" followed by "=" with "<=". And same for ">".
             }
-            size = parsed.size(); //update the size so we dont have index out of bounds error.
+            size = parsed.size(); //update the size, so we don't have "index out of bounds" error.
         }
     }
 

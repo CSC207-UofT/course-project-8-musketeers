@@ -1,9 +1,7 @@
 package Backend.ExpressionBuilders;
 
-import Backend.Constants;
 import Backend.Exceptions.BaseCaseCreatorException;
 import Backend.Exceptions.CompoundCaseCreatorException;
-import Backend.Exceptions.EmptyBuilderException;
 import Backend.Exceptions.InvalidTermException;
 import Backend.Expressions.*;
 
@@ -29,7 +27,7 @@ public class RealValuedExpressionFactory implements ExpressionFactory<RealValued
         return expr;
     }
 
-    /**This method creates an binary operator Expression in which the operator's inputs are the given left and right
+    /**This method creates a binary operator Expression in which the operator's inputs are the given left and right
      * input expressions e.g. applies + to 1 and 3 to get a 1 + 3 expression.
      *
      * @param lExpr The left input expression to the operator.

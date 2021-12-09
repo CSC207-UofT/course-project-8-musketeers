@@ -25,7 +25,7 @@ public abstract class RealValuedExpression extends Expression<Float> implements 
         varMap.put("x", x);
         varMap.put("y", y);
         if (domain.evaluate(varMap)) {
-            return evaluate(varMap); // this evaluate is from Expression class
+            return evaluate(varMap); // this "evaluate" is from Expression class
         } else {
             return Float.NaN;
         }
@@ -36,7 +36,7 @@ public abstract class RealValuedExpression extends Expression<Float> implements 
         Map<String, Float> varMap = new HashMap<>();
         varMap.put("x", x);
         if (domain.evaluate(varMap)) {
-            return evaluate(varMap); // this evaluate is from Expression class
+            return evaluate(varMap); // this "evaluate" is from Expression class
         } else {
             return Float.NaN;
         }

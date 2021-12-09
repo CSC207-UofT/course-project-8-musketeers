@@ -5,7 +5,7 @@ package Backend.Expressions;
  */
 public abstract class FunctionExpression extends RealValuedExpression {
 
-    private String[] variables;
+    private final String[] variables;
     private RealValuedExpression[] inputs;
 
     /**
@@ -57,16 +57,6 @@ public abstract class FunctionExpression extends RealValuedExpression {
      */
     public String[] getVariables() {
         return this.variables;
-    }
-
-    /**
-     * Sets the variables the function is expressed in terms of
-     *
-     * @param variables Array of strings that represent the variables that the function is in terms of
-     */
-    public void setVariables(String[] variables) {
-        this.variables = variables;
-        this.inputs = stringArrayToExpressions(variables);
     }
 
     @Override

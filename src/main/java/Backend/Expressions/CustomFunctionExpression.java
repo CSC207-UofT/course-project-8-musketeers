@@ -33,14 +33,6 @@ public class CustomFunctionExpression extends FunctionExpression {
         setDomain(domain);
     }
 
-    public CustomFunctionExpression(String funcName, String[] variables,
-                                    RealValuedExpression[] inputs, RealValuedExpression function) {
-        super(funcName, variables);
-        this.function = function;
-        setInputs(inputs);
-    }
-
-
     @Override
     public Float evaluate(Map<String, Float> arguments) {
         Map<String, Float> varMap = new HashMap<>();
