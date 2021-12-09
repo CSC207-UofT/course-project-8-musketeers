@@ -218,7 +218,8 @@ public class ExpressionCreator implements PropertyChangeListener {
         /* Below should never happen if we additionally add the "checkCommasWithinFunctions" checker, which we have
            decided to add it now. Now, abandoned "checkCommasWithinFunctions" with "checkMultipleTermsConnection", as
            the latter is more general and safer, but the former works too, thanks to "ExpressionReader". */
-        throw new CompoundCaseCreatorException("SomethingExceptionUncaughtException");
+        throw new CompoundCaseCreatorException("OperandTypeException!"); /* Should have the algorithm to check from
+        outer to inner, but this suffices. */
     }
 
     private List<String> unchainComparators(List<String> terms) { // Only unchain the outer ones.
@@ -299,7 +300,7 @@ public class ExpressionCreator implements PropertyChangeListener {
                 RealValuedExpression inputExp = (RealValuedExpression) create(inputTerm);
                 inputs[i] = inputExp; // Add the expression for this input.
                 startInd = commaIndices.get(i) + 1;
-            } catch (BaseCaseCreatorException e) {
+            } catch (InvalidTermException e) {
                 throw new CompoundCaseCreatorException("InvalidFunctionInputsException!");
             }
         }

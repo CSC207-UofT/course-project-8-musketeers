@@ -138,7 +138,7 @@ public class ValidityCheckerTest {
     @Test(timeout = 50)
     public void testWrongCommas3() throws InvalidTermException {
         thrown.expect(CompoundCaseCreatorException.class);
-        thrown.expectMessage(this.ERRORMESSAGE_INVALID_TERM);
+        thrown.expectMessage(this.ERRORMESSAGE_FUNCTION_INPUT_TYPE);
         Expression<?> exp = er.read("cos((x+y,))");
     }
 

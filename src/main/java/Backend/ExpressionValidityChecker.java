@@ -433,7 +433,6 @@ public class ExpressionValidityChecker implements PropertyChangeListener {
         }
         return false;
     }
-
 }
 
 
