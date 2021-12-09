@@ -10,6 +10,7 @@ public class GUIHelper {
     private final Grapher grapher;
     private String gType;
 
+
     public GUIHelper(Grapher g, int dim) {
         grapher = g;
         imgDim = dim;

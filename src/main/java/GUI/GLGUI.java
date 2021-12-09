@@ -43,6 +43,7 @@ public class GLGUI extends GLFWApp implements GUI {
 
     private GUIHelper guiHelper;
 
+
     public GLGUI(Grapher grapher, int imgDim) {
         this.imgDim = imgDim;
         this.guiHelper = new GUIHelper(grapher, imgDim);
@@ -117,6 +118,9 @@ public class GLGUI extends GLFWApp implements GUI {
         glLinkProgram(progID);
     }
 
+    /**
+     * Initializes GUI.
+     */
     public void initGUI() {
         try {
             initGL();
@@ -168,7 +172,12 @@ public class GLGUI extends GLFWApp implements GUI {
     }
 
 
-
+    /**
+     * Track the positions of cursor in the associated window.
+     * @param l References the window.
+     * @param x x position of the cursor.
+     * @param y y position of the cursor.
+     */
     private static void cursor_pos_callback(long l, double x, double y) {
         mousex = (float) (x - 400) / 200.f;
         mousey = (float) (y - 400) / 200.f;
@@ -190,6 +199,13 @@ public class GLGUI extends GLFWApp implements GUI {
         }
     }
 
+    /**
+     * Track the information (clicking) from the mouse.
+     * @param win References the window.
+     * @param button the button being activated
+     * @param action Action like press or release
+     * @param mods mode.
+     */
     private static void mouseCallback(long win, int button, int action, int mods) {
         // Below Ted: Mouse drag:
         if (action == GLFW_PRESS && button == GLFW_MOUSE_BUTTON_LEFT) {
@@ -201,6 +217,14 @@ public class GLGUI extends GLFWApp implements GUI {
         }
     }
 
+    /**
+     * Track the keyboard inputs.
+     * @param window References the window.
+     * @param key the key being activated
+     * @param scancode the button being activated
+     * @param action Action like press or release
+     * @param mods mode.
+     */
     private static void keyboardCallback(long window, int key, int scancode, int action, int mods) {
         if (action == GLFW_PRESS) {
             if (key == GLFW_KEY_UP) {

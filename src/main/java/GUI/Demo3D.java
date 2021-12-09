@@ -34,6 +34,10 @@ public class Demo3D extends GLFWApp {
     public Demo3D() {
     }
 
+    /**
+     * Create vertex shaders and fragment shaders. An OpenGL Technical thing. Shaders are small programs that run in
+     * parts of GPU in parallel.
+     */
     public static void makeShader() throws IOException {
         String vertShader;
         String fragShader;
@@ -65,6 +69,12 @@ public class Demo3D extends GLFWApp {
         glLinkProgram(progID);
     }
 
+    /**
+     * Track the positions of cursor in the associated window.
+     * @param l References the window.
+     * @param x x position of the cursor.
+     * @param y y position of the cursor.
+     */
     private static void cursor_pos_callback(long l, double x, double y) {
         mousex = (float) (x - 400) / 200.f;
         mousey = -(float) (y - 400) / 200.f;
@@ -97,6 +107,13 @@ public class Demo3D extends GLFWApp {
         System.out.println("Fin.");
     }
 
+    /**
+     * Track the information (clicking) from the mouse.
+     * @param win References the window.
+     * @param button the button being activated
+     * @param action Action like press or release
+     * @param mods mode.
+     */
     private static void mouseCallback(long win, int button, int action, int mods) {
         /* Print a message when the user pressed down a mouse button */
         if (action == GLFW_PRESS) {
