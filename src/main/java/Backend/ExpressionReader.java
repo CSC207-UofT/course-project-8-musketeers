@@ -1,8 +1,6 @@
 package Backend;
 
 import Backend.Exceptions.InvalidTermException;
-import Backend.ExpressionBuilders.BooleanValuedExpressionFactory;
-import Backend.ExpressionBuilders.RealValuedExpressionFactory;
 import Backend.Expressions.*;
 
 import java.util.ArrayList;
