@@ -1,4 +1,4 @@
-Part 1: Principles of Universal Design
+Part 1: Principles of Universal Design \n
 Equitable Use:
 Our program is not hard to use, so the learning curve is quite low if it exists. Those with disabilities may use special devices to input their data. As long as the devices input is interpreted by the computer to be identical to typing and/or moving the cursor, our program should not have any trouble accommodating them. (Example: Speech to text will input data into CLI, but our program is responsible for interpreting the data and not the speech, so there isn’t an issue). Given the actual program is just a graphing calculator, there is little accommodation to be made as there are no actual expectations of the ability of the user.
 Flexibility in Use:
