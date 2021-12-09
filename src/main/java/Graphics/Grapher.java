@@ -17,7 +17,6 @@ import java.util.Map;
 public class Grapher {
 
     private final Axes axes;
-    private final ExplicitGrapher expGrapher = new ExplicitGrapher(); // Explicit graphers for explicit functions
     private final ImplicitGrapher impGrapher = new ImplicitGrapher(); // Implicit grapher for implicit functions
     private final AxesUseCase auc = new AxesUseCase(); // Use case class to interact with Axes
     private final AxesDrawer ad = new AxesDrawer(); // AxesDrawer to draw Axes and grids
