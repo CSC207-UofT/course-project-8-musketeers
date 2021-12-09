@@ -24,8 +24,7 @@ public class ExpressionReader {
      */
     public ExpressionReader(Map<String, FunctionExpression> funcMap) {
         this.validityChecker = new ExpressionPropertyReporter(funcMap);
-        this.realBooleanCreatorImp = new RealBooleanCreatorImp(funcMap, this.validityChecker, new RealValuedExpressionFactory(),
-                new BooleanValuedExpressionFactory());
+        this.realBooleanCreatorImp = new RealBooleanCreatorImp(funcMap, this.validityChecker);
     }
 
     /**

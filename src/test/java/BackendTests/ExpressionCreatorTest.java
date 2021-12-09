@@ -23,8 +23,7 @@ public class ExpressionCreatorTest {
 
     @Before
     public void setUp(){
-        realBooleanCreatorImp = new RealBooleanCreatorImp(axes.getNamedExpressions(), realValuedExpressionFactory,
-                booleanValuedExpressionFactory);
+        realBooleanCreatorImp = new RealBooleanCreatorImp(axes.getNamedExpressions());
     }
 
     // TEST INPUT PATTERNS
@@ -317,8 +316,7 @@ public class ExpressionCreatorTest {
     @Test(timeout = 50)
     public void testCompositionOfCustomFunctions() throws InvalidTermException {
         Axes axes = new Axes();
-        RealBooleanCreatorImp ec2 = new RealBooleanCreatorImp(axes.getNamedExpressions(), realValuedExpressionFactory,
-                booleanValuedExpressionFactory);
+        RealBooleanCreatorImp ec2 = new RealBooleanCreatorImp(axes.getNamedExpressions());
         ExpressionReader er2 = new ExpressionReader(axes);
 
         String funcName = "f";

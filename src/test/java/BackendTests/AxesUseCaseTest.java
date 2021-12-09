@@ -102,8 +102,7 @@ public class AxesUseCaseTest {
     @Test(timeout = 100)
     public void testAxesAddCustomFunction() throws InvalidTermException {
 
-        RealBooleanCreatorImp ec = new RealBooleanCreatorImp(axesUseCase.getNamedFunctions(axes),
-                new RealValuedExpressionFactory(), new BooleanValuedExpressionFactory());
+        RealBooleanCreatorImp ec = new RealBooleanCreatorImp(axesUseCase.getNamedFunctions(axes));
         String funcName = "f";
         String[] variables = {"x"};
         Expression<?> func = ec.create(List.of("x", "^", "2"));
