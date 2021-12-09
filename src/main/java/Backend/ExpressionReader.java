@@ -14,8 +14,8 @@ import java.util.Map;
  */
 public class ExpressionReader {
     private final Constants constants = new Constants();
-    private final ExpressionCreator expressionCreator;
-    public final ExpressionValidityChecker validityChecker;
+    private final RealBooleanCreatorImp realBooleanCreatorImp;
+    public final ExpressionPropertyReporter validityChecker;
 
     /**
      * Constructor for ExpressionReader.
@@ -23,19 +23,19 @@ public class ExpressionReader {
      * @param funcMap A map of function names to the actual functions.
      */
     public ExpressionReader(Map<String, FunctionExpression> funcMap) {
-        this.validityChecker = new ExpressionValidityChecker(funcMap);
-        this.expressionCreator = new ExpressionCreator(funcMap, this.validityChecker, new RealValuedExpressionFactory(),
+        this.validityChecker = new ExpressionPropertyReporter(funcMap);
+        this.realBooleanCreatorImp = new RealBooleanCreatorImp(funcMap, this.validityChecker, new RealValuedExpressionFactory(),
                 new BooleanValuedExpressionFactory());
     }
 
     /**
-     * @param axes Axes object that ExpressionCreator and ValidityChecker are going to be 'configured' to
+     * @param axes Axes object that RealBooleanCreatorImp and ValidityChecker are going to be 'configured' to
      *             i.e. this is the Axes object that they will observing
      */
     public ExpressionReader(Axes axes) {
         this(axes.getNamedExpressions());
 
-        axes.addObserver(this.expressionCreator);
+        axes.addObserver(this.realBooleanCreatorImp);
         axes.addObserver(this.validityChecker);
     }
 
@@ -164,14 +164,14 @@ public class ExpressionReader {
     // will be thrown, or program crashes, depends.. //
     // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
     private RealValuedExpression realValuedRead(List<String> terms) throws InvalidTermException {
-        return (RealValuedExpression) expressionCreator.create(terms);
+        return (RealValuedExpression) realBooleanCreatorImp.create(terms);
     }
 
     // Below precondition: Should be boolean-valued expressions, so if there's no logicals or comparators at all, then
     // some exception will be thrown.
     // E.g. "x = 4" is acceptable; "x^2 + y" will evoke some exceptions.
     private BooleanValuedExpression booleanValuedRead(List<String> terms) throws InvalidTermException {
-        return (BooleanValuedExpression) expressionCreator.create(terms);
+        return (BooleanValuedExpression) realBooleanCreatorImp.create(terms);
     }
 
     /**
