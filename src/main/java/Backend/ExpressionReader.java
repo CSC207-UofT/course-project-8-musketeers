@@ -14,8 +14,8 @@ import java.util.Map;
  */
 public class ExpressionReader {
     private final Constants constants = new Constants();
-    private final ExpressionCreator ec;
-    public final ExpressionValidityChecker vc;
+    private final ExpressionCreator expressionCreator;
+    public final ExpressionValidityChecker validityChecker;
 
     /**
      * Constructor for ExpressionReader.
@@ -23,8 +23,8 @@ public class ExpressionReader {
      * @param funcMap A map of function names to the actual functions.
      */
     public ExpressionReader(Map<String, FunctionExpression> funcMap) {
-        this.vc = new ExpressionValidityChecker(funcMap);
-        this.ec = new ExpressionCreator(funcMap, this.vc, new RealValuedExpressionFactory(),
+        this.validityChecker = new ExpressionValidityChecker(funcMap);
+        this.expressionCreator = new ExpressionCreator(funcMap, this.validityChecker, new RealValuedExpressionFactory(),
                 new BooleanValuedExpressionFactory());
     }
 
@@ -35,8 +35,8 @@ public class ExpressionReader {
     public ExpressionReader(Axes axes) {
         this(axes.getNamedExpressions());
 
-        axes.addObserver(this.ec);
-        axes.addObserver(this.vc);
+        axes.addObserver(this.expressionCreator);
+        axes.addObserver(this.validityChecker);
     }
 
     /**
@@ -61,7 +61,7 @@ public class ExpressionReader {
      */
     public Expression<?> read(String expression) throws InvalidTermException {
         List<String> terms = expressionParser(expression);
-        if (vc.containsOperator(terms, "Logical") || vc.containsOperator(terms, "Comparator")) {
+        if (validityChecker.containsOperator(terms, "Logical") || validityChecker.containsOperator(terms, "Comparator")) {
             return booleanValuedRead(terms);
         } else {
             if (!terms.contains("=")) {
@@ -95,11 +95,11 @@ public class ExpressionReader {
         List<String> funcHeader = terms.subList(0, terms.indexOf("="));
 
         // check the first term is a valid function name (all alphabets and is not already taken)
-        if (!vc.validFuncName(funcHeader.get(0))) {
+        if (!validityChecker.validFuncName(funcHeader.get(0))){
             return false;
         }
         // Check condition 2
-        if (!vc.enclosedByOuterBrackets(funcHeader.subList(1, funcHeader.size()))) {
+        if (!validityChecker.enclosedByOuterBrackets(funcHeader.subList(1, funcHeader.size()))){
             return false;
         }
 
@@ -164,14 +164,14 @@ public class ExpressionReader {
     // will be thrown, or program crashes, depends.. //
     // E.g. "x^2 + y" is acceptable; "x = 4" will evoke some exceptions.
     private RealValuedExpression realValuedRead(List<String> terms) throws InvalidTermException {
-        return (RealValuedExpression) ec.create(terms);
+        return (RealValuedExpression) expressionCreator.create(terms);
     }
 
     // Below precondition: Should be boolean-valued expressions, so if there's no logicals or comparators at all, then
     // some exception will be thrown.
     // E.g. "x = 4" is acceptable; "x^2 + y" will evoke some exceptions.
     private BooleanValuedExpression booleanValuedRead(List<String> terms) throws InvalidTermException {
-        return (BooleanValuedExpression) ec.create(terms);
+        return (BooleanValuedExpression) expressionCreator.create(terms);
     }
 
     /**

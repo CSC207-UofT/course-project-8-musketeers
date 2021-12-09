@@ -71,74 +71,22 @@ public class ExpressionValidityChecker implements PropertyChangeListener {
      */
     public void preCheck(List<String> terms) throws InvalidTermException {
         if (terms.size() == 0) {
-            throw new BaseCaseCreatorException("NullExpressionException!");
-        } else if (terms.size() == 1) { // Important (e.g. for <findFunctionInputs> and <createOnOperators> to catch the
-            // correct exception (BaseCaseException rather than potentially InvalidTermException)).
-            String term = terms.get(0);
-            if (!(checkNumber(term) | constants.getVariables().contains(term))) {
-                throw new BaseCaseCreatorException("InvalidSingleExpressionException!");
-            }
-        } else {
-            if (!checkAllTermsValid(terms)) { //check if all terms are terms we can interpret.
-                throw new CompoundCaseCreatorException("InvalidTermException!");
-            } else if (!checkMatchingBrackets(terms)) { //Check if each bracket has a corresponding bracket and we dont
-                // any extra brackets.
-                throw new CompoundCaseCreatorException("UnmatchedBracketsException!");
-            } else if (!checkFunctionBrackets(terms)) { //Check that brackets
-                throw new CompoundCaseCreatorException("FunctionBracketsException!");
-            } else if (!checkCommasWithinFunctions(terms)) {
-                throw new CompoundCaseCreatorException("CommasNotWithinFunctions!");
-            } else if (!checkMultipleTermsConnection(terms)) {
-                throw new CompoundCaseCreatorException("NonConnectedMultipleTermsException!");
-            } else if (!checkFunctionInputSize(terms)) {
-                throw new CompoundCaseCreatorException("FunctionInputsSizeException!");
-            }
+            throw new BaseCaseCreatorException(BaseCaseCreatorException.ERRORMESSAGE_EMPTY_EXPRESSION);
+        } else if (!checkAllTermsValid(terms)) { //check if all terms are terms we can interpret.
+            throw new CompoundCaseCreatorException("InvalidTermException!");
+        } else if (terms.size() == 1){
+            return;
+        } else if (!checkMatchingBrackets(terms)) { //Check if each bracket has a corresponding bracket and we dont
+                                                    // any extra brackets.
+            throw new CompoundCaseCreatorException("UnmatchedBracketsException!");
+        } else if (!checkFunctionBrackets(terms)) { //Check that brackets
+            throw new CompoundCaseCreatorException("FunctionBracketsException!");
         }
-    }
-
-    // Don't need the three recursive checker since we implicitly have them checked in <ExpressionCreator> already!
-
-    // Below method: First input is one (left or right) operand, and the second input is the operator type.
-
-    public void operandsTypeCheck(List<String> leftTerms, String operatorType, List<String> rightTerms) throws CompoundCaseCreatorException {
-
-        switch (operatorType) {
-            case "Logical": {
-                if (!((containsOperator(leftTerms, "Comparator") ||
-                        containsOperator(leftTerms, "Logical")) &&
-                        (containsOperator(rightTerms, "Comparator") ||
-                                containsOperator(rightTerms, "Logical")))) {
-                    throw new CompoundCaseCreatorException("OperandTypeException!");
-                }
-                break;
-            }
-            case "Arithmetic":
-            case "Comparator": {
-
-                if (containsOperator(leftTerms, "Comparator") ||
-                        containsOperator(leftTerms, "Logical") ||
-                        containsOperator(rightTerms, "Comparator") ||
-                        containsOperator(rightTerms, "Logical")) {
-                    throw new CompoundCaseCreatorException("OperandTypeException!");
-                }
-                break;
-            }
-            // In theory, this should be thrown
-            default:
-                throw new IllegalStateException("Unrecognized Operator Type!");
+        else if (!checkCommasWithinFunctions(terms)) {
+            throw new CompoundCaseCreatorException("CommasNotWithinFunctions!");
         }
-    }
-
-    /**
-     * A method that checks whether any logical or comparator operators appear in the input terms, and
-     * throws an exception if they appear.
-     *
-     * @param terms The list of terms as accepted by the create method.
-     * @throws CompoundCaseCreatorException thrown if the expression contains logical or comparator operators.
-     */
-    public void realValuedPreconditionCheck(List<String> terms) throws CompoundCaseCreatorException {
-        if (containsOperator(terms, "Logical") || containsOperator(terms, "Comparator")) {
-            throw new CompoundCaseCreatorException("NotRealValuedExpressionException!");
+        else if (!checkMultipleTermsConnection(terms)) {
+            throw new CompoundCaseCreatorException("NonConnectedMultipleTermsException!");
         }
     }
 
@@ -163,7 +111,6 @@ public class ExpressionValidityChecker implements PropertyChangeListener {
     private boolean checkAllTermsValid(List<String> terms) {
         for (int i = 0; i <= terms.size() - 1; i++) {
             String term = terms.get(i);
-
 
             if (!(checkNumber(term) | // If a term is not a number,
                     constants.getVariables().contains(term) | // or a variable,
@@ -239,35 +186,7 @@ public class ExpressionValidityChecker implements PropertyChangeListener {
         return getOuterItems(terms, List.of(new String[]{","})).isEmpty();
     }
 
-    /**
-     * Checks if each function called in the expression has correct input size.
-     *
-     * @param terms The list of terms as accepted by the create method.
-     * @return True if and only if all functions have correct input size. Example: ["cos","(","x",")] returns true,
-     * ["sin","(","x","y",")"] returns false.
-     */
-    private boolean checkFunctionInputSize(List<String> terms) {
-
-        Map<String, List<Integer>> functionsAndIndexLists = getOuterItems(terms, new ArrayList<>(definedFuncs.keySet()));
-        List<String> functionInputTerms;
-        int numCommas;
-
-        for (List<Integer> indices : functionsAndIndexLists.values()) {
-            for (Integer index : indices) {
-                //Get the list representing the scope of the function.
-                functionInputTerms = terms.subList(index + 2, findCorrespondingBracket(terms, index + 1));
-                numCommas = getOuterItems(functionInputTerms, List.of(",")).size();
-                if (funcNumInputs.get(terms.get(index)) - 1 != numCommas) {
-                    return false;
-                }
-            } // This works thanks to checkers in "precheck" that is done before this checker.
-        }
-        // All functions have correct input sizes, so return true.
-        return true;
-    }
-
-    /**
-     * This method ensures that if no operators appear in an expression then it's just a function call
+    /** This method ensures that if no operators appear in an expression then it's just a function call
      *
      * @param terms The list of terms as accepted by the create method.
      * @return True if and only if <terms> represents one or zero functions, variables, or numbers.

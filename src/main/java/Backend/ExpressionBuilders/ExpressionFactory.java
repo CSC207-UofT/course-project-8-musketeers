@@ -1,7 +1,10 @@
 package Backend.ExpressionBuilders;
 
 import Backend.Constants;
-import Backend.Expressions.Expression;
+import Backend.Exceptions.EmptyBuilderException;
+import Backend.Exceptions.InvalidTermException;
+import Backend.Expressions.*;
+import java.util.Map;
 
 public interface ExpressionFactory<T extends Expression<?>> {
     // T is the type of expression that the ExpressionBuilder subclass builds.
@@ -9,5 +12,6 @@ public interface ExpressionFactory<T extends Expression<?>> {
 
     // mandates that every ExpressionBuilder has the ability to handle binary operators
     // operatorType might not be necessary
-    T constructExpression(Expression<?> lExpr, String op, Expression<?> rExpr, String operatorType);
+    public T constructExpression(Expression<?> lExpr, String op, Expression<?> rExpr, String operatorType) throws
+            InvalidTermException;
 }
