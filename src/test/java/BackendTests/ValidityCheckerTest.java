@@ -25,8 +25,6 @@ public class ValidityCheckerTest {
 
     // TEST INPUT PATTERNS
 
-    // Todo: add a test for the errors that ExpressionPropertyReporter.checkMultipleTermsConnection checks
-
     @Test(timeout = 50)
     public void testEmptyExpression() throws InvalidTermException {
         thrown.expect(BaseCaseCreatorException.class);
@@ -83,7 +81,6 @@ public class ValidityCheckerTest {
         Expression<?> exp = expressionReader.read("shinch(x)");
     }
 
-    // TODO: the program currently fails on this test (the test is correct)
     @Test(timeout = 50)
     public void testInvalidArithmeticOperatorInputs() throws InvalidTermException {
         thrown.expect(CompoundCaseCreatorException.class);
@@ -105,7 +102,6 @@ public class ValidityCheckerTest {
         Expression<?> exp = expressionReader.read("(1 < 2) < 2");
     }
 
-    // TODO: decide whether the error message here should be ERRORMESSAGE_FUNCTION_INPUT_SIZE
     @Test(timeout = 50)
     public void testWrongFunctionInputLength() throws InvalidTermException {
         thrown.expect(CompoundCaseCreatorException.class);

@@ -20,7 +20,6 @@ import static org.lwjgl.opengl.GL33.*;
 
 /**
  * A User Interface which uses GLFW
- * TODO: split into UI, Controller, Presenter
  */
 public class GLGUI extends GLFWApp implements GUI {
     private int progID;
